@@ -2,15 +2,22 @@ from __future__ import annotations
 
 from typing import List, Optional, Tuple
 
+from sce.core.candidates import CandidateGenerator, RuleCandidateGenerator, candidate_results_to_legacy_pairs
 from sce.core.scoring import SCEScoringEngine
 from sce.core.types import Attractor, Event, EventType, EvolutionResult, Rule, State, Transition, TransitionType
 from sce.storage.memory import MemoryRepository
 
 
 class SCEEvolver:
-    def __init__(self, repo: MemoryRepository, scorer: SCEScoringEngine) -> None:
+    def __init__(
+        self,
+        repo: MemoryRepository,
+        scorer: SCEScoringEngine,
+        candidate_generator: Optional[CandidateGenerator] = None,
+    ) -> None:
         self.repo = repo
         self.scorer = scorer
+        self.candidate_generator = candidate_generator
 
     def admissible_state(self, state: State) -> bool:
         for constraint in self.repo.constraints.values():
@@ -22,14 +29,10 @@ class SCEEvolver:
         return self.admissible_state(target)
 
     def generate_candidates(self, current_state: State) -> List[Tuple[State, Optional[Rule]]]:
-        candidates: List[Tuple[State, Optional[Rule]]] = []
-        for rule in sorted(self.repo.rules.values(), key=lambda r: r.priority, reverse=True):
-            if not rule.active:
-                continue
-            for candidate in rule.transform(current_state):
-                candidate.status = "candidate"
-                candidates.append((candidate, rule))
-        return candidates
+        generator = self.candidate_generator
+        if generator is None:
+            generator = RuleCandidateGenerator(list(self.repo.rules.values()))
+        return candidate_results_to_legacy_pairs(generator.generate(current_state))
 
     def detect_attractor(self, trace: List[State]) -> Optional[Attractor]:
         if len(trace) < 3:
@@ -67,7 +70,7 @@ class SCEEvolver:
                 self.repo.add_event(Event(EventType.HALT, state_id=current_state.state_id, payload={"reason": "no candidates"}))
                 return EvolutionResult("no candidates", current_state, trace, selected_transitions)
 
-            scored: List[Tuple[State, Rule, Transition, float]] = []
+            scored: List[Tuple[State, Optional[Rule], Transition, float]] = []
             for candidate, rule in candidates_with_rules:
                 self.repo.add_state(candidate)
                 transition_cost = self.scorer.compute_transition_cost(current_state, candidate, rule)
@@ -104,7 +107,7 @@ class SCEEvolver:
                     payload={
                         "from": str(current_state.state_id),
                         "to": str(next_state.state_id),
-                        "rule": selected_rule.name,
+                        "rule": selected_rule.name if selected_rule else None,
                         "stability": next_state.stability,
                     },
                 )
