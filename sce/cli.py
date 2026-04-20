@@ -3,6 +3,7 @@ from __future__ import annotations
 import argparse
 import json
 
+from sce.scenarios.action_demo import run_action_demo
 from sce.scenarios.agent_demo import run_agent_demo
 from sce.scenarios.conflicting_memory import run_conflicting_memory_demo
 from sce.scenarios.contract_risk import run_contract_risk_demo
@@ -21,6 +22,7 @@ def main() -> None:
     sub.add_parser("run-contract-demo")
     sub.add_parser("run-agent-demo")
     sub.add_parser("run-goal-agent-demo")
+    sub.add_parser("run-action-demo")
     sub.add_parser("explain-demo")
     sub.add_parser("print-migration")
     args = parser.parse_args()
@@ -37,6 +39,8 @@ def main() -> None:
         print(json.dumps(run_agent_demo(), indent=2, ensure_ascii=False))
     elif args.command == "run-goal-agent-demo":
         print(json.dumps(run_goal_agent_demo(), indent=2, ensure_ascii=False))
+    elif args.command == "run-action-demo":
+        print(json.dumps(run_action_demo(), indent=2, ensure_ascii=False))
     elif args.command == "explain-demo":
         print(json.dumps(run_demo()["explanation"], indent=2, ensure_ascii=False))
     elif args.command == "print-migration":
