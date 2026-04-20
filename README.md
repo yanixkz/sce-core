@@ -46,26 +46,37 @@ SCE computation:
 state space + constraints + scoring → stable admissible state
 ```
 
-Instead of only storing facts, SCE Core represents:
+---
 
-- states
-- transitions
-- constraints
-- links (support, contradiction, causality)
-- events
-- attractors
-- explanations
+## LLM integration (experimental)
+
+SCE Core can be used as a reasoning layer on top of LLMs:
+
+```text
+LLM → generates candidate states
+SCE → filters, scores, selects, explains
+```
+
+In other words:
+
+```text
+LLMs propose. SCE decides.
+```
+
+Run demo:
+
+```bash
+sce run-llm-demo
+```
 
 ---
 
 ## Architecture
 
-SCE Core is organized as a small state-evolution pipeline:
-
 ```text
 Current state
     ↓
-CandidateGenerator
+CandidateGenerator (rules / LLM / events / graph)
     ↓
 Candidate states
     ↓
@@ -76,29 +87,6 @@ Stability scoring
 Selected transition
     ↓
 Next state / attractor
-```
-
-Core components:
-
-- `State` — a snapshot, fact, hypothesis or memory state
-- `Link` — support, contradiction, causality, similarity or derivation
-- `Constraint` — admissibility rule for states or transitions
-- `CandidateGenerator` — produces possible next states
-- `SCEScoringEngine` — computes coherence, conflict, entropy, support and stability
-- `SCEEvolver` — filters, scores and selects the next state
-- `SCEExplainer` — explains why a state is stable or unstable
-- `MemoryRepository` — default in-memory runtime backend
-- `PostgresRepository` — experimental persistence backend
-
-The default generator is rule-based, but the architecture allows other candidate sources later:
-
-```text
-rules
-+ events
-+ graph expansion
-+ retrieval
-+ LLM-generated hypotheses
-+ repair operators
 ```
 
 ---
@@ -114,56 +102,20 @@ stability =
   + e * support
 ```
 
-A system selects the most stable admissible state.
-
 ---
 
-## What this prototype includes
+## Demos
 
-- in-memory repository
-- state / transition / constraint / link / event / attractor / rule model
-- candidate generation module
-- scoring engine
-- evolution engine
-- explainability layer
-- supplier reliability demo
-- conflicting memory demo
-- pytest tests
-- PostgreSQL schema draft
-
----
-
-## Conflicting memory demo
-
-The conflict demo shows the core idea in a smaller scenario:
-
-```text
-conflicting evidence → stability scoring → selected memory state
-```
-
-Run it with:
+### Conflict demo
 
 ```bash
 sce run-conflict-demo
 ```
 
-The scenario compares two competing memory states:
+### LLM demo
 
-```text
-supplier A is reliable
-supplier A is unreliable
-```
-
-Evidence supports and contradicts both candidates. SCE Core scores coherence, conflict, entropy, support and stability, then selects the more stable state.
-
----
-
-## PostgreSQL backend
-
-See:
-
-```
-docs/postgres.md
+```bash
+sce run-llm-demo
 ```
 
 ---
@@ -179,22 +131,6 @@ pip install -r requirements.txt
 
 ---
 
-## Run demo
-
-```bash
-sce run-demo
-```
-
----
-
-## Explain demo
-
-```bash
-sce explain-demo
-```
-
----
-
 ## Run tests
 
 ```bash
@@ -203,44 +139,11 @@ pytest
 
 ---
 
-## Example use cases
-
-- AI agent memory
-- explainable decision systems
-- knowledge graph reasoning
-- constraint-based planning
-- business process intelligence
-- supply chain systems
-- contract reasoning
-- adaptive workflows
-
----
-
-## Roadmap
-
-See issues:
-
-- PostgreSQL repository
-- candidate generation
-- attractor detection
-- constraint DSL
-- LLM integration
-
----
-
 ## Status
 
 Research prototype.
 
 Not production-ready.
-
----
-
-## Contributing
-
-Contributions and criticism are welcome.
-
-See CONTRIBUTING.md.
 
 ---
 
