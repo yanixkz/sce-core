@@ -86,6 +86,16 @@ A system selects the most stable admissible state.
 
 ---
 
+## PostgreSQL backend
+
+See:
+
+```
+docs/postgres.md
+```
+
+---
+
 ## Install
 
 ```bash
