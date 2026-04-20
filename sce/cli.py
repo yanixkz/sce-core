@@ -3,8 +3,9 @@ from __future__ import annotations
 import argparse
 import json
 
-from sce.scenarios.supplier_reliability import run_demo
 from sce.scenarios.conflicting_memory import run_conflicting_memory_demo
+from sce.scenarios.llm_memory import run_llm_memory_demo
+from sce.scenarios.supplier_reliability import run_demo
 from sce.storage.postgres import POSTGRES_MIGRATION_SQL
 
 
@@ -13,6 +14,7 @@ def main() -> None:
     sub = parser.add_subparsers(dest="command", required=True)
     sub.add_parser("run-demo")
     sub.add_parser("run-conflict-demo")
+    sub.add_parser("run-llm-demo")
     sub.add_parser("explain-demo")
     sub.add_parser("print-migration")
     args = parser.parse_args()
@@ -21,6 +23,8 @@ def main() -> None:
         print(json.dumps(run_demo(), indent=2, ensure_ascii=False))
     elif args.command == "run-conflict-demo":
         print(json.dumps(run_conflicting_memory_demo(), indent=2, ensure_ascii=False))
+    elif args.command == "run-llm-demo":
+        print(json.dumps(run_llm_memory_demo(), indent=2, ensure_ascii=False))
     elif args.command == "explain-demo":
         print(json.dumps(run_demo()["explanation"], indent=2, ensure_ascii=False))
     elif args.command == "print-migration":
