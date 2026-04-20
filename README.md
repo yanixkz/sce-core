@@ -2,14 +2,12 @@
 
 ![Tests](https://github.com/yanixkz/sce-core/actions/workflows/tests.yml/badge.svg)
 
-**State–Constraint–Evolution Core** is an experimental state-evolution engine for explainable AI memory, constraint-based reasoning, and adaptive decision systems.
+**State–Constraint–Evolution Core** is an experimental state-evolution engine for explainable AI memory, constraint-based reasoning, adaptive agents, and decision systems.
 
-Most AI systems remember facts. SCE Core remembers how facts become stable, unstable, constrained, contradicted, and transformed.
-
-It treats data not as static records, but as evolving states under constraints.
+Most AI systems remember facts. SCE Core remembers how facts become stable, unstable, constrained, contradicted, transformed, selected, acted on, and learned from.
 
 ```text
-LLMs propose. SCE decides.
+LLMs propose. SCE decides. Agents act. Feedback adapts.
 ```
 
 ---
@@ -50,8 +48,10 @@ This works for generation, but lacks:
 - conflict tracking
 - explainable transitions
 - stability evaluation
+- goal-directed action
+- adaptation from feedback
 
-SCE Core explores a different layer: **state-evolution memory**.
+SCE Core explores a different layer: **state-evolution memory and reasoning**.
 
 ---
 
@@ -67,6 +67,17 @@ SCE computation:
 
 ```text
 state space + constraints + scoring → stable admissible state
+```
+
+Agentic SCE loop:
+
+```text
+LLM → candidate states
+SCE → stability selection
+Goal → stopping condition
+Action → world update
+Feedback → learning
+World → shared multi-agent state
 ```
 
 ---
@@ -89,6 +100,14 @@ Selected transition
 Next state / attractor
     ↓
 Explanation
+    ↓
+Goal check
+    ↓
+Action execution
+    ↓
+Feedback / learning
+    ↓
+World state
 ```
 
 Core components:
@@ -100,6 +119,10 @@ Core components:
 - `AttractorDetector`
 - `GraphQueryLayer`
 - `SCEExplainer`
+- `GoalDrivenAgent`
+- `ActionExecutor`
+- `StabilityWeightLearner`
+- `MultiAgentWorld`
 - `MemoryRepository`
 - `PostgresRepository` (Phase 1)
 
@@ -148,14 +171,17 @@ Where:
 
 ---
 
-## v0.2 features
-
-Current experimental v0.2 direction includes:
+## Current experimental features
 
 - Constraint DSL
 - Graph Query Layer
-- Contract Risk demo
 - Real LLM adapter
+- Agent loop
+- Goal-driven agent
+- Action layer
+- Learning layer
+- Multi-agent world
+- PostgreSQL persistence (Phase 1)
 - Origin documentation
 
 Graph queries:
@@ -195,6 +221,36 @@ sce run-llm-demo
 sce run-contract-demo
 ```
 
+### Agent loop
+
+```bash
+sce run-agent-demo
+```
+
+### Goal-driven agent
+
+```bash
+sce run-goal-agent-demo
+```
+
+### Action layer
+
+```bash
+sce run-action-demo
+```
+
+### Learning layer
+
+```bash
+sce run-learning-demo
+```
+
+### Multi-agent world
+
+```bash
+sce run-multi-agent-demo
+```
+
 ---
 
 ## PostgreSQL backend
@@ -230,6 +286,8 @@ pip install openai
 pytest
 ```
 
+The test suite includes unit and smoke tests for candidate generation, attractor detection, graph queries, action execution, goal agents, learning, multi-agent world execution, and an end-to-end reasoning/action/learning flow.
+
 ---
 
 ## Example use cases
@@ -244,6 +302,7 @@ SCE Core may be useful where multiple possible states exist and the system must 
 - contract risk
 - adaptive workflows
 - explainable business logic
+- multi-agent simulations
 
 ---
 
