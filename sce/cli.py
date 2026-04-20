@@ -6,6 +6,7 @@ import json
 from sce.scenarios.agent_demo import run_agent_demo
 from sce.scenarios.conflicting_memory import run_conflicting_memory_demo
 from sce.scenarios.contract_risk import run_contract_risk_demo
+from sce.scenarios.goal_agent_demo import run_goal_agent_demo
 from sce.scenarios.llm_memory import run_llm_memory_demo
 from sce.scenarios.supplier_reliability import run_demo
 from sce.storage.postgres import POSTGRES_MIGRATION_SQL
@@ -19,6 +20,7 @@ def main() -> None:
     sub.add_parser("run-llm-demo")
     sub.add_parser("run-contract-demo")
     sub.add_parser("run-agent-demo")
+    sub.add_parser("run-goal-agent-demo")
     sub.add_parser("explain-demo")
     sub.add_parser("print-migration")
     args = parser.parse_args()
@@ -33,6 +35,8 @@ def main() -> None:
         print(json.dumps(run_contract_risk_demo(), indent=2, ensure_ascii=False))
     elif args.command == "run-agent-demo":
         print(json.dumps(run_agent_demo(), indent=2, ensure_ascii=False))
+    elif args.command == "run-goal-agent-demo":
+        print(json.dumps(run_goal_agent_demo(), indent=2, ensure_ascii=False))
     elif args.command == "explain-demo":
         print(json.dumps(run_demo()["explanation"], indent=2, ensure_ascii=False))
     elif args.command == "print-migration":
