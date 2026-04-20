@@ -81,8 +81,34 @@ A system selects the most stable admissible state.
 - evolution engine
 - explainability layer
 - supplier reliability demo
+- conflicting memory demo
 - pytest tests
 - PostgreSQL schema draft
+
+---
+
+## Conflicting memory demo
+
+The conflict demo shows the core idea in a smaller scenario:
+
+```text
+conflicting evidence → stability scoring → selected memory state
+```
+
+Run it with:
+
+```bash
+sce run-conflict-demo
+```
+
+The scenario compares two competing memory states:
+
+```text
+supplier A is reliable
+supplier A is unreliable
+```
+
+Evidence supports and contradicts both candidates. SCE Core scores coherence, conflict, entropy, support and stability, then selects the more stable state.
 
 ---
 
