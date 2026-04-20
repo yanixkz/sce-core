@@ -58,6 +58,51 @@ Instead of only storing facts, SCE Core represents:
 
 ---
 
+## Architecture
+
+SCE Core is organized as a small state-evolution pipeline:
+
+```text
+Current state
+    ↓
+CandidateGenerator
+    ↓
+Candidate states
+    ↓
+Constraint filtering
+    ↓
+Stability scoring
+    ↓
+Selected transition
+    ↓
+Next state / attractor
+```
+
+Core components:
+
+- `State` — a snapshot, fact, hypothesis or memory state
+- `Link` — support, contradiction, causality, similarity or derivation
+- `Constraint` — admissibility rule for states or transitions
+- `CandidateGenerator` — produces possible next states
+- `SCEScoringEngine` — computes coherence, conflict, entropy, support and stability
+- `SCEEvolver` — filters, scores and selects the next state
+- `SCEExplainer` — explains why a state is stable or unstable
+- `MemoryRepository` — default in-memory runtime backend
+- `PostgresRepository` — experimental persistence backend
+
+The default generator is rule-based, but the architecture allows other candidate sources later:
+
+```text
+rules
++ events
++ graph expansion
++ retrieval
++ LLM-generated hypotheses
++ repair operators
+```
+
+---
+
 ## Stability formula
 
 ```text
@@ -77,6 +122,7 @@ A system selects the most stable admissible state.
 
 - in-memory repository
 - state / transition / constraint / link / event / attractor / rule model
+- candidate generation module
 - scoring engine
 - evolution engine
 - explainability layer
