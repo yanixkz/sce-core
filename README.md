@@ -16,7 +16,9 @@ Not a database of facts, but a database of evolving states.
 
 Many AI systems follow this pattern:
 
+```text
 prompt → retrieval → LLM → answer
+```
 
 This works for generation, but lacks:
 
@@ -34,11 +36,15 @@ SCE Core explores a different layer: state-evolution memory.
 
 Traditional computation:
 
+```text
 data + algorithm → result
+```
 
 SCE computation:
 
+```text
 state space + constraints + scoring → stable admissible state
+```
 
 Instead of only storing facts, SCE Core represents:
 
@@ -54,12 +60,14 @@ Instead of only storing facts, SCE Core represents:
 
 ## Stability formula
 
+```text
 stability =
     a * coherence
   - b * cost
   - c * conflict
   - d * entropy
   + e * support
+```
 
 A system selects the most stable admissible state.
 
@@ -80,28 +88,36 @@ A system selects the most stable admissible state.
 
 ## Install
 
+```bash
 python -m venv .venv
 source .venv/bin/activate
 pip install -e .
 pip install -r requirements.txt
+```
 
 ---
 
 ## Run demo
 
+```bash
 sce run-demo
+```
 
 ---
 
 ## Explain demo
 
+```bash
 sce explain-demo
+```
 
 ---
 
 ## Run tests
 
+```bash
 pytest
+```
 
 ---
 
