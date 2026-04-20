@@ -10,6 +10,7 @@ from sce.scenarios.contract_risk import run_contract_risk_demo
 from sce.scenarios.goal_agent_demo import run_goal_agent_demo
 from sce.scenarios.learning_demo import run_learning_demo
 from sce.scenarios.llm_memory import run_llm_memory_demo
+from sce.scenarios.llm_planning_demo import run_llm_planning_demo
 from sce.scenarios.multi_agent_demo import run_multi_agent_demo
 from sce.scenarios.planning_demo import run_planning_demo
 from sce.scenarios.supplier_reliability import run_demo
@@ -23,6 +24,7 @@ def main() -> None:
     sub.add_parser("run-demo")
     sub.add_parser("run-conflict-demo")
     sub.add_parser("run-llm-demo")
+    sub.add_parser("run-llm-planning-demo")
     sub.add_parser("run-contract-demo")
     sub.add_parser("run-agent-demo")
     sub.add_parser("run-goal-agent-demo")
@@ -41,6 +43,8 @@ def main() -> None:
         print(json.dumps(run_conflicting_memory_demo(), indent=2, ensure_ascii=False))
     elif args.command == "run-llm-demo":
         print(json.dumps(run_llm_memory_demo(), indent=2, ensure_ascii=False))
+    elif args.command == "run-llm-planning-demo":
+        print(json.dumps(run_llm_planning_demo(), indent=2, ensure_ascii=False))
     elif args.command == "run-contract-demo":
         print(json.dumps(run_contract_risk_demo(), indent=2, ensure_ascii=False))
     elif args.command == "run-agent-demo":
