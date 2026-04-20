@@ -12,6 +12,7 @@ from sce.scenarios.learning_demo import run_learning_demo
 from sce.scenarios.llm_memory import run_llm_memory_demo
 from sce.scenarios.llm_planning_demo import run_llm_planning_demo
 from sce.scenarios.multi_agent_demo import run_multi_agent_demo
+from sce.scenarios.plan_scoring_demo import run_plan_scoring_demo
 from sce.scenarios.planning_demo import run_planning_demo
 from sce.scenarios.supplier_reliability import run_demo
 from sce.scenarios.tools_demo import run_tools_demo
@@ -33,6 +34,7 @@ def main() -> None:
     sub.add_parser("run-multi-agent-demo")
     sub.add_parser("run-tools-demo")
     sub.add_parser("run-planning-demo")
+    sub.add_parser("run-plan-scoring-demo")
     sub.add_parser("explain-demo")
     sub.add_parser("print-migration")
     args = parser.parse_args()
@@ -61,6 +63,8 @@ def main() -> None:
         print(json.dumps(run_tools_demo(), indent=2, ensure_ascii=False))
     elif args.command == "run-planning-demo":
         print(json.dumps(run_planning_demo(), indent=2, ensure_ascii=False))
+    elif args.command == "run-plan-scoring-demo":
+        print(json.dumps(run_plan_scoring_demo(), indent=2, ensure_ascii=False))
     elif args.command == "explain-demo":
         print(json.dumps(run_demo()["explanation"], indent=2, ensure_ascii=False))
     elif args.command == "print-migration":
