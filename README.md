@@ -1,5 +1,7 @@
 # SCE Core
 
+![Tests](https://github.com/yanixkz/sce-core/actions/workflows/tests.yml/badge.svg)
+
 State–Constraint–Evolution Core is an experimental state-evolution engine for explainable AI memory, constraint-based reasoning, and adaptive decision systems.
 
 Most AI systems remember facts. SCE Core remembers how facts become stable, unstable, constrained, contradicted, and transformed.
