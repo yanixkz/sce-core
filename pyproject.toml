@@ -1,6 +1,6 @@
 [project]
 name = "sce-core"
-version = "0.1.0-alpha"
+version = "0.1.0a0"
 description = "State–Constraint–Evolution Core"
 authors = [{ name = "SCE Authors" }]
 requires-python = ">=3.11"
@@ -12,3 +12,6 @@ sce = "sce.cli:main"
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 pythonpath = ["."]
+
+[tool.setuptools]
+packages = ["sce"]
