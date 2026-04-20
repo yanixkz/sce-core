@@ -2,17 +2,19 @@ from __future__ import annotations
 
 from typing import Any, Dict
 
+from sce.core.explain import SCEExplainer
 from sce.core.scoring import SCEScoringEngine
 from sce.core.types import Constraint, Link, RelationType, State
 from sce.storage.memory import MemoryRepository
 
 
 def run_conflicting_memory_demo() -> Dict[str, Any]:
-    """Demonstrate how SCE Core scores competing memory states.
+    """Demonstrate how SCE Core scores and explains competing memory states.
 
     Scenario:
         An AI agent has conflicting evidence about whether a supplier is reliable.
-        The system evaluates two competing states and selects the more stable one.
+        The system evaluates two competing states, selects the more stable one,
+        and explains the decision.
     """
 
     repo = MemoryRepository()
@@ -82,6 +84,7 @@ def run_conflicting_memory_demo() -> Dict[str, Any]:
 
     candidates = [reliable, unreliable]
     selected = max(candidates, key=lambda state: state.stability)
+    explanation = SCEExplainer(repo).explain_comparison([state.state_id for state in candidates])
 
     return {
         "scenario": "conflicting_memory",
@@ -100,4 +103,5 @@ def run_conflicting_memory_demo() -> Dict[str, Any]:
         ],
         "selected_claim": selected.data["claim"],
         "selected_state_id": str(selected.state_id),
+        "explanation": explanation,
     }
