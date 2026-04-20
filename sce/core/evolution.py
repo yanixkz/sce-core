@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from typing import List, Optional, Tuple
 
+from sce.core.attractors import AttractorDetector, FixedPointAttractorDetector
 from sce.core.candidates import CandidateGenerator, RuleCandidateGenerator, candidate_results_to_legacy_pairs
 from sce.core.scoring import SCEScoringEngine
 from sce.core.types import Attractor, Event, EventType, EvolutionResult, Rule, State, Transition, TransitionType
@@ -14,10 +15,12 @@ class SCEEvolver:
         repo: MemoryRepository,
         scorer: SCEScoringEngine,
         candidate_generator: Optional[CandidateGenerator] = None,
+        attractor_detector: Optional[AttractorDetector] = None,
     ) -> None:
         self.repo = repo
         self.scorer = scorer
         self.candidate_generator = candidate_generator
+        self.attractor_detector = attractor_detector or FixedPointAttractorDetector()
 
     def admissible_state(self, state: State) -> bool:
         for constraint in self.repo.constraints.values():
@@ -35,27 +38,7 @@ class SCEEvolver:
         return candidate_results_to_legacy_pairs(generator.generate(current_state))
 
     def detect_attractor(self, trace: List[State]) -> Optional[Attractor]:
-        if len(trace) < 3:
-            return None
-        last = trace[-1]
-        recent = trace[-3:]
-        avg_stability = sum(s.stability for s in recent) / len(recent)
-        same_type = all(s.state_type == last.state_type for s in recent)
-        stable_enough = avg_stability > 0.5
-        if same_type and stable_enough:
-            signature = f"{last.state_type}:{last.data.get('supplier_id', 'unknown')}:{last.data.get('category', 'unknown')}"
-            return Attractor(
-                attractor_type=last.state_type,
-                signature_hash=signature,
-                invariant={
-                    "state_type": last.state_type,
-                    "supplier_id": last.data.get("supplier_id"),
-                    "category": last.data.get("category"),
-                },
-                member_state_ids=[s.state_id for s in recent],
-                stability_score=avg_stability,
-            )
-        return None
+        return self.attractor_detector.detect(trace)
 
     def evolve(self, current_state: State, max_steps: int = 10, epsilon: float = 0.01) -> EvolutionResult:
         trace: List[State] = [current_state]
