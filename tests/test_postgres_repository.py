@@ -5,7 +5,7 @@ import os
 import pytest
 
 from sce.core.types import Link, RelationType, State
-from sce.storage.postgres import PostgresRepository
+from sce.storage.postgres import POSTGRES_MIGRATION_SQL, PostgresRepository
 
 
 def test_postgres_repository_round_trip_state_and_links():
@@ -35,3 +35,24 @@ def test_postgres_repository_round_trip_state_and_links():
     assert len(neighborhood) == 1
 
     repo.close()
+
+
+def test_postgres_migration_includes_episodes_table():
+    assert "CREATE TABLE IF NOT EXISTS episodes" in POSTGRES_MIGRATION_SQL
+
+    for column in (
+        "episode_id           UUID PRIMARY KEY",
+        "created_at           TIMESTAMPTZ NOT NULL",
+        "state_snapshot       JSONB NOT NULL",
+        "goal                 TEXT NOT NULL",
+        "plan_name            TEXT NOT NULL",
+        "action_names         JSONB NOT NULL",
+        "success              BOOLEAN NOT NULL",
+        "reward               DOUBLE PRECISION NOT NULL",
+        "reason               TEXT NOT NULL DEFAULT ''",
+    ):
+        assert column in POSTGRES_MIGRATION_SQL
+
+    assert "CREATE INDEX IF NOT EXISTS idx_episodes_created_at ON episodes(created_at);" in POSTGRES_MIGRATION_SQL
+    assert "CREATE INDEX IF NOT EXISTS idx_episodes_goal ON episodes(goal);" in POSTGRES_MIGRATION_SQL
+    assert "CREATE INDEX IF NOT EXISTS idx_episodes_plan_name ON episodes(plan_name);" in POSTGRES_MIGRATION_SQL

@@ -74,6 +74,23 @@ CREATE TABLE IF NOT EXISTS attractors (
     discovered_at       TIMESTAMP DEFAULT now(),
     meta_json           JSONB DEFAULT '{}'
 );
+
+
+CREATE TABLE IF NOT EXISTS episodes (
+    episode_id           UUID PRIMARY KEY,
+    created_at           TIMESTAMPTZ NOT NULL,
+    state_snapshot       JSONB NOT NULL,
+    goal                 TEXT NOT NULL,
+    plan_name            TEXT NOT NULL,
+    action_names         JSONB NOT NULL,
+    success              BOOLEAN NOT NULL,
+    reward               DOUBLE PRECISION NOT NULL,
+    reason               TEXT NOT NULL DEFAULT ''
+);
+
+CREATE INDEX IF NOT EXISTS idx_episodes_created_at ON episodes(created_at);
+CREATE INDEX IF NOT EXISTS idx_episodes_goal ON episodes(goal);
+CREATE INDEX IF NOT EXISTS idx_episodes_plan_name ON episodes(plan_name);
 """
 
 
