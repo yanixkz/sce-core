@@ -8,6 +8,7 @@ from sce.core.evolution import SCEEvolver
 from sce.core.queries import GraphQueryLayer
 from sce.core.scoring import SCEScoringEngine
 from sce.scenarios.action_demo import run_action_demo
+from sce.scenarios.adaptive_agent_demo import run_adaptive_agent_demo
 from sce.scenarios.agent_demo import run_agent_demo
 from sce.scenarios.cognitive_agent_demo import run_cognitive_agent_demo
 from sce.scenarios.conflicting_memory import run_conflicting_memory_demo
@@ -50,6 +51,7 @@ def main() -> None:
     sub.add_parser("run-learning-demo")
     sub.add_parser("run-learning-planning-demo")
     sub.add_parser("run-memory-aware-planning-demo")
+    sub.add_parser("run-adaptive-agent-demo")
     sub.add_parser("run-multi-agent-demo")
     sub.add_parser("run-tools-demo")
     sub.add_parser("run-planning-demo")
@@ -86,6 +88,8 @@ def main() -> None:
         print(json.dumps(run_learning_planning_demo(), indent=2, ensure_ascii=False))
     elif args.command == "run-memory-aware-planning-demo":
         print(json.dumps(run_memory_aware_planning_demo(), indent=2, ensure_ascii=False))
+    elif args.command == "run-adaptive-agent-demo":
+        print(json.dumps(run_adaptive_agent_demo(), indent=2, ensure_ascii=False))
     elif args.command == "run-multi-agent-demo":
         print(json.dumps(run_multi_agent_demo(), indent=2, ensure_ascii=False))
     elif args.command == "run-tools-demo":
