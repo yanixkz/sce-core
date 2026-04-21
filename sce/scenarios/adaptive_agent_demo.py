@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-from sce.core.actions import Action
 from sce.core.episode_memory import EpisodeMemory
 from sce.core.planning import LearningPlanExecutor, MemoryAwarePlanner, Plan, PlanExecutor, ToolPlanner
 from sce.core.tools import MockSupplierRiskAPI, ToolActionBridge, ToolRegistry
@@ -17,6 +16,56 @@ def _score_summary(planner: MemoryAwarePlanner, plans: list[Plan], state: State,
         }
         for score in planner.score(plans, state, goal)
     ]
+
+
+def _format_score_table(scores: list[dict]) -> str:
+    lines = ["plan                         base    memory   total", "------------------------------------------------------"]
+    for item in scores:
+        lines.append(
+            f"{item['plan_name']:<28} "
+            f"{item['base_score']:>5.2f}   "
+            f"{item['memory_bias']:>6.2f}   "
+            f"{item['total_score']:>5.2f}"
+        )
+    return "\n".join(lines)
+
+
+def format_adaptive_agent_demo(result: dict) -> str:
+    """Render the adaptive agent demo as a readable terminal story."""
+
+    changed = "YES" if result["changed_choice"] else "NO"
+    return "\n".join(
+        [
+            "SCE Adaptive Agent Demo",
+            "=======================",
+            "",
+            f"Goal:  {result['goal']}",
+            f"State: {result['state']}",
+            "",
+            "1) Before learning",
+            "------------------",
+            _format_score_table(result["before_learning_scores"]),
+            "",
+            f"Selected plan: {result['first_choice']}",
+            f"Execution success: {result['first_execution_success']}",
+            "",
+            "2) Learning event",
+            "-----------------",
+            "A successful escalation episode is stored in episodic memory.",
+            f"Episodes in memory: {result['episodes_after_learning']}",
+            "",
+            "3) After learning",
+            "-----------------",
+            _format_score_table(result["after_learning_scores"]),
+            "",
+            f"Selected plan: {result['second_choice']}",
+            f"Changed choice: {changed}",
+            "",
+            "Interpretation",
+            "--------------",
+            result["explanation"],
+        ]
+    )
 
 
 def run_adaptive_agent_demo() -> dict:
