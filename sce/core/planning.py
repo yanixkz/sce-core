@@ -1,12 +1,14 @@
 from __future__ import annotations
 
 from dataclasses import dataclass, field
-from typing import Any, Dict, List
+from typing import TYPE_CHECKING, Any, Dict, List
 
 from sce.core.actions import Action, ActionResult
-from sce.core.episode_memory import EpisodeMemory
 from sce.core.tools import ToolActionBridge
 from sce.core.types import State
+
+if TYPE_CHECKING:
+    from sce.core.episode_memory import EpisodeMemory
 
 
 @dataclass(frozen=True)
@@ -123,7 +125,7 @@ class ToolPlanner:
 class MemoryAwarePlanner:
     """Rank candidate plans using base scores plus episodic memory bias."""
 
-    def __init__(self, base_planner: ToolPlanner, memory: EpisodeMemory) -> None:
+    def __init__(self, base_planner: ToolPlanner, memory: "EpisodeMemory") -> None:
         self.base_planner = base_planner
         self.memory = memory
 
@@ -167,7 +169,7 @@ class PlanExecutor:
 class LearningPlanExecutor:
     """Executes a plan and records the outcome in episodic memory."""
 
-    def __init__(self, executor: PlanExecutor, memory: EpisodeMemory) -> None:
+    def __init__(self, executor: PlanExecutor, memory: "EpisodeMemory") -> None:
         self.executor = executor
         self.memory = memory
 
