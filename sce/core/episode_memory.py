@@ -2,11 +2,14 @@ from __future__ import annotations
 
 from dataclasses import dataclass, field
 from datetime import datetime
-from typing import Any, Dict, List
+from typing import TYPE_CHECKING, Any, Dict, List
 from uuid import UUID, uuid4
 
 from sce.core.planning import Plan
 from sce.core.types import State
+
+if TYPE_CHECKING:
+    from sce.core.memory_repository import EpisodeRepository
 
 
 @dataclass(frozen=True)
@@ -27,8 +30,9 @@ class Episode:
 class EpisodeMemory:
     """Simple in-memory episodic memory for plans and outcomes."""
 
-    def __init__(self) -> None:
+    def __init__(self, repository: "EpisodeRepository | None" = None) -> None:
         self.episodes: List[Episode] = []
+        self._repository = repository
 
     def remember(
         self,
@@ -49,6 +53,8 @@ class EpisodeMemory:
             reason=reason,
         )
         self.episodes.append(episode)
+        if self._repository is not None:
+            self._repository.save_episode(episode)
         return episode
 
     def similar(self, state: State, goal: str, limit: int = 5) -> List[Episode]:
