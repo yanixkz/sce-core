@@ -6,6 +6,7 @@ from unittest.mock import MagicMock
 from uuid import uuid4
 
 import pytest
+from psycopg.types.json import Jsonb
 
 from sce.core.episode_memory import Episode
 from sce.core.types import Link, RelationType, State
@@ -104,8 +105,8 @@ def test_postgres_episode_repository_save_list_clear_without_db(monkeypatch):
     insert_query, insert_params = fake_cursor.execute.call_args[0]
     assert "INSERT INTO episodes" in insert_query
     assert insert_params[0] == str(older.episode_id)
-    assert isinstance(insert_params[2], str)
-    assert isinstance(insert_params[5], str)
+    assert isinstance(insert_params[2], Jsonb)
+    assert isinstance(insert_params[5], Jsonb)
 
     fake_cursor.fetchall.return_value = [
         (

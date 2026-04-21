@@ -5,6 +5,7 @@ from typing import List
 from uuid import UUID
 
 import psycopg
+from psycopg.types.json import Jsonb
 
 from sce.core.episode_memory import Episode
 from sce.core.types import Attractor, Event, Link, State, Transition
@@ -368,10 +369,10 @@ class PostgresEpisodeRepository:
                 (
                     payload["episode_id"],
                     payload["created_at"],
-                    json.dumps(payload["state_snapshot"]),
+                    Jsonb(payload["state_snapshot"]),
                     payload["goal"],
                     payload["plan_name"],
-                    json.dumps(payload["action_names"]),
+                    Jsonb(payload["action_names"]),
                     payload["success"],
                     payload["reward"],
                     payload["reason"],
