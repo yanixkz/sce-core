@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from collections import deque
 from dataclasses import dataclass
-from typing import List, Optional
+from typing import Any, Dict, List, Optional
 from uuid import UUID
 
 from sce.core.types import Attractor, Constraint, Link, State
@@ -15,6 +15,26 @@ class PathResult:
 
     state_ids: List[UUID]
     stability_score: float
+
+
+@dataclass(frozen=True)
+class GraphNodeResult:
+    state_id: str
+    state_type: str
+    stability: float
+    is_attractor: bool
+    constraints: List[Dict[str, Any]]
+    constraints_satisfied: bool
+
+
+@dataclass(frozen=True)
+class GraphEdgeResult:
+    edge_id: str
+    source_state_id: str
+    target_state_id: str
+    relation_type: str
+    strength: float
+    directed: bool
 
 
 class GraphQueryLayer:
@@ -105,10 +125,92 @@ class GraphQueryLayer:
 
         return best
 
+    def export_graph_json(self) -> Dict[str, List[Dict[str, Any]]]:
+        """Export graph as inspectable JSON payload: {nodes: [...], edges: [...]}."""
+
+        attractor_state_ids = {
+            state_id for attractor in self.repo.attractors.values() for state_id in attractor.member_state_ids
+        }
+
+        nodes = [
+            {
+                "state_id": node.state_id,
+                "state_type": node.state_type,
+                "stability": node.stability,
+                "is_attractor": node.is_attractor,
+                "constraints": node.constraints,
+                "constraints_satisfied": node.constraints_satisfied,
+            }
+            for node in (self._node_for_state(state, attractor_state_ids) for state in self.repo.states.values())
+        ]
+
+        edges = [
+            {
+                "edge_id": edge.edge_id,
+                "source_state_id": edge.source_state_id,
+                "target_state_id": edge.target_state_id,
+                "relation_type": edge.relation_type,
+                "strength": edge.strength,
+                "directed": edge.directed,
+            }
+            for edge in (self._edge_from_link(link) for link in self.repo.links.values())
+        ]
+
+        return {"nodes": nodes, "edges": edges}
+
+    def export_graph_networkx(self) -> Any:
+        """Optional networkx export. Raises ImportError if dependency is missing."""
+
+        try:
+            import networkx as nx
+        except ImportError as exc:
+            raise ImportError("networkx is not installed. Install it with: pip install networkx") from exc
+
+        graph = nx.DiGraph()
+        payload = self.export_graph_json()
+        for node in payload["nodes"]:
+            graph.add_node(node["state_id"], **node)
+        for edge in payload["edges"]:
+            graph.add_edge(edge["source_state_id"], edge["target_state_id"], **edge)
+        return graph
+
     def _score_path(self, state_ids: List[UUID]) -> PathResult:
         states = [self.repo.get_state(state_id) for state_id in state_ids]
         avg_stability = sum(state.stability for state in states) / len(states)
         return PathResult(state_ids=state_ids, stability_score=avg_stability)
+
+    def _node_for_state(self, state: State, attractor_state_ids: set[UUID]) -> GraphNodeResult:
+        checks: List[Dict[str, Any]] = []
+        for constraint in self.repo.constraints.values():
+            applies = constraint.applies_to(state)
+            satisfied = constraint.is_satisfied(state) if applies else True
+            checks.append(
+                {
+                    "name": constraint.name,
+                    "applies": applies,
+                    "satisfied": satisfied,
+                    "hard": constraint.hard,
+                }
+            )
+        return GraphNodeResult(
+            state_id=str(state.state_id),
+            state_type=state.state_type,
+            stability=state.stability,
+            is_attractor=state.state_id in attractor_state_ids,
+            constraints=checks,
+            constraints_satisfied=all(item["satisfied"] for item in checks),
+        )
+
+    @staticmethod
+    def _edge_from_link(link: Link) -> GraphEdgeResult:
+        return GraphEdgeResult(
+            edge_id=str(link.link_id),
+            source_state_id=str(link.source_state_id),
+            target_state_id=str(link.target_state_id),
+            relation_type=link.relation_type.value,
+            strength=link.strength,
+            directed=link.directed,
+        )
 
     def _neighbor_ids(self, state_id: UUID) -> List[UUID]:
         ids = set()

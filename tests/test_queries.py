@@ -87,3 +87,44 @@ def test_path_to():
     assert path.state_ids[0] == a.state_id
     assert path.state_ids[-1] == c.state_id
     assert path.stability_score > 0
+
+
+def test_export_graph_json_contains_nodes_edges_and_constraint_status():
+    repo = MemoryRepository()
+    a = _make_state(repo, "a", 0.4)
+    b = _make_state(repo, "b", 0.7)
+    b.data["risk"] = 7
+
+    repo.add_link(Link(a.state_id, b.state_id, RelationType.SUPPORTS, 0.9))
+    repo.add_constraint(
+        Constraint(
+            name="risk_below_5",
+            predicate=lambda s: float(s.data.get("risk", 0)) < 5,
+            scope_type="state_type",
+            scope_ref="test",
+        )
+    )
+    repo.add_attractor(
+        Attractor(
+            attractor_type="steady",
+            signature_hash="steady-1",
+            invariant={},
+            member_state_ids=[a.state_id],
+            stability_score=0.9,
+        )
+    )
+
+    q = GraphQueryLayer(repo)
+    graph = q.export_graph_json()
+
+    assert "nodes" in graph
+    assert "edges" in graph
+    assert len(graph["nodes"]) == 2
+    assert len(graph["edges"]) == 1
+
+    node_a = next(node for node in graph["nodes"] if node["state_id"] == str(a.state_id))
+    node_b = next(node for node in graph["nodes"] if node["state_id"] == str(b.state_id))
+    assert node_a["is_attractor"] is True
+    assert node_a["constraints_satisfied"] is True
+    assert node_b["constraints_satisfied"] is False
+    assert node_b["constraints"][0]["name"] == "risk_below_5"
