@@ -20,6 +20,19 @@ class Plan:
 
 
 @dataclass(frozen=True)
+class PlanScore:
+    """Inspectable score assigned to a candidate plan."""
+
+    plan: Plan
+    base_score: float
+    memory_bias: float
+
+    @property
+    def total_score(self) -> float:
+        return self.base_score + self.memory_bias
+
+
+@dataclass(frozen=True)
 class PlanExecutionResult:
     """Result of executing a plan."""
 
@@ -62,6 +75,7 @@ class ToolPlanner:
                     payload={},
                 )
             ],
+            meta={"base_score": 0.1},
         )
 
         if "supplier" in goal_lower or "risk" in goal_lower:
@@ -81,7 +95,7 @@ class ToolPlanner:
                             },
                         )
                     ],
-                    meta={"supplier_id": supplier_id},
+                    meta={"supplier_id": supplier_id, "base_score": 0.6},
                 ),
                 Plan(
                     name="escalation_plan",
@@ -94,7 +108,7 @@ class ToolPlanner:
                             payload={"supplier_id": supplier_id},
                         )
                     ],
-                    meta={"supplier_id": supplier_id},
+                    meta={"supplier_id": supplier_id, "base_score": 0.4},
                 ),
                 monitor_plan,
             ]
@@ -103,23 +117,29 @@ class ToolPlanner:
 
 
 class MemoryAwarePlanner:
-    """Rank candidate plans using episodic memory bias."""
+    """Rank candidate plans using base scores plus episodic memory bias."""
 
     def __init__(self, base_planner: ToolPlanner, memory: EpisodeMemory) -> None:
         self.base_planner = base_planner
         self.memory = memory
 
     def plan(self, state: State, goal: str, candidates: List[Plan] | None = None) -> Plan:
-        candidate_plans = candidates or self.base_planner.candidates(state, goal)
-        ranked = self.rank(candidate_plans, state, goal)
-        return ranked[0]
+        ranked = self.score(candidates or self.base_planner.candidates(state, goal), state, goal)
+        return ranked[0].plan
 
     def rank(self, candidates: List[Plan], state: State, goal: str) -> List[Plan]:
-        return sorted(
-            candidates,
-            key=lambda plan: self.memory.plan_bias(plan, state, goal),
-            reverse=True,
-        )
+        return [score.plan for score in self.score(candidates, state, goal)]
+
+    def score(self, candidates: List[Plan], state: State, goal: str) -> List[PlanScore]:
+        scores = [
+            PlanScore(
+                plan=plan,
+                base_score=float(plan.meta.get("base_score", 0.0)),
+                memory_bias=self.memory.plan_bias(plan, state, goal),
+            )
+            for plan in candidates
+        ]
+        return sorted(scores, key=lambda item: item.total_score, reverse=True)
 
 
 class PlanExecutor:
