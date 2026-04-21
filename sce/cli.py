@@ -5,10 +5,12 @@ import json
 
 from sce.scenarios.action_demo import run_action_demo
 from sce.scenarios.agent_demo import run_agent_demo
+from sce.scenarios.cognitive_agent_demo import run_cognitive_agent_demo
 from sce.scenarios.conflicting_memory import run_conflicting_memory_demo
 from sce.scenarios.contract_risk import run_contract_risk_demo
 from sce.scenarios.goal_agent_demo import run_goal_agent_demo
 from sce.scenarios.learning_demo import run_learning_demo
+from sce.scenarios.learning_planning_demo import run_learning_planning_demo
 from sce.scenarios.llm_memory import run_llm_memory_demo
 from sce.scenarios.llm_planning_demo import run_llm_planning_demo
 from sce.scenarios.multi_agent_demo import run_multi_agent_demo
@@ -31,10 +33,12 @@ def main() -> None:
     sub.add_parser("run-goal-agent-demo")
     sub.add_parser("run-action-demo")
     sub.add_parser("run-learning-demo")
+    sub.add_parser("run-learning-planning-demo")
     sub.add_parser("run-multi-agent-demo")
     sub.add_parser("run-tools-demo")
     sub.add_parser("run-planning-demo")
     sub.add_parser("run-plan-scoring-demo")
+    sub.add_parser("run-cognitive-agent-demo")
     sub.add_parser("explain-demo")
     sub.add_parser("print-migration")
     args = parser.parse_args()
@@ -57,6 +61,8 @@ def main() -> None:
         print(json.dumps(run_action_demo(), indent=2, ensure_ascii=False))
     elif args.command == "run-learning-demo":
         print(json.dumps(run_learning_demo(), indent=2, ensure_ascii=False))
+    elif args.command == "run-learning-planning-demo":
+        print(json.dumps(run_learning_planning_demo(), indent=2, ensure_ascii=False))
     elif args.command == "run-multi-agent-demo":
         print(json.dumps(run_multi_agent_demo(), indent=2, ensure_ascii=False))
     elif args.command == "run-tools-demo":
@@ -65,6 +71,8 @@ def main() -> None:
         print(json.dumps(run_planning_demo(), indent=2, ensure_ascii=False))
     elif args.command == "run-plan-scoring-demo":
         print(json.dumps(run_plan_scoring_demo(), indent=2, ensure_ascii=False))
+    elif args.command == "run-cognitive-agent-demo":
+        print(json.dumps(run_cognitive_agent_demo(), indent=2, ensure_ascii=False))
     elif args.command == "explain-demo":
         print(json.dumps(run_demo()["explanation"], indent=2, ensure_ascii=False))
     elif args.command == "print-migration":
