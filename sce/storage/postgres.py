@@ -6,6 +6,7 @@ from uuid import UUID
 
 import psycopg
 
+from sce.core.episode_memory import Episode
 from sce.core.types import Attractor, Event, Link, State, Transition
 
 POSTGRES_MIGRATION_SQL = """
@@ -327,3 +328,97 @@ class PostgresRepository:
             )
         self.conn.commit()
         return attractor.attractor_id
+
+
+class PostgresEpisodeRepository:
+    """PostgreSQL-backed repository for episodic memory records."""
+
+    def __init__(self, dsn: str) -> None:
+        self.dsn = dsn
+        self.conn = psycopg.connect(dsn)
+
+    def close(self) -> None:
+        self.conn.close()
+
+    def init_schema(self) -> None:
+        with self.conn.cursor() as cur:
+            cur.execute(POSTGRES_MIGRATION_SQL)
+        self.conn.commit()
+
+    def save_episode(self, episode: Episode) -> None:
+        payload = episode.to_dict()
+        with self.conn.cursor() as cur:
+            cur.execute(
+                """
+                INSERT INTO episodes (
+                    episode_id, created_at, state_snapshot, goal, plan_name,
+                    action_names, success, reward, reason
+                )
+                VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)
+                ON CONFLICT (episode_id) DO UPDATE SET
+                    created_at = EXCLUDED.created_at,
+                    state_snapshot = EXCLUDED.state_snapshot,
+                    goal = EXCLUDED.goal,
+                    plan_name = EXCLUDED.plan_name,
+                    action_names = EXCLUDED.action_names,
+                    success = EXCLUDED.success,
+                    reward = EXCLUDED.reward,
+                    reason = EXCLUDED.reason
+                """,
+                (
+                    payload["episode_id"],
+                    payload["created_at"],
+                    json.dumps(payload["state_snapshot"]),
+                    payload["goal"],
+                    payload["plan_name"],
+                    json.dumps(payload["action_names"]),
+                    payload["success"],
+                    payload["reward"],
+                    payload["reason"],
+                ),
+            )
+        self.conn.commit()
+
+    def list_episodes(self, limit: int | None = None) -> List[Episode]:
+        query = """
+            SELECT
+                episode_id,
+                created_at,
+                state_snapshot,
+                goal,
+                plan_name,
+                action_names,
+                success,
+                reward,
+                reason
+            FROM episodes
+            ORDER BY created_at DESC
+        """
+        params: tuple[int, ...] = ()
+        if limit is not None:
+            query += " LIMIT %s"
+            params = (limit,)
+        with self.conn.cursor() as cur:
+            cur.execute(query, params)
+            rows = cur.fetchall()
+        return [
+            Episode.from_dict(
+                {
+                    "episode_id": str(row[0]),
+                    "created_at": row[1].isoformat(),
+                    "state_snapshot": row[2],
+                    "goal": row[3],
+                    "plan_name": row[4],
+                    "action_names": row[5],
+                    "success": row[6],
+                    "reward": row[7],
+                    "reason": row[8],
+                }
+            )
+            for row in rows
+        ]
+
+    def clear(self) -> None:
+        with self.conn.cursor() as cur:
+            cur.execute("DELETE FROM episodes")
+        self.conn.commit()
