@@ -45,31 +45,15 @@ class ToolPlanner:
     """
 
     def plan(self, state: State, goal: str) -> Plan:
+        return self.candidates(state, goal)[0]
+
+    def candidates(self, state: State, goal: str) -> List[Plan]:
         goal_lower = goal.lower()
         data = state.data or {}
 
-        if "supplier" in goal_lower or "risk" in goal_lower:
-            supplier_id = data.get("supplier_id") or data.get("entity") or "supplier A"
-            return Plan(
-                name="supplier_risk_plan",
-                reason="Goal requires supplier risk evidence from an external source.",
-                actions=[
-                    Action(
-                        name="fetch_supplier_risk",
-                        description="Fetch supplier risk metrics from an external supplier-risk tool.",
-                        action_type="tool",
-                        payload={
-                            "tool": "supplier_risk_api",
-                            "arguments": {"supplier_id": supplier_id},
-                        },
-                    )
-                ],
-                meta={"supplier_id": supplier_id},
-            )
-
-        return Plan(
+        monitor_plan = Plan(
             name="monitor_plan",
-            reason="No specialized tool selected; defaulting to monitoring.",
+            reason="Monitor current state without external calls.",
             actions=[
                 Action(
                     name="monitor",
@@ -80,6 +64,43 @@ class ToolPlanner:
             ],
         )
 
+        if "supplier" in goal_lower or "risk" in goal_lower:
+            supplier_id = data.get("supplier_id") or data.get("entity") or "supplier A"
+            return [
+                Plan(
+                    name="supplier_risk_plan",
+                    reason="Goal requires supplier risk evidence from an external source.",
+                    actions=[
+                        Action(
+                            name="fetch_supplier_risk",
+                            description="Fetch supplier risk metrics from an external supplier-risk tool.",
+                            action_type="tool",
+                            payload={
+                                "tool": "supplier_risk_api",
+                                "arguments": {"supplier_id": supplier_id},
+                            },
+                        )
+                    ],
+                    meta={"supplier_id": supplier_id},
+                ),
+                Plan(
+                    name="escalation_plan",
+                    reason="Escalate high-risk supplier context for human or workflow follow-up.",
+                    actions=[
+                        Action(
+                            name="escalate",
+                            description="Escalate supplier risk for follow-up.",
+                            action_type="workflow",
+                            payload={"supplier_id": supplier_id},
+                        )
+                    ],
+                    meta={"supplier_id": supplier_id},
+                ),
+                monitor_plan,
+            ]
+
+        return [monitor_plan]
+
 
 class MemoryAwarePlanner:
     """Rank candidate plans using episodic memory bias."""
@@ -89,7 +110,7 @@ class MemoryAwarePlanner:
         self.memory = memory
 
     def plan(self, state: State, goal: str, candidates: List[Plan] | None = None) -> Plan:
-        candidate_plans = candidates or [self.base_planner.plan(state, goal)]
+        candidate_plans = candidates or self.base_planner.candidates(state, goal)
         ranked = self.rank(candidate_plans, state, goal)
         return ranked[0]
 
