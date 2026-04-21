@@ -18,6 +18,7 @@ from sce.scenarios.learning_planning_demo import run_learning_planning_demo
 from sce.scenarios.llm_memory import run_llm_memory_demo
 from sce.scenarios.llm_planning_demo import run_llm_planning_demo
 from sce.scenarios.llm_voice_demo import run_llm_voice_demo
+from sce.scenarios.memory_aware_planning_demo import run_memory_aware_planning_demo
 from sce.scenarios.multi_agent_demo import run_multi_agent_demo
 from sce.scenarios.plan_scoring_demo import run_plan_scoring_demo
 from sce.scenarios.planning_demo import run_planning_demo
@@ -48,6 +49,7 @@ def main() -> None:
     sub.add_parser("run-action-demo")
     sub.add_parser("run-learning-demo")
     sub.add_parser("run-learning-planning-demo")
+    sub.add_parser("run-memory-aware-planning-demo")
     sub.add_parser("run-multi-agent-demo")
     sub.add_parser("run-tools-demo")
     sub.add_parser("run-planning-demo")
@@ -82,6 +84,8 @@ def main() -> None:
         print(json.dumps(run_learning_demo(), indent=2, ensure_ascii=False))
     elif args.command == "run-learning-planning-demo":
         print(json.dumps(run_learning_planning_demo(), indent=2, ensure_ascii=False))
+    elif args.command == "run-memory-aware-planning-demo":
+        print(json.dumps(run_memory_aware_planning_demo(), indent=2, ensure_ascii=False))
     elif args.command == "run-multi-agent-demo":
         print(json.dumps(run_multi_agent_demo(), indent=2, ensure_ascii=False))
     elif args.command == "run-tools-demo":
