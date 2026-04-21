@@ -19,5 +19,6 @@ testpaths = ["tests"]
 pythonpath = ["."]
 
 [tool.setuptools.packages.find]
-include = ["sce*"]
-exclude = ["migrations*", "tests*", "examples*", "docs*"]
+where = ["."]
+include = ["sce", "sce.*"]
+exclude = ["migrations", "migrations.*", "tests", "tests.*", "examples", "examples.*", "docs", "docs.*"]
