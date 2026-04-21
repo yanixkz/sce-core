@@ -10,9 +10,27 @@ jobs:
   test:
     runs-on: ubuntu-latest
 
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: sce
+          POSTGRES_PASSWORD: sce
+          POSTGRES_DB: sce_test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U sce -d sce_test"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
     strategy:
       matrix:
         python-version: ["3.11", "3.12"]
+
+    env:
+      SCE_DATABASE_URL: postgresql://sce:sce@localhost:5432/sce_test
 
     steps:
       - name: Checkout repository
