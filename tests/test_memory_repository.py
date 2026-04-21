@@ -55,3 +55,25 @@ def test_repository_clear_removes_all_episodes():
     repository.clear()
 
     assert repository.list_episodes() == []
+
+
+def test_repository_list_episodes_returns_detached_copies():
+    repository = InMemoryEpisodeRepository()
+    repository.save_episode(
+        Episode(
+            state_snapshot={"entity": "supplier A"},
+            goal="observe",
+            plan_name="p1",
+            action_names=["monitor"],
+            success=True,
+            reward=1.0,
+        )
+    )
+
+    listed_episode = repository.list_episodes()[0]
+    listed_episode.action_names.append("escalate")
+    listed_episode.state_snapshot["entity"] = "mutated"
+
+    stored_episode = repository.list_episodes()[0]
+    assert stored_episode.action_names == ["monitor"]
+    assert stored_episode.state_snapshot["entity"] == "supplier A"

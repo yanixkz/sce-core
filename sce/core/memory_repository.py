@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import copy
 from typing import List, Protocol
 
 from sce.core.episode_memory import Episode
@@ -25,13 +26,11 @@ class InMemoryEpisodeRepository:
         self._episodes: List[Episode] = []
 
     def save_episode(self, episode: Episode) -> None:
-        self._episodes.append(episode)
+        self._episodes.append(copy.deepcopy(episode))
 
     def list_episodes(self, limit: int | None = None) -> List[Episode]:
-        episodes = list(self._episodes)
-        if limit is None:
-            return episodes
-        return episodes[:limit]
+        episodes = self._episodes if limit is None else self._episodes[:limit]
+        return [copy.deepcopy(episode) for episode in episodes]
 
     def clear(self) -> None:
         self._episodes.clear()
