@@ -39,26 +39,30 @@ SCE Core has evolved into a cognitive AI system with:
 
 ## Next Priorities
 
-### v0.3 — State Graph Visualization
+### v0.3 — State Graph Export + ASCII Visualization ✅
 - Graph export (JSON)
-- Visualization (networkx / frontend)
-- Attractor highlighting
+- ASCII visualization in CLI
 
 ### v0.4 — Persistent Memory (Postgres++)
 - Full persistence for episodes
 - Rule storage
 - Replay / audit
+- PostgreSQL integration tests in CI
 
 ### v0.5 — Advanced Abstraction
 - Causal pattern extraction
 - Condition-based rules
 - Rule scoring
 
-### v0.6 — Production Readiness
+### v0.6 — Production API Hardening
 - API stabilization
 - Auth
 - Rate limiting
 - Deployment configs
+
+### v0.7 — Richer Visual UI (Later)
+- Rich graph UI beyond ASCII
+- Interactive exploration
 
 ---
 
