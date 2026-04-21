@@ -2,10 +2,10 @@
 
 ![Tests](https://github.com/yanixkz/sce-core/actions/workflows/tests.yml/badge.svg)
 
-**State–Constraint–Evolution Core** is an experimental state-evolution engine for explainable AI memory, constraint-based reasoning, adaptive agents, planning systems, and tool-using AI.
+**State–Constraint–Evolution Core** is an experimental cognitive architecture for building decision-making AI systems.
 
 ```text
-LLM → Reasoning → Planning → Validation → Scoring → Action → Tools → Learning
+LLM → Planning → Validation → Scoring → Execution → Learning → Memory → Abstraction
 ```
 
 ---
@@ -14,68 +14,66 @@ LLM → Reasoning → Planning → Validation → Scoring → Action → Tools �
 
 SCE Core is not just a reasoning engine.
 
-It is a **decision-making architecture** where:
+It is a **self-improving decision system** where:
 
 - states evolve
-- constraints limit possibilities
+- constraints define valid actions
 - plans are generated
 - plans are validated
-- plans are compared
-- best strategy is executed
+- plans are scored and selected
+- actions are executed
+- outcomes are learned
+- experiences are stored
+- rules are extracted
 
 ---
 
-## Core Loop
+## Full Cognitive Loop
 
 ```text
 State
 ↓
-LLM (candidates / plans)
-↓
-SCE (selection)
-↓
-Planner
+Planner (LLM / rules)
 ↓
 Validator
 ↓
-Scorer
+Scorer (learning + memory + rules)
+↓
+Selector
 ↓
 Executor
 ↓
-Tools
+Outcome
 ↓
 Learning
+↓
+Memory
+↓
+Abstraction (rules)
+↓
+Next decision is improved
 ```
 
 ---
 
-## New capabilities (current version)
+## Core Components
 
-- Tool integration (ToolRegistry, ToolActionBridge)
-- Deterministic planning (ToolPlanner)
-- LLM-based planning (LLMPlanner)
-- Plan validation (PlanValidator)
-- Plan scoring and selection (PlanScorer, PlanSelector)
-- Multi-step execution
-- End-to-end agent loop
+- **Planning** — deterministic and LLM-based planners
+- **Validation** — constraint checking
+- **Scoring** — heuristic + learning-based evaluation
+- **Execution** — tool interaction layer
+- **Learning** — adaptive weight updates
+- **Memory** — episodic experience storage
+- **Abstraction** — rule extraction from experience
+- **Agent** — full closed-loop system
 
 ---
 
 ## Demos
 
-### Basic reasoning
+### Core reasoning
 ```bash
 sce run-demo
-```
-
-### LLM reasoning
-```bash
-sce run-llm-demo
-```
-
-### Tools
-```bash
-sce run-tools-demo
 ```
 
 ### Planning
@@ -83,20 +81,14 @@ sce run-tools-demo
 sce run-planning-demo
 ```
 
-### LLM Planning
+### LLM planning
 ```bash
 sce run-llm-planning-demo
 ```
 
-### Plan Scoring
+### Plan scoring
 ```bash
 sce run-plan-scoring-demo
-```
-
-### Agents
-```bash
-sce run-agent-demo
-sce run-goal-agent-demo
 ```
 
 ### Learning
@@ -104,7 +96,22 @@ sce run-goal-agent-demo
 sce run-learning-demo
 ```
 
-### Multi-agent world
+### Learning + planning
+```bash
+sce run-learning-planning-demo
+```
+
+### Cognitive agent (full loop)
+```bash
+sce run-cognitive-agent-demo
+```
+
+### Tools
+```bash
+sce run-tools-demo
+```
+
+### Multi-agent
 ```bash
 sce run-multi-agent-demo
 ```
@@ -121,7 +128,7 @@ Stab(x) = a·Coh(x) − b·Cost(x) − c·Conf(x) − d·Ent(x) + e·Support(x)
 
 ## Status
 
-Research prototype evolving into agent system architecture.
+Prototype of a cognitive AI system with self-improving behavior.
 
 ---
 
