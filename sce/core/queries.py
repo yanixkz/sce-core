@@ -2,10 +2,10 @@ from __future__ import annotations
 
 from collections import deque
 from dataclasses import dataclass
-from typing import List, Optional
+from typing import Any, Dict, List, Optional
 from uuid import UUID
 
-from sce.core.types import Attractor, Constraint, Link, State
+from sce.core.types import Attractor, Constraint, State
 from sce.storage.memory import MemoryRepository
 
 
@@ -104,6 +104,57 @@ class GraphQueryLayer:
                     queue.append(next_path)
 
         return best
+
+    def export_graph_json(self) -> Dict[str, List[Dict[str, Any]]]:
+        """Export the state graph as JSON-serializable nodes and edges."""
+
+        attractor_state_ids = {
+            state_id
+            for attractor in self.repo.attractors.values()
+            for state_id in attractor.member_state_ids
+        }
+
+        nodes: List[Dict[str, Any]] = []
+        for state in self.repo.states.values():
+            checks = []
+            for constraint in self.repo.constraints.values():
+                applies = constraint.applies_to(state)
+                satisfied = constraint.is_satisfied(state) if applies else True
+                checks.append(
+                    {
+                        "name": constraint.name,
+                        "applies": applies,
+                        "satisfied": satisfied,
+                        "hard": constraint.hard,
+                    }
+                )
+
+            nodes.append(
+                {
+                    "state_id": str(state.state_id),
+                    "state_type": state.state_type,
+                    "stability": state.stability,
+                    "is_attractor": state.state_id in attractor_state_ids,
+                    "constraints": checks,
+                    "constraints_satisfied": all(item["satisfied"] for item in checks),
+                    "data": state.data,
+                }
+            )
+
+        edges: List[Dict[str, Any]] = []
+        for link in self.repo.links.values():
+            edges.append(
+                {
+                    "edge_id": str(link.link_id),
+                    "source_state_id": str(link.source_state_id),
+                    "target_state_id": str(link.target_state_id),
+                    "relation_type": link.relation_type.value,
+                    "strength": link.strength,
+                    "directed": link.directed,
+                }
+            )
+
+        return {"nodes": nodes, "edges": edges}
 
     def _score_path(self, state_ids: List[UUID]) -> PathResult:
         states = [self.repo.get_state(state_id) for state_id in state_ids]
