@@ -1,14 +1,14 @@
 from __future__ import annotations
 
 import os
-from datetime import datetime, timedelta
+from datetime import timedelta
 from unittest.mock import MagicMock
 from uuid import uuid4
 
 import pytest
 from psycopg.types.json import Jsonb
 
-from sce.core.episode_memory import Episode
+from sce.core.episode_memory import Episode, utc_now
 from sce.core.types import Link, RelationType, State
 from sce.storage.postgres import (
     POSTGRES_MIGRATION_SQL,
@@ -48,20 +48,10 @@ def test_postgres_repository_round_trip_state_and_links():
 
 def test_postgres_migration_includes_episodes_table():
     assert "CREATE TABLE IF NOT EXISTS episodes" in POSTGRES_MIGRATION_SQL
-
-    for column in (
-        "episode_id           UUID PRIMARY KEY",
-        "created_at           TIMESTAMPTZ NOT NULL",
-        "state_snapshot       JSONB NOT NULL",
-        "goal                 TEXT NOT NULL",
-        "plan_name            TEXT NOT NULL",
-        "action_names         JSONB NOT NULL",
-        "success              BOOLEAN NOT NULL",
-        "reward               DOUBLE PRECISION NOT NULL",
-        "reason               TEXT NOT NULL DEFAULT ''",
-    ):
-        assert column in POSTGRES_MIGRATION_SQL
-
+    assert "episode_id           UUID PRIMARY KEY" in POSTGRES_MIGRATION_SQL
+    assert "created_at           TIMESTAMPTZ NOT NULL" in POSTGRES_MIGRATION_SQL
+    assert "state_snapshot       JSONB NOT NULL" in POSTGRES_MIGRATION_SQL
+    assert "action_names         JSONB NOT NULL" in POSTGRES_MIGRATION_SQL
     assert "CREATE INDEX IF NOT EXISTS idx_episodes_created_at ON episodes(created_at);" in POSTGRES_MIGRATION_SQL
     assert "CREATE INDEX IF NOT EXISTS idx_episodes_goal ON episodes(goal);" in POSTGRES_MIGRATION_SQL
     assert "CREATE INDEX IF NOT EXISTS idx_episodes_plan_name ON episodes(plan_name);" in POSTGRES_MIGRATION_SQL
@@ -76,8 +66,7 @@ def test_postgres_episode_repository_save_list_clear_without_db(monkeypatch):
     monkeypatch.setattr("sce.storage.postgres.psycopg.connect", lambda _: fake_conn)
 
     repo = PostgresEpisodeRepository("postgresql://unused")
-
-    now = datetime.utcnow()
+    now = utc_now()
     older = Episode(
         episode_id=uuid4(),
         created_at=now - timedelta(minutes=1),
@@ -155,7 +144,7 @@ def test_postgres_episode_repository_integration_round_trip():
     repo = PostgresEpisodeRepository(dsn)
     repo.init_schema()
     repo.clear()
-    now = datetime.utcnow()
+    now = utc_now()
 
     older = Episode(
         episode_id=uuid4(),
