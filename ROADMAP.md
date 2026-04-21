@@ -1,38 +1,58 @@
-# Roadmap
+# SCE Core Roadmap (Updated)
 
-## v0.1-alpha
+## Current State (v0.1-alpha)
 
-- MemoryRepository
-- core types
-- scoring engine
-- evolution engine
-- explainability
-- supplier reliability demo
-- pytest tests
+SCE Core has evolved into a cognitive AI system with:
 
-## v0.2
+- CognitiveAgent (closed decision loop)
+- Learning + Memory + Abstraction
+- LLM integration (OpenAI + Anthropic)
+- Voice OS bridge
+- FastAPI REST API
+- Multi-agent world
+- Graph query layer
 
-- PostgreSQL repository
-- persistence for demo runs
-- selected/rejected transition queries
+---
 
-## v0.3
+## Next Priorities
 
-- candidate generator interface
-- repair candidate generation
-- event-driven candidate generation
+### v0.2 — Constraint DSL
+- Human-readable constraint language
+- DSL → predicate compiler
+- DB-storable constraints
 
-## v0.4
+### v0.3 — State Graph Visualization
+- Graph export (JSON)
+- Visualization (networkx / frontend)
+- Attractor highlighting
 
-- constraint DSL
-- safer predicate evaluation
+### v0.4 — Persistent Memory (Postgres++)
+- Full persistence for episodes
+- Rule storage
+- Replay / audit
 
-## v0.5
+### v0.5 — Advanced Abstraction
+- Causal pattern extraction
+- Condition-based rules
+- Rule scoring
 
-- attractor detection improvements
-- clustering and cycle detection
+### v0.6 — Production Readiness
+- API stabilization
+- Auth
+- Rate limiting
+- Deployment configs
 
-## v0.6
+---
 
-- LLM integration layer
-- AI agent examples
+## Long-Term
+
+- Autonomous agents
+- Real-time systems
+- Voice-native interfaces
+- Multi-agent coordination
+
+---
+
+## Status
+
+Transitioned from research prototype → cognitive architecture → early product system
