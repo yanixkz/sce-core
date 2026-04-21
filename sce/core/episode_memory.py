@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass, field
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import TYPE_CHECKING, Any, Dict, List
 from uuid import UUID, uuid4
 
@@ -10,6 +10,10 @@ from sce.core.types import State
 
 if TYPE_CHECKING:
     from sce.core.memory_repository import EpisodeRepository
+
+
+def utc_now() -> datetime:
+    return datetime.now(timezone.utc)
 
 
 @dataclass(frozen=True)
@@ -24,7 +28,7 @@ class Episode:
     reward: float
     reason: str = ""
     episode_id: UUID = field(default_factory=uuid4)
-    created_at: datetime = field(default_factory=datetime.utcnow)
+    created_at: datetime = field(default_factory=utc_now)
 
     def to_dict(self) -> Dict[str, Any]:
         return {
