@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import argparse
 import json
+from pathlib import Path
 
 from sce.core.evolution import SCEEvolver
 from sce.core.queries import GraphQueryLayer
@@ -53,7 +54,8 @@ def main() -> None:
     sub.add_parser("run-plan-scoring-demo")
     sub.add_parser("run-cognitive-agent-demo")
     sub.add_parser("run-llm-voice-demo")
-    sub.add_parser("export-graph")
+    export_graph_parser = sub.add_parser("export-graph")
+    export_graph_parser.add_argument("--out", type=Path, default=None)
     sub.add_parser("visualize-graph")
     sub.add_parser("explain-demo")
     sub.add_parser("print-migration")
@@ -92,7 +94,11 @@ def main() -> None:
     elif args.command == "run-llm-voice-demo":
         print(json.dumps(run_llm_voice_demo(), indent=2, ensure_ascii=False))
     elif args.command == "export-graph":
-        print(json.dumps(_export_supplier_graph(), indent=2, ensure_ascii=False))
+        graph_json = json.dumps(_export_supplier_graph(), indent=2, ensure_ascii=False)
+        if args.out is None:
+            print(graph_json)
+        else:
+            args.out.write_text(graph_json, encoding="utf-8")
     elif args.command == "visualize-graph":
         graph = _export_supplier_graph()
         print(render_ascii_graph(graph))
