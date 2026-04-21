@@ -15,14 +15,15 @@ class ScoredPlan:
 
 
 class PlanScorer:
-    """Heuristic scorer for comparing alternative plans.
+    """Heuristic scorer with optional learning and episodic memory.
 
-    Optionally accepts a learning object with `get_weights() -> dict`.
-    This lets execution outcomes influence future plan selection.
+    - learning: object with get_weights() -> dict
+    - memory: object with plan_bias(plan, state, goal) -> float
     """
 
-    def __init__(self, learning: Any | None = None) -> None:
+    def __init__(self, learning: Any | None = None, memory: Any | None = None) -> None:
         self.learning = learning
+        self.memory = memory
 
     def score(self, plan: Plan, state: State, goal: str) -> ScoredPlan:
         goal_lower = goal.lower()
@@ -55,6 +56,12 @@ class PlanScorer:
         value -= max(0, len(plan.actions) - 2) * 0.1 * weights.get("efficiency", 1.0)
         if len(plan.actions) <= 2:
             reasons.append("plan is compact")
+
+        if self.memory:
+            bias = self.memory.plan_bias(plan, state, goal)
+            value += bias
+            if bias != 0:
+                reasons.append("memory bias")
 
         return ScoredPlan(plan=plan, score=value, reason=", ".join(reasons))
 
