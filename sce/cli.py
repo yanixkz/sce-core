@@ -23,6 +23,7 @@ from sce.scenarios.planning_demo import run_planning_demo
 from sce.scenarios.supplier_reliability import make_supplier_reliability_scenario, run_demo
 from sce.scenarios.tools_demo import run_tools_demo
 from sce.storage.postgres import POSTGRES_MIGRATION_SQL
+from sce.visualization.graph_ascii import render_ascii_graph
 
 
 def _export_supplier_graph() -> dict:
@@ -53,6 +54,7 @@ def main() -> None:
     sub.add_parser("run-cognitive-agent-demo")
     sub.add_parser("run-llm-voice-demo")
     sub.add_parser("export-graph")
+    sub.add_parser("visualize-graph")
     sub.add_parser("explain-demo")
     sub.add_parser("print-migration")
     args = parser.parse_args()
@@ -91,6 +93,9 @@ def main() -> None:
         print(json.dumps(run_llm_voice_demo(), indent=2, ensure_ascii=False))
     elif args.command == "export-graph":
         print(json.dumps(_export_supplier_graph(), indent=2, ensure_ascii=False))
+    elif args.command == "visualize-graph":
+        graph = _export_supplier_graph()
+        print(render_ascii_graph(graph))
     elif args.command == "explain-demo":
         print(json.dumps(run_demo()["explanation"], indent=2, ensure_ascii=False))
     elif args.command == "print-migration":
