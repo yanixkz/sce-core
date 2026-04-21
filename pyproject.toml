@@ -20,3 +20,4 @@ pythonpath = ["."]
 
 [tool.setuptools.packages.find]
 include = ["sce*"]
+exclude = ["migrations*", "tests*", "examples*", "docs*"]
