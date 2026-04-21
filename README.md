@@ -28,6 +28,7 @@ SCE Core is a **self-improving decision system** where:
 - actions are executed through tools
 - outcomes update learning weights
 - experiences are stored as episodes
+- memory biases future planning decisions
 - rules are extracted from repeated successful episodes
 
 ---
@@ -71,6 +72,7 @@ Next decision is improved
 - **Learning** — adaptive weight updates
 - **Memory** — episodic experience storage with pluggable repositories
 - **Persistent memory** — EpisodeRepository, InMemoryEpisodeRepository, PostgresEpisodeRepository
+- **Memory-aware planning** — remembered outcomes bias future plan selection
 - **Abstraction** — rule extraction from experience
 - **Graph observability** — JSON graph export and ASCII visualization
 - **Voice OS bridge** — text/voice intent to cognitive agent
@@ -149,6 +151,7 @@ sce run-goal-agent-demo
 sce run-action-demo
 sce run-learning-demo
 sce run-learning-planning-demo
+sce run-memory-aware-planning-demo
 sce run-multi-agent-demo
 sce run-tools-demo
 sce run-planning-demo
@@ -161,6 +164,31 @@ sce export-graph
 sce export-graph --out graph.json
 sce visualize-graph
 sce visualize-graph --out graph.txt
+```
+
+---
+
+## Memory-aware planning demo
+
+Run:
+
+```bash
+sce run-memory-aware-planning-demo
+```
+
+The demo records past decision episodes, scores candidate plans with `EpisodeMemory.plan_bias(...)`, and selects the plan with the strongest positive memory signal.
+
+Example shape:
+
+```json
+{
+  "remembered_episode_count": 3,
+  "candidate_scores": [
+    {"plan_name": "slow_monitoring_plan", "memory_bias": -0.8},
+    {"plan_name": "escalation_plan", "memory_bias": 0.9}
+  ],
+  "selected_plan": "escalation_plan"
+}
 ```
 
 ---
@@ -258,7 +286,7 @@ sce visualize-graph --out graph.txt
 
 ## Status
 
-Prototype of a cognitive AI system with self-improving behavior, graph observability, and pluggable persistent episodic memory.
+Prototype of a cognitive AI system with self-improving behavior, graph observability, memory-aware planning, and pluggable persistent episodic memory.
 
 ---
 
