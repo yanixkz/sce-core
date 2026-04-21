@@ -21,9 +21,11 @@ Learning → Memory → Abstraction
 SCE Core can be inspected from the terminal:
 
 ```bash
+sce run-adaptive-agent-demo-pretty
 sce visualize-graph
-sce run-memory-aware-planning-demo
 ```
+
+The adaptive demo shows an agent changing its plan after episodic memory shifts the decision score.
 
 More visual/demo commands are documented in [`docs/VISUAL_DEMO.md`](docs/VISUAL_DEMO.md).
 
@@ -165,6 +167,8 @@ sce run-action-demo
 sce run-learning-demo
 sce run-learning-planning-demo
 sce run-memory-aware-planning-demo
+sce run-adaptive-agent-demo
+sce run-adaptive-agent-demo-pretty
 sce run-multi-agent-demo
 sce run-tools-demo
 sce run-planning-demo
@@ -178,6 +182,32 @@ sce export-graph --out graph.json
 sce visualize-graph
 sce visualize-graph --out graph.txt
 ```
+
+---
+
+## Adaptive agent demo
+
+Run:
+
+```bash
+sce run-adaptive-agent-demo-pretty
+```
+
+The demo shows a complete decision loop:
+
+```text
+candidate plans → scoring → execution → memory → re-scoring → changed plan
+```
+
+It prints:
+
+- before-learning scores
+- execution trace
+- learning event
+- after-learning scores
+- why the decision changed
+
+This is the quickest way to see SCE Core behaving as an adaptive decision system.
 
 ---
 
