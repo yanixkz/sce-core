@@ -5,26 +5,30 @@
 **State–Constraint–Evolution Core** is an experimental cognitive architecture for building decision-making AI systems.
 
 ```text
-LLM → Planning → Validation → Scoring → Execution → Learning → Memory → Abstraction
+Input / Voice / API
+↓
+LLM Intent
+↓
+Planning → Validation → Scoring → Execution
+↓
+Learning → Memory → Abstraction
 ```
 
 ---
 
 ## What is SCE Core
 
-SCE Core is not just a reasoning engine.
-
-It is a **self-improving decision system** where:
+SCE Core is a **self-improving decision system** where:
 
 - states evolve
 - constraints define valid actions
 - plans are generated
 - plans are validated
 - plans are scored and selected
-- actions are executed
-- outcomes are learned
-- experiences are stored
-- rules are extracted
+- actions are executed through tools
+- outcomes update learning weights
+- experiences are stored as episodes
+- rules are extracted from repeated successful episodes
 
 ---
 
@@ -49,7 +53,7 @@ Learning
 ↓
 Memory
 ↓
-Abstraction (rules)
+Abstraction
 ↓
 Next decision is improved
 ```
@@ -58,62 +62,98 @@ Next decision is improved
 
 ## Core Components
 
+- **Core state model** — State, Transition, Constraint, Link, Event, Attractor, Rule
+- **Scoring** — stability formula and state scoring
 - **Planning** — deterministic and LLM-based planners
-- **Validation** — constraint checking
-- **Scoring** — heuristic + learning-based evaluation
-- **Execution** — tool interaction layer
+- **Validation** — plan and constraint checks
+- **Execution** — action and tool layers
 - **Learning** — adaptive weight updates
 - **Memory** — episodic experience storage
 - **Abstraction** — rule extraction from experience
-- **Agent** — full closed-loop system
+- **Voice OS bridge** — text/voice intent to cognitive agent
+- **FastAPI API** — `/health` and `/ask`
+- **LLM providers** — OpenAI and Anthropic JSON clients
 
 ---
 
-## Demos
+## Install
 
-### Core reasoning
+```bash
+python -m venv .venv
+source .venv/bin/activate
+pip install -e .
+pip install -r requirements.txt
+```
+
+Optional extras:
+
+```bash
+pip install -e .[api,openai]
+pip install -e .[api,anthropic]
+```
+
+---
+
+## Run tests
+
+```bash
+pytest
+```
+
+---
+
+## Run API
+
+```bash
+uvicorn sce.api:app --reload
+```
+
+Open:
+
+```text
+http://127.0.0.1:8000/docs
+```
+
+Example:
+
+```bash
+curl -X POST http://127.0.0.1:8000/ask \
+  -H "Content-Type: application/json" \
+  -d '{"text":"check supplier risk"}'
+```
+
+With real LLM intent parsing:
+
+```bash
+export OPENAI_API_KEY=...
+curl -X POST http://127.0.0.1:8000/ask \
+  -H "Content-Type: application/json" \
+  -d '{"text":"check supplier risk","use_llm_intent":true,"provider":"openai"}'
+```
+
+---
+
+## CLI demos
+
 ```bash
 sce run-demo
-```
-
-### Planning
-```bash
-sce run-planning-demo
-```
-
-### LLM planning
-```bash
+sce run-conflict-demo
+sce run-llm-demo
 sce run-llm-planning-demo
-```
-
-### Plan scoring
-```bash
-sce run-plan-scoring-demo
-```
-
-### Learning
-```bash
+sce run-contract-demo
+sce run-agent-demo
+sce run-goal-agent-demo
+sce run-action-demo
 sce run-learning-demo
-```
-
-### Learning + planning
-```bash
 sce run-learning-planning-demo
-```
-
-### Cognitive agent (full loop)
-```bash
-sce run-cognitive-agent-demo
-```
-
-### Tools
-```bash
-sce run-tools-demo
-```
-
-### Multi-agent
-```bash
 sce run-multi-agent-demo
+sce run-tools-demo
+sce run-planning-demo
+sce run-plan-scoring-demo
+sce run-cognitive-agent-demo
+sce run-llm-voice-demo
+sce explain-demo
+sce print-migration
 ```
 
 ---
@@ -123,6 +163,17 @@ sce run-multi-agent-demo
 ```text
 Stab(x) = a·Coh(x) − b·Cost(x) − c·Conf(x) − d·Ent(x) + e·Support(x)
 ```
+
+---
+
+## Current gaps / next work
+
+- Constraint DSL
+- State graph visualization
+- Persistent memory in PostgreSQL
+- PostgreSQL integration tests in CI
+- Advanced abstraction / causal rules
+- Production API hardening
 
 ---
 
