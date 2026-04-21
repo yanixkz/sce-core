@@ -26,6 +26,33 @@ class Episode:
     episode_id: UUID = field(default_factory=uuid4)
     created_at: datetime = field(default_factory=datetime.utcnow)
 
+    def to_dict(self) -> Dict[str, Any]:
+        return {
+            "episode_id": str(self.episode_id),
+            "created_at": self.created_at.isoformat(),
+            "state_snapshot": self.state_snapshot,
+            "goal": self.goal,
+            "plan_name": self.plan_name,
+            "action_names": self.action_names,
+            "success": self.success,
+            "reward": self.reward,
+            "reason": self.reason,
+        }
+
+    @classmethod
+    def from_dict(cls, data: Dict[str, Any]) -> "Episode":
+        return cls(
+            state_snapshot=data["state_snapshot"],
+            goal=data["goal"],
+            plan_name=data["plan_name"],
+            action_names=data["action_names"],
+            success=data["success"],
+            reward=data["reward"],
+            reason=data.get("reason", ""),
+            episode_id=UUID(data["episode_id"]),
+            created_at=datetime.fromisoformat(data["created_at"]),
+        )
+
 
 class EpisodeMemory:
     """Simple in-memory episodic memory for plans and outcomes."""
