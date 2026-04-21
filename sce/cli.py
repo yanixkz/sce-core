@@ -56,7 +56,8 @@ def main() -> None:
     sub.add_parser("run-llm-voice-demo")
     export_graph_parser = sub.add_parser("export-graph")
     export_graph_parser.add_argument("--out", type=Path, default=None)
-    sub.add_parser("visualize-graph")
+    visualize_graph_parser = sub.add_parser("visualize-graph")
+    visualize_graph_parser.add_argument("--out", type=Path, default=None)
     sub.add_parser("explain-demo")
     sub.add_parser("print-migration")
     args = parser.parse_args()
@@ -101,7 +102,11 @@ def main() -> None:
             args.out.write_text(graph_json, encoding="utf-8")
     elif args.command == "visualize-graph":
         graph = _export_supplier_graph()
-        print(render_ascii_graph(graph))
+        ascii_graph = render_ascii_graph(graph)
+        if args.out is None:
+            print(ascii_graph)
+        else:
+            args.out.write_text(ascii_graph, encoding="utf-8")
     elif args.command == "explain-demo":
         print(json.dumps(run_demo()["explanation"], indent=2, ensure_ascii=False))
     elif args.command == "print-migration":
