@@ -1,6 +1,6 @@
 # SCE Core Roadmap (Updated)
 
-## Current State (v0.2-alpha)
+## Current State (v0.3-alpha)
 
 SCE Core has evolved into a cognitive AI system with:
 
@@ -12,6 +12,8 @@ SCE Core has evolved into a cognitive AI system with:
 - Multi-agent world
 - Graph query layer
 - Constraint DSL (safe text constraints compiled to predicates)
+- Graph export (JSON) and ASCII visualization
+- Persistent episodic memory (in-memory + PostgreSQL)
 
 ---
 
@@ -35,19 +37,25 @@ SCE Core has evolved into a cognitive AI system with:
 - Safe evaluator without eval/exec
 - Constraint compatibility tests
 
+### v0.3 — Graph + Persistence Foundation
+- Graph export (JSON)
+- ASCII visualization in CLI
+- Episode serialization (to_dict / from_dict)
+- EpisodeRepository abstraction
+- InMemoryEpisodeRepository
+- PostgresEpisodeRepository
+- PostgreSQL migration (episodes table)
+- JSONB storage (psycopg Jsonb)
+
 ---
 
 ## Next Priorities
 
-### v0.3 — State Graph Export + ASCII Visualization ✅
-- Graph export (JSON)
-- ASCII visualization in CLI
-
-### v0.4 — Persistent Memory (Postgres++)
-- Full persistence for episodes
-- Rule storage
-- Replay / audit
+### v0.4 — Persistent Memory Hardening
 - PostgreSQL integration tests in CI
+- Connection lifecycle improvements
+- Batch inserts / performance tuning
+- Error handling and retries
 
 ### v0.5 — Advanced Abstraction
 - Causal pattern extraction
@@ -77,4 +85,4 @@ SCE Core has evolved into a cognitive AI system with:
 
 ## Status
 
-Transitioned from research prototype → cognitive architecture → early product system.
+Transitioned from research prototype → cognitive architecture → early product system with persistent memory.
