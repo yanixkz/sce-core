@@ -69,8 +69,10 @@ Next decision is improved
 - **Constraint DSL** — compile safe textual constraints into predicates
 - **Execution** — action and tool layers
 - **Learning** — adaptive weight updates
-- **Memory** — episodic experience storage
+- **Memory** — episodic experience storage with pluggable repositories
+- **Persistent memory** — EpisodeRepository, InMemoryEpisodeRepository, PostgresEpisodeRepository
 - **Abstraction** — rule extraction from experience
+- **Graph observability** — JSON graph export and ASCII visualization
 - **Voice OS bridge** — text/voice intent to cognitive agent
 - **FastAPI API** — `/health` and `/ask`
 - **LLM providers** — OpenAI and Anthropic JSON clients
@@ -156,7 +158,9 @@ sce run-llm-voice-demo
 sce explain-demo
 sce print-migration
 sce export-graph
+sce export-graph --out graph.json
 sce visualize-graph
+sce visualize-graph --out graph.txt
 ```
 
 ---
@@ -197,12 +201,40 @@ Supported syntax:
 
 ---
 
+## Persistent episodic memory
+
+SCE Core supports pluggable episodic memory repositories:
+
+- `EpisodeRepository` protocol
+- `InMemoryEpisodeRepository`
+- `PostgresEpisodeRepository`
+- `Episode.to_dict()` / `Episode.from_dict()` JSON serialization
+- optional persistence through `EpisodeMemory(repository=...)`
+
+Example:
+
+```python
+from sce.core import EpisodeMemory, InMemoryEpisodeRepository
+
+repo = InMemoryEpisodeRepository()
+memory = EpisodeMemory(repository=repo)
+```
+
+PostgreSQL support includes an `episodes` migration table and JSONB storage for episode payloads. Print the migration SQL with:
+
+```bash
+sce print-migration
+```
+
+---
+
 ## State graph export
 
 Export the current state graph to JSON from the CLI:
 
 ```bash
 sce export-graph
+sce export-graph --out graph.json
 ```
 
 ## ASCII graph visualization
@@ -211,12 +243,14 @@ Render a terminal-friendly ASCII view of the current state graph:
 
 ```bash
 sce visualize-graph
+sce visualize-graph --out graph.txt
 ```
 
 ## Current gaps / next work
 
-- Persistent memory in PostgreSQL
 - PostgreSQL integration tests in CI
+- Rule persistence
+- Replay / audit tooling
 - Advanced abstraction / causal rules
 - Production API hardening
 
@@ -224,7 +258,7 @@ sce visualize-graph
 
 ## Status
 
-Prototype of a cognitive AI system with self-improving behavior.
+Prototype of a cognitive AI system with self-improving behavior, graph observability, and pluggable persistent episodic memory.
 
 ---
 
