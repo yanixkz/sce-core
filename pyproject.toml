@@ -18,7 +18,11 @@ sce = "sce.cli:main"
 testpaths = ["tests"]
 pythonpath = ["."]
 
-[tool.setuptools.packages.find]
-where = ["."]
-include = ["sce", "sce.*"]
-exclude = ["migrations", "migrations.*", "tests", "tests.*", "examples", "examples.*", "docs", "docs.*"]
+[tool.setuptools]
+packages = [
+  "sce",
+  "sce.core",
+  "sce.storage",
+  "sce.scenarios",
+  "sce.visualization"
+]
