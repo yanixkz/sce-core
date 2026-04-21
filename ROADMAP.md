@@ -1,6 +1,6 @@
 # SCE Core Roadmap (Updated)
 
-## Current State (v0.1-alpha)
+## Current State (v0.2-alpha)
 
 SCE Core has evolved into a cognitive AI system with:
 
@@ -11,15 +11,33 @@ SCE Core has evolved into a cognitive AI system with:
 - FastAPI REST API
 - Multi-agent world
 - Graph query layer
+- Constraint DSL (safe text constraints compiled to predicates)
 
 ---
 
-## Next Priorities
+## Completed Milestones
+
+### v0.1 — Cognitive Core
+- Core state model
+- Scoring and evolution
+- Explainability
+- Agent loop
+- Tool layer
+- Learning layer
+- Episodic memory
+- Abstraction rules
+- Voice OS bridge
+- FastAPI API
 
 ### v0.2 — Constraint DSL
 - Human-readable constraint language
 - DSL → predicate compiler
-- DB-storable constraints
+- Safe evaluator without eval/exec
+- Constraint compatibility tests
+
+---
+
+## Next Priorities
 
 ### v0.3 — State Graph Visualization
 - Graph export (JSON)
@@ -55,4 +73,4 @@ SCE Core has evolved into a cognitive AI system with:
 
 ## Status
 
-Transitioned from research prototype → cognitive architecture → early product system
+Transitioned from research prototype → cognitive architecture → early product system.
