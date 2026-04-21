@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import json
-from typing import List
+from typing import Any, List
 from uuid import UUID
 
 import psycopg
@@ -96,6 +96,12 @@ CREATE INDEX IF NOT EXISTS idx_episodes_plan_name ON episodes(plan_name);
 """
 
 
+def _json_value(value: Any) -> Any:
+    if isinstance(value, str):
+        return json.loads(value)
+    return value
+
+
 class PostgresRepository:
     """Basic PostgreSQL repository for persistent states, links, transitions and events."""
 
@@ -137,7 +143,7 @@ class PostgresRepository:
                 (
                     state.state_id,
                     state.state_type,
-                    json.dumps(state.data),
+                    Jsonb(state.data),
                     state.energy,
                     state.entropy,
                     state.coherence,
@@ -146,7 +152,7 @@ class PostgresRepository:
                     state.support,
                     state.status,
                     state.signature_hash,
-                    json.dumps(state.meta),
+                    Jsonb(state.meta),
                 ),
             )
         self.conn.commit()
@@ -169,7 +175,7 @@ class PostgresRepository:
         return State(
             state_id=state_id,
             state_type=row[0],
-            data=row[1],
+            data=_json_value(row[1]),
             energy=row[2],
             entropy=row[3],
             coherence=row[4],
@@ -178,7 +184,7 @@ class PostgresRepository:
             support=row[7],
             status=row[8],
             signature_hash=row[9],
-            meta=row[10] or {},
+            meta=_json_value(row[10]) or {},
         )
 
     def add_link(self, link: Link) -> UUID:
@@ -196,7 +202,7 @@ class PostgresRepository:
                     link.relation_type.value,
                     link.strength,
                     link.directed,
-                    json.dumps(link.meta),
+                    Jsonb(link.meta),
                 ),
             )
         self.conn.commit()
@@ -221,7 +227,7 @@ class PostgresRepository:
                 relation_type=row[2],
                 strength=row[3],
                 directed=row[4],
-                meta=row[5] or {},
+                meta=_json_value(row[5]) or {},
             )
             for row in rows
         ]
@@ -245,7 +251,7 @@ class PostgresRepository:
                 relation_type=row[2],
                 strength=row[3],
                 directed=row[4],
-                meta=row[5] or {},
+                meta=_json_value(row[5]) or {},
             )
             for row in rows
         ]
@@ -279,7 +285,7 @@ class PostgresRepository:
                     transition.delta_time_ms,
                     transition.admissible,
                     transition.selected,
-                    json.dumps(transition.meta),
+                    Jsonb(transition.meta),
                 ),
             )
         self.conn.commit()
@@ -303,8 +309,8 @@ class PostgresRepository:
                     event.event_type.value,
                     event.state_id,
                     event.transition_id,
-                    json.dumps(event.payload),
-                    json.dumps(event.meta),
+                    Jsonb(event.payload),
+                    Jsonb(event.meta),
                 ),
             )
         self.conn.commit()
@@ -322,9 +328,9 @@ class PostgresRepository:
                     attractor.attractor_id,
                     attractor.attractor_type,
                     attractor.signature_hash,
-                    json.dumps(attractor.invariant),
+                    Jsonb(attractor.invariant),
                     attractor.stability_score,
-                    json.dumps(attractor.meta),
+                    Jsonb(attractor.meta),
                 ),
             )
         self.conn.commit()
@@ -407,10 +413,10 @@ class PostgresEpisodeRepository:
                 {
                     "episode_id": str(row[0]),
                     "created_at": row[1].isoformat(),
-                    "state_snapshot": row[2],
+                    "state_snapshot": _json_value(row[2]),
                     "goal": row[3],
                     "plan_name": row[4],
-                    "action_names": row[5],
+                    "action_names": _json_value(row[5]),
                     "success": row[6],
                     "reward": row[7],
                     "reason": row[8],
