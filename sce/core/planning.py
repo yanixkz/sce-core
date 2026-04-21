@@ -4,6 +4,7 @@ from dataclasses import dataclass, field
 from typing import Any, Dict, List
 
 from sce.core.actions import Action, ActionResult
+from sce.core.episode_memory import EpisodeMemory
 from sce.core.tools import ToolActionBridge
 from sce.core.types import State
 
@@ -77,6 +78,26 @@ class ToolPlanner:
                     payload={},
                 )
             ],
+        )
+
+
+class MemoryAwarePlanner:
+    """Rank candidate plans using episodic memory bias."""
+
+    def __init__(self, base_planner: ToolPlanner, memory: EpisodeMemory) -> None:
+        self.base_planner = base_planner
+        self.memory = memory
+
+    def plan(self, state: State, goal: str, candidates: List[Plan] | None = None) -> Plan:
+        candidate_plans = candidates or [self.base_planner.plan(state, goal)]
+        ranked = self.rank(candidate_plans, state, goal)
+        return ranked[0]
+
+    def rank(self, candidates: List[Plan], state: State, goal: str) -> List[Plan]:
+        return sorted(
+            candidates,
+            key=lambda plan: self.memory.plan_bias(plan, state, goal),
+            reverse=True,
         )
 
 
