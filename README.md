@@ -155,6 +155,8 @@ sce run-cognitive-agent-demo
 sce run-llm-voice-demo
 sce explain-demo
 sce print-migration
+sce export-graph
+sce visualize-graph
 ```
 
 ---
@@ -195,9 +197,24 @@ Supported syntax:
 
 ---
 
+## State graph export
+
+Export the current state graph to JSON from the CLI:
+
+```bash
+sce export-graph
+```
+
+## ASCII graph visualization
+
+Render a terminal-friendly ASCII view of the current state graph:
+
+```bash
+sce visualize-graph
+```
+
 ## Current gaps / next work
 
-- State graph visualization
 - Persistent memory in PostgreSQL
 - PostgreSQL integration tests in CI
 - Advanced abstraction / causal rules
