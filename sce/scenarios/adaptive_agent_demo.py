@@ -18,6 +18,10 @@ def _score_summary(planner: MemoryAwarePlanner, plans: list[Plan], state: State,
     ]
 
 
+def _score_by_plan(scores: list[dict]) -> dict[str, dict]:
+    return {item["plan_name"]: item for item in scores}
+
+
 def _format_score_table(scores: list[dict]) -> str:
     lines = ["plan                         base    memory   total", "------------------------------------------------------"]
     for item in scores:
@@ -28,6 +32,28 @@ def _format_score_table(scores: list[dict]) -> str:
             f"{item['total_score']:>5.2f}"
         )
     return "\n".join(lines)
+
+
+def _format_decision_change(result: dict) -> str:
+    before = _score_by_plan(result["before_learning_scores"])
+    after = _score_by_plan(result["after_learning_scores"])
+    selected = result["second_choice"]
+    previous = result["first_choice"]
+
+    selected_before = before[selected]
+    selected_after = after[selected]
+    previous_after = after[previous]
+
+    memory_delta = selected_after["memory_bias"] - selected_before["memory_bias"]
+    margin = selected_after["total_score"] - previous_after["total_score"]
+
+    return "\n".join(
+        [
+            f"{selected} received a memory boost of +{memory_delta:.2f}.",
+            f"After learning, {selected} beats {previous} by {margin:.2f} total score.",
+            "The decision changed because remembered outcomes shifted the ranking, not because the base rules changed.",
+        ]
+    )
 
 
 def format_adaptive_agent_demo(result: dict) -> str:
@@ -49,17 +75,25 @@ def format_adaptive_agent_demo(result: dict) -> str:
             f"Selected plan: {result['first_choice']}",
             f"Execution success: {result['first_execution_success']}",
             "",
-            "2) Learning event",
+            "2) Execution trace",
+            "------------------",
+            *[f"- {step}" for step in result["execution_trace"]],
+            "",
+            "3) Learning event",
             "-----------------",
             "A successful escalation episode is stored in episodic memory.",
             f"Episodes in memory: {result['episodes_after_learning']}",
             "",
-            "3) After learning",
+            "4) After learning",
             "-----------------",
             _format_score_table(result["after_learning_scores"]),
             "",
             f"Selected plan: {result['second_choice']}",
             f"Changed choice: {changed}",
+            "",
+            "Why the decision changed",
+            "------------------------",
+            _format_decision_change(result),
             "",
             "Interpretation",
             "--------------",
@@ -100,6 +134,15 @@ def run_adaptive_agent_demo() -> dict:
     second_scores = _score_summary(planner, candidates, state, goal)
     second_plan = planner.plan(state, goal, candidates)
 
+    execution_trace = [
+        f"Generated {len(candidates)} candidate plans.",
+        f"Selected {first_plan.name} using base scores and current memory.",
+        f"Executed {first_plan.name}; success={first_result.success}.",
+        "Stored the execution result as an episode.",
+        "Stored an additional successful escalation episode.",
+        f"Re-scored candidates and selected {second_plan.name}.",
+    ]
+
     return {
         "goal": goal,
         "state": state.data,
@@ -110,6 +153,7 @@ def run_adaptive_agent_demo() -> dict:
         "changed_choice": first_plan.name != second_plan.name,
         "before_learning_scores": first_scores,
         "after_learning_scores": second_scores,
+        "execution_trace": execution_trace,
         "explanation": (
             "The first choice follows base planning scores. After a successful escalation episode is remembered, "
             "memory bias changes the next plan selection."
