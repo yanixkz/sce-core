@@ -49,6 +49,10 @@ class PlanExecutionResult:
             return None
         return self.results[-1].resulting_state
 
+    @property
+    def reward(self) -> float:
+        return 1.0 if self.success else -1.0
+
 
 class ToolPlanner:
     """Simple deterministic planner for selecting tools from state context.
@@ -158,3 +162,23 @@ class PlanExecutor:
             current = result.resulting_state
 
         return PlanExecutionResult(plan_name=plan.name, results=results)
+
+
+class LearningPlanExecutor:
+    """Executes a plan and records the outcome in episodic memory."""
+
+    def __init__(self, executor: PlanExecutor, memory: EpisodeMemory) -> None:
+        self.executor = executor
+        self.memory = memory
+
+    def execute(self, plan: Plan, initial_state: State, goal: str) -> PlanExecutionResult:
+        result = self.executor.execute(plan, initial_state)
+        self.memory.remember(
+            initial_state,
+            goal,
+            plan,
+            success=result.success,
+            reward=result.reward,
+            reason="execution_success" if result.success else "execution_failed",
+        )
+        return result
