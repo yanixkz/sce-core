@@ -66,6 +66,7 @@ Next decision is improved
 - **Scoring** — stability formula and state scoring
 - **Planning** — deterministic and LLM-based planners
 - **Validation** — plan and constraint checks
+- **Constraint DSL** — compile safe textual constraints into predicates
 - **Execution** — action and tool layers
 - **Learning** — adaptive weight updates
 - **Memory** — episodic experience storage
@@ -166,9 +167,36 @@ Stab(x) = a·Coh(x) − b·Cost(x) − c·Conf(x) − d·Ent(x) + e·Support(x)
 
 ---
 
+## Constraint DSL (safe predicates)
+
+You can define constraints as strings and compile them without `eval`/`exec`:
+
+```python
+from sce.core.constraint_dsl import compile_constraint_dsl
+from sce.core.types import Constraint, State
+
+predicate = compile_constraint_dsl(
+    '(late_delivery_rate <= 0.30 AND breach_reported == false) OR tier == "gold"'
+)
+
+constraint = Constraint(name="supplier_policy", predicate=predicate)
+ok = constraint.is_satisfied(
+    State("supplier", {"late_delivery_rate": 0.25, "breach_reported": False, "tier": "silver"})
+)
+```
+
+Supported syntax:
+
+- comparisons: `==`, `!=`, `<`, `<=`, `>`, `>=`
+- boolean operators: `AND`, `OR`, `NOT`
+- parentheses
+- numbers, quoted strings, booleans (`true`, `false`)
+- identifiers are read from `State.data`
+
+---
+
 ## Current gaps / next work
 
-- Constraint DSL
 - State graph visualization
 - Persistent memory in PostgreSQL
 - PostgreSQL integration tests in CI
