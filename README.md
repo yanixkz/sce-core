@@ -16,6 +16,19 @@ Learning → Memory → Abstraction
 
 ---
 
+## Quick visual demo
+
+SCE Core can be inspected from the terminal:
+
+```bash
+sce visualize-graph
+sce run-memory-aware-planning-demo
+```
+
+More visual/demo commands are documented in [`docs/VISUAL_DEMO.md`](docs/VISUAL_DEMO.md).
+
+---
+
 ## What is SCE Core
 
 SCE Core is a **self-improving decision system** where:
@@ -276,11 +289,11 @@ sce visualize-graph --out graph.txt
 
 ## Current gaps / next work
 
-- PostgreSQL integration tests in CI
 - Rule persistence
 - Replay / audit tooling
 - Advanced abstraction / causal rules
 - Production API hardening
+- Browser-based graph UI
 
 ---
 
