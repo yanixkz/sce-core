@@ -2,7 +2,80 @@
 
 SCE Core can be inspected from the terminal without a separate UI.
 
-## 1. ASCII graph
+The quickest demo is the adaptive agent story:
+
+```bash
+sce run-adaptive-agent-demo-pretty
+```
+
+It shows an agent generating candidate plans, scoring them, executing a plan, writing the outcome to memory, re-scoring, and changing its future decision.
+
+---
+
+## 1. Adaptive agent demo
+
+Run:
+
+```bash
+sce run-adaptive-agent-demo-pretty
+```
+
+The output is a readable terminal story:
+
+```text
+SCE Adaptive Agent Demo
+=======================
+
+Goal:  assess supplier risk
+State: {'entity': 'supplier A', 'risk': 'high'}
+
+1) Before learning
+------------------
+plan                         base    memory   total
+------------------------------------------------------
+supplier_risk_plan           0.60     0.00    0.60
+escalation_plan              0.40     0.00    0.40
+monitor_plan                 0.10     0.00    0.10
+
+Selected plan: supplier_risk_plan
+Execution success: True
+
+2) Execution trace
+------------------
+- Generated 3 candidate plans.
+- Selected supplier_risk_plan using base scores and current memory.
+- Executed supplier_risk_plan; success=True.
+- Stored the execution result as an episode.
+- Stored an additional successful escalation episode.
+- Re-scored candidates and selected escalation_plan.
+
+3) Learning event
+-----------------
+A successful escalation episode is stored in episodic memory.
+Episodes in memory: 2
+
+4) After learning
+-----------------
+plan                         base    memory   total
+------------------------------------------------------
+escalation_plan              0.40     0.75    1.15
+supplier_risk_plan           0.60     0.50    1.10
+monitor_plan                 0.10     0.00    0.10
+
+Selected plan: escalation_plan
+Changed choice: YES
+
+Why the decision changed
+------------------------
+escalation_plan received a memory boost.
+The decision changed because remembered outcomes shifted the ranking.
+```
+
+This is the best entry point for seeing the core idea: remembered outcomes can change future decisions.
+
+---
+
+## 2. ASCII graph
 
 Run:
 
@@ -39,7 +112,9 @@ supplier_risky (stab=-0.21)
   └─[conflicts]→ supplier_contract_safe
 ```
 
-## 2. JSON graph export
+---
+
+## 3. JSON graph export
 
 Run:
 
@@ -53,9 +128,11 @@ Write it to a file:
 sce export-graph --out graph.json
 ```
 
-The JSON export is useful for building a web UI later.
+The JSON export is useful for building a browser UI later.
 
-## 3. Memory-aware planning demo
+---
+
+## 4. Memory-aware planning demo
 
 Run:
 
@@ -63,7 +140,7 @@ Run:
 sce run-memory-aware-planning-demo
 ```
 
-This demonstrates how previous episodes bias future plan selection.
+This lower-level demo demonstrates how previous episodes bias future plan selection.
 
 Expected shape:
 
@@ -78,7 +155,9 @@ Expected shape:
 }
 ```
 
-## 4. API docs
+---
+
+## 5. API docs
 
 Run:
 
@@ -92,11 +171,13 @@ Open:
 http://127.0.0.1:8000/docs
 ```
 
+---
+
 ## Current visual surface
 
 SCE Core currently supports:
 
-- terminal demos
+- adaptive terminal demo
 - ASCII graph visualization
 - JSON graph export
 - FastAPI Swagger docs
