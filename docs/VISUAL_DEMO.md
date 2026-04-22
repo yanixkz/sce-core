@@ -2,12 +2,13 @@
 
 SCE Core can be inspected from the terminal without a separate UI.
 
-The three quickest demos are:
+The four quickest demos are:
 
 ```bash
 sce run-adaptive-agent-demo-pretty
 sce run-decision-backbone-demo-pretty
 sce run-controlled-evolution-demo-pretty
+sce run-reliability-aware-planning-demo-pretty
 ```
 
 The adaptive demo shows an agent generating candidate plans, scoring them, executing a plan, writing the outcome to memory, re-scoring, and changing its future decision.
@@ -15,6 +16,8 @@ The adaptive demo shows an agent generating candidate plans, scoring them, execu
 The decision backbone demo shows which reasoning nodes carry the decision from evidence to target action, and which branches are dangling.
 
 The controlled evolution demo shows how local prediction errors accumulate into a reliability score for the trajectory.
+
+The reliability-aware planning demo shows reliability affecting the next plan choice.
 
 ---
 
@@ -161,7 +164,47 @@ This is the quickest way to see the control idea: local errors are tracked and s
 
 ---
 
-## 4. ASCII graph
+## 4. Reliability-aware planning demo
+
+Run:
+
+```bash
+sce run-reliability-aware-planning-demo-pretty
+```
+
+The output shows reliability changing the selected plan:
+
+```text
+SCE Reliability-Aware Planning Demo
+===================================
+
+1) Without trajectory reliability
+---------------------------------
+plan                         base    memory   total
+------------------------------------------------------
+supplier_risk_plan           0.60     0.00    0.60
+escalation_plan              0.40     0.00    0.40
+monitor_plan                 0.10     0.00    0.10
+
+Selected plan: supplier_risk_plan
+
+2) With trajectory reliability
+------------------------------
+plan                         base    memory   rel   total
+----------------------------------------------------------
+escalation_plan              0.40     0.00   0.95    1.35
+supplier_risk_plan           0.60     0.00   0.10    0.70
+monitor_plan                 0.10     0.00   0.20    0.30
+
+Selected plan: escalation_plan
+Changed choice: YES
+```
+
+This closes the loop: reliability is no longer only observed after the fact; it can affect the next decision.
+
+---
+
+## 5. ASCII graph
 
 Run:
 
@@ -185,7 +228,7 @@ The ASCII renderer shows:
 
 ---
 
-## 5. JSON graph export
+## 6. JSON graph export
 
 Run:
 
@@ -203,7 +246,7 @@ The JSON export is useful for building a browser UI later.
 
 ---
 
-## 6. Exploration demo
+## 7. Exploration demo
 
 Run:
 
@@ -215,7 +258,7 @@ This demo shows the difference between exploiting the current top-scoring plan a
 
 ---
 
-## 7. Memory-aware planning demo
+## 8. Memory-aware planning demo
 
 Run:
 
@@ -227,7 +270,7 @@ This lower-level demo demonstrates how previous episodes bias future plan select
 
 ---
 
-## 8. API docs
+## 9. API docs
 
 Run:
 
@@ -250,6 +293,7 @@ SCE Core currently supports:
 - adaptive terminal demo
 - decision backbone terminal demo
 - controlled evolution terminal demo
+- reliability-aware planning terminal demo
 - exploration terminal demo
 - ASCII graph visualization
 - JSON graph export
