@@ -26,6 +26,26 @@ Reliability-aware planning lets SCE prefer the plan that is not only promising, 
 
 ---
 
+## Memory integration
+
+Reliability is stored in episodic memory as part of an episode:
+
+```python
+memory.remember(
+    state,
+    goal,
+    plan,
+    success=True,
+    reward=0.0,
+    reason="controlled_evolution_report",
+    reliability=0.95,
+)
+```
+
+`ReliabilityAwarePlanner` can read remembered reliability through `EpisodeMemory.plan_reliability(...)`.
+
+---
+
 ## Planner
 
 `ReliabilityAwarePlanner` wraps `MemoryAwarePlanner` and adds reliability to ranking.
@@ -34,7 +54,14 @@ Reliability-aware planning lets SCE prefer the plan that is not only promising, 
 from sce.core.planning import MemoryAwarePlanner, ReliabilityAwarePlanner, ToolPlanner
 from sce.core.episode_memory import EpisodeMemory
 
-memory_planner = MemoryAwarePlanner(ToolPlanner(), EpisodeMemory())
+memory = EpisodeMemory()
+memory_planner = MemoryAwarePlanner(ToolPlanner(), memory)
+planner = ReliabilityAwarePlanner(memory_planner, reliability_weight=1.0)
+```
+
+You can also inject explicit reliability values for tests or controlled scenarios:
+
+```python
 planner = ReliabilityAwarePlanner(
     memory_planner,
     reliability_by_plan={
@@ -47,6 +74,18 @@ planner = ReliabilityAwarePlanner(
 
 ---
 
+## Execution integration
+
+`ReliabilityAwareLearningPlanExecutor` records both execution outcome and trajectory reliability:
+
+```python
+executor.execute(plan, state, goal, report=evolution_report)
+```
+
+The report reliability is stored inside the remembered episode.
+
+---
+
 ## Demo
 
 Run:
@@ -55,7 +94,7 @@ Run:
 sce run-reliability-aware-planning-demo-pretty
 ```
 
-The demo shows the planner selecting one plan without reliability and a different plan when trajectory reliability is included.
+The demo shows the planner selecting one plan without reliability and a different plan when remembered trajectory reliability is included.
 
 ---
 
@@ -72,7 +111,7 @@ Reliability-aware planning uses that reliability during future plan scoring.
 This closes the loop:
 
 ```text
-execute → observe error → compute reliability → affect next plan
+execute → observe error → compute reliability → remember reliability → affect next plan
 ```
 
 ---
@@ -81,8 +120,7 @@ execute → observe error → compute reliability → affect next plan
 
 Planned extensions:
 
-- automatic reliability updates from executed plans
-- reliability stored inside episodic memory
 - reliability decay over time
 - reliability by state/goal/context, not only by plan name
 - reliability-aware exploration triggers
+- reliability-aware memory pruning
