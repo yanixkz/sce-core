@@ -2,7 +2,7 @@
 
 ![Tests](https://github.com/yanixkz/sce-core/actions/workflows/tests.yml/badge.svg)
 
-**State–Constraint–Evolution Core** is an experimental cognitive architecture for building decision-making AI systems.
+**State–Constraint–Evolution Core** is an experimental cognitive architecture for building explainable, adaptive decision-making AI systems.
 
 ```text
 Input / Voice / API
@@ -12,6 +12,8 @@ LLM Intent
 Planning → Validation → Scoring → Execution
 ↓
 Learning → Memory → Abstraction
+↓
+Decision Backbone / Graph Observability
 ```
 
 ---
@@ -22,10 +24,13 @@ SCE Core can be inspected from the terminal:
 
 ```bash
 sce run-adaptive-agent-demo-pretty
+sce run-decision-backbone-demo-pretty
 sce visualize-graph
 ```
 
 The adaptive demo shows an agent changing its plan after episodic memory shifts the decision score.
+
+The decision backbone demo shows which reasoning nodes actually carry a decision and which branches are dangling.
 
 More visual/demo commands are documented in [`docs/VISUAL_DEMO.md`](docs/VISUAL_DEMO.md).
 
@@ -45,6 +50,8 @@ SCE Core is a **self-improving decision system** where:
 - outcomes update learning weights
 - experiences are stored as episodes
 - memory biases future planning decisions
+- reasoning graphs are reduced to decision-carrying backbones
+- dangling branches can be exposed for audit and pruning
 - rules are extracted from repeated successful episodes
 
 ---
@@ -72,7 +79,9 @@ Memory
 ↓
 Abstraction
 ↓
-Next decision is improved
+Decision Backbone
+↓
+Next decision is improved and explainable
 ```
 
 ---
@@ -90,6 +99,7 @@ Next decision is improved
 - **Persistent memory** — EpisodeRepository, InMemoryEpisodeRepository, PostgresEpisodeRepository
 - **Memory-aware planning** — remembered outcomes bias future plan selection
 - **Exploration-aware selection** — optional epsilon-style exploration of non-top candidate plans
+- **Decision backbone** — graph extraction of decision-carrying nodes vs dangling reasoning branches
 - **Abstraction** — rule extraction from experience
 - **Graph observability** — JSON graph export and ASCII visualization
 - **Voice OS bridge** — text/voice intent to cognitive agent
@@ -171,6 +181,10 @@ sce run-learning-planning-demo
 sce run-memory-aware-planning-demo
 sce run-adaptive-agent-demo
 sce run-adaptive-agent-demo-pretty
+sce run-exploration-demo
+sce run-exploration-demo-pretty
+sce run-decision-backbone-demo
+sce run-decision-backbone-demo-pretty
 sce run-multi-agent-demo
 sce run-tools-demo
 sce run-planning-demo
@@ -210,6 +224,34 @@ It prints:
 - why the decision changed
 
 This is the quickest way to see SCE Core behaving as an adaptive decision system.
+
+---
+
+## Decision backbone demo
+
+Run:
+
+```bash
+sce run-decision-backbone-demo-pretty
+```
+
+The demo shows a supplier-risk reasoning graph and separates:
+
+- nodes that carry the decision from evidence to target action
+- dangling branches that are connected but do not influence the target decision
+
+Conceptually:
+
+```text
+forward  = nodes reachable from evidence
+backward = nodes that can reach the decision target
+backbone = forward ∩ backward
+dangling = forward - backbone
+```
+
+This adds structural explainability on top of scores and generated explanations.
+
+More details: [`docs/DECISION_BACKBONE.md`](docs/DECISION_BACKBONE.md).
 
 ---
 
@@ -341,6 +383,8 @@ sce visualize-graph --out graph.txt
 
 ## Current gaps / next work
 
+- Constraint-aware decision backbone extraction
+- Memory-aware decision backbone extraction
 - Rule persistence
 - Replay / audit tooling
 - Advanced abstraction / causal rules
@@ -351,7 +395,7 @@ sce visualize-graph --out graph.txt
 
 ## Status
 
-Prototype of a cognitive AI system with self-improving behavior, graph observability, exploration-aware memory planning, and pluggable persistent episodic memory.
+Prototype of a cognitive AI system with self-improving behavior, graph observability, exploration-aware memory planning, decision backbone extraction, and pluggable persistent episodic memory.
 
 ---
 
