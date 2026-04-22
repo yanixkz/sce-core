@@ -281,6 +281,8 @@ predicted step value → actual observed value → step error → cumulative rel
 
 This adds a practical control layer: SCE can reason not only about which decision was selected, but also how reliable the stepwise evolution was.
 
+More details: [`docs/CONTROLLED_EVOLUTION.md`](docs/CONTROLLED_EVOLUTION.md).
+
 ---
 
 ## Memory-aware planning demo
