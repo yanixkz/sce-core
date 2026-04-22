@@ -49,6 +49,14 @@ def _print_json(payload: dict) -> None:
     print(json.dumps(payload, indent=2, ensure_ascii=False))
 
 
+def run_demo(name: str) -> dict:
+    return DEMO_REGISTRY[name]().runner()
+
+
+def format_demo(name: str, result: dict) -> str:
+    return DEMO_REGISTRY[name]().formatter(result)
+
+
 def render_ascii_graph(graph: dict) -> str:
     """Compatibility wrapper kept for tests and monkeypatching."""
     from sce.visualization.graph_ascii import render_ascii_graph as _render_ascii_graph
@@ -60,9 +68,12 @@ def _format_state_graph(graph: dict) -> str:
     return "\n".join(["State Graph", "===========", "", render_ascii_graph(graph)])
 
 
-def _run_named_demo(name: str) -> None:
-    spec = DEMO_REGISTRY[name]()
-    print(spec.formatter(spec.runner()))
+def _run_named_demo(name: str, as_json: bool = False) -> None:
+    result = run_demo(name)
+    if as_json:
+        _print_json(result)
+    else:
+        print(format_demo(name, result))
 
 
 def _list_demos() -> None:
@@ -89,6 +100,7 @@ def main() -> None:
     sub = parser.add_subparsers(dest="command", required=True)
     demo_parser = sub.add_parser("demo")
     demo_parser.add_argument("name", nargs="?", choices=("list", *DEMO_CHOICES), default=DEFAULT_DEMO)
+    demo_parser.add_argument("--json", action="store_true", help="Print raw demo result as JSON")
     sub.add_parser("run-demo")
     sub.add_parser("run-supplier-risk-demo")
     sub.add_parser("run-supplier-risk-demo-pretty")
@@ -132,15 +144,13 @@ def main() -> None:
         if args.name == "list":
             _list_demos()
         else:
-            _run_named_demo(args.name)
+            _run_named_demo(args.name, as_json=args.json)
     elif args.command == "run-demo":
-        from sce.scenarios.supplier_reliability import run_demo
+        from sce.scenarios.supplier_reliability import run_demo as run_supplier_reliability_demo
 
-        _print_json(run_demo())
+        _print_json(run_supplier_reliability_demo())
     elif args.command == "run-supplier-risk-demo":
-        from sce.scenarios.supplier_risk_demo import run_supplier_risk_demo
-
-        _print_json(run_supplier_risk_demo())
+        _print_json(run_demo("supplier-risk"))
     elif args.command == "run-supplier-risk-demo-pretty":
         _run_named_demo("supplier-risk")
     elif args.command == "run-conflict-demo":
@@ -227,9 +237,7 @@ def main() -> None:
 
         print(format_reliability_aware_planning_demo(run_reliability_aware_planning_demo()))
     elif args.command == "run-hypothesis-research-demo":
-        from sce.scenarios.hypothesis_research_demo import run_hypothesis_research_demo
-
-        _print_json(run_hypothesis_research_demo())
+        _print_json(run_demo("hypothesis"))
     elif args.command == "run-hypothesis-research-demo-pretty":
         _run_named_demo("hypothesis")
     elif args.command == "run-multi-agent-demo":
@@ -270,9 +278,9 @@ def main() -> None:
         else:
             args.out.write_text(ascii_graph, encoding="utf-8")
     elif args.command == "explain-demo":
-        from sce.scenarios.supplier_reliability import run_demo
+        from sce.scenarios.supplier_reliability import run_demo as run_supplier_reliability_demo
 
-        _print_json(run_demo()["explanation"])
+        _print_json(run_supplier_reliability_demo()["explanation"])
     elif args.command == "print-migration":
         from sce.storage.postgres import POSTGRES_MIGRATION_SQL
 
