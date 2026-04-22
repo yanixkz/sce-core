@@ -308,6 +308,8 @@ base score + memory bias + reliability bonus → selected plan
 
 This closes the loop between controlled evolution and planning: reliability is no longer only observed after the fact; it can affect the next decision.
 
+More details: [`docs/RELIABILITY_AWARE_PLANNING.md`](docs/RELIABILITY_AWARE_PLANNING.md).
+
 ---
 
 ## Memory-aware planning demo
