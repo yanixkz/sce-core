@@ -49,6 +49,7 @@ def _export_supplier_graph() -> dict:
 def main() -> None:
     parser = argparse.ArgumentParser(prog="sce")
     sub = parser.add_subparsers(dest="command", required=True)
+    sub.add_parser("demo")
     sub.add_parser("run-demo")
     sub.add_parser("run-supplier-risk-demo")
     sub.add_parser("run-supplier-risk-demo-pretty")
@@ -88,7 +89,9 @@ def main() -> None:
     sub.add_parser("print-migration")
     args = parser.parse_args()
 
-    if args.command == "run-demo":
+    if args.command == "demo":
+        print(format_supplier_risk_demo(run_supplier_risk_demo()))
+    elif args.command == "run-demo":
         print(json.dumps(run_demo(), indent=2, ensure_ascii=False))
     elif args.command == "run-supplier-risk-demo":
         print(json.dumps(run_supplier_risk_demo(), indent=2, ensure_ascii=False))
