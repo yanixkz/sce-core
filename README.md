@@ -40,6 +40,7 @@ SCE Core is a **self-improving decision system** where:
 - plans are generated
 - plans are validated
 - plans are scored and selected
+- planners can explore alternatives instead of only exploiting the current top score
 - actions are executed through tools
 - outcomes update learning weights
 - experiences are stored as episodes
@@ -59,7 +60,7 @@ Validator
 ↓
 Scorer (learning + memory + rules)
 ↓
-Selector
+Selector (exploit / explore)
 ↓
 Executor
 ↓
@@ -88,6 +89,7 @@ Next decision is improved
 - **Memory** — episodic experience storage with pluggable repositories
 - **Persistent memory** — EpisodeRepository, InMemoryEpisodeRepository, PostgresEpisodeRepository
 - **Memory-aware planning** — remembered outcomes bias future plan selection
+- **Exploration-aware selection** — optional epsilon-style exploration of non-top candidate plans
 - **Abstraction** — rule extraction from experience
 - **Graph observability** — JSON graph export and ASCII visualization
 - **Voice OS bridge** — text/voice intent to cognitive agent
@@ -236,6 +238,26 @@ Example shape:
 
 ---
 
+## Exploration-aware planning
+
+`MemoryAwarePlanner` supports optional exploration:
+
+```python
+import random
+from sce.core.planning import MemoryAwarePlanner, ToolPlanner
+
+planner = MemoryAwarePlanner(
+    ToolPlanner(),
+    memory,
+    exploration_rate=0.1,
+    rng=random.Random(42),
+)
+```
+
+When exploration is enabled, the planner can occasionally try a non-top plan. This helps the agent discover useful alternatives instead of always exploiting the current highest-scoring plan.
+
+---
+
 ## Stability formula
 
 ```text
@@ -329,7 +351,7 @@ sce visualize-graph --out graph.txt
 
 ## Status
 
-Prototype of a cognitive AI system with self-improving behavior, graph observability, memory-aware planning, and pluggable persistent episodic memory.
+Prototype of a cognitive AI system with self-improving behavior, graph observability, exploration-aware memory planning, and pluggable persistent episodic memory.
 
 ---
 
