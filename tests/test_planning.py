@@ -1,5 +1,9 @@
 from __future__ import annotations
 
+import random
+
+import pytest
+
 from sce.core.actions import Action
 from sce.core.episode_memory import EpisodeMemory
 from sce.core.planning import MemoryAwarePlanner, Plan, PlanExecutor, ToolPlanner
@@ -100,6 +104,28 @@ def test_memory_aware_planner_selects_best_memory_weighted_plan():
     selected = planner.plan(state, goal, candidates=[supplier_plan, escalation_plan])
 
     assert selected.name == "escalation_plan"
+
+
+def test_memory_aware_planner_can_explore_non_top_plan():
+    memory = EpisodeMemory()
+    planner = MemoryAwarePlanner(
+        ToolPlanner(),
+        memory,
+        exploration_rate=1.0,
+        rng=random.Random(0),
+    )
+    state = State("planning_context", {"entity": "supplier A", "risk": "high"})
+    goal = "assess supplier risk"
+    candidates = ToolPlanner().candidates(state, goal)
+
+    selected = planner.plan(state, goal, candidates=candidates)
+
+    assert selected.name != "supplier_risk_plan"
+
+
+def test_memory_aware_planner_rejects_invalid_exploration_rate():
+    with pytest.raises(ValueError, match="exploration_rate"):
+        MemoryAwarePlanner(ToolPlanner(), EpisodeMemory(), exploration_rate=1.5)
 
 
 def test_plan_executor_runs_tool_plan_and_returns_tool_result_state():
