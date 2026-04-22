@@ -36,7 +36,7 @@ The decision backbone demo shows which reasoning nodes actually carry a decision
 
 The controlled evolution demo shows how local prediction errors accumulate into trajectory-level reliability.
 
-The reliability-aware planning demo shows reliability changing the selected plan.
+The reliability-aware planning demo shows remembered reliability changing the selected plan.
 
 More visual/demo commands are documented in [`docs/VISUAL_DEMO.md`](docs/VISUAL_DEMO.md).
 
@@ -56,6 +56,7 @@ SCE Core is a **self-improving decision system** where:
 - actions are executed through tools
 - outcomes update learning weights
 - experiences are stored as episodes
+- reliability is stored in episodic memory
 - memory biases future planning decisions
 - reasoning graphs are reduced to decision-carrying backbones
 - dangling branches can be exposed for audit and pruning
@@ -110,7 +111,7 @@ Next decision is improved, explainable, and reliability-aware
 - **Persistent memory** — EpisodeRepository, InMemoryEpisodeRepository, PostgresEpisodeRepository
 - **Memory-aware planning** — remembered outcomes bias future plan selection
 - **Exploration-aware selection** — optional epsilon-style exploration of non-top candidate plans
-- **Reliability-aware planning** — trajectory reliability can rerank candidate plans
+- **Reliability-aware planning** — remembered trajectory reliability can rerank candidate plans
 - **Decision backbone** — graph extraction of decision-carrying nodes vs dangling reasoning branches
 - **Controlled evolution** — local prediction error tracking and trajectory reliability reports
 - **Abstraction** — rule extraction from experience
@@ -300,13 +301,13 @@ Run:
 sce run-reliability-aware-planning-demo-pretty
 ```
 
-The demo shows trajectory reliability influencing plan selection:
+The demo shows remembered trajectory reliability influencing plan selection:
 
 ```text
-base score + memory bias + reliability bonus → selected plan
+base score + memory bias + remembered reliability bonus → selected plan
 ```
 
-This closes the loop between controlled evolution and planning: reliability is no longer only observed after the fact; it can affect the next decision.
+This closes the loop between controlled evolution, memory, and planning: reliability is no longer only observed after the fact; it is remembered and can affect the next decision.
 
 More details: [`docs/RELIABILITY_AWARE_PLANNING.md`](docs/RELIABILITY_AWARE_PLANNING.md).
 
@@ -412,7 +413,7 @@ repo = InMemoryEpisodeRepository()
 memory = EpisodeMemory(repository=repo)
 ```
 
-PostgreSQL support includes an `episodes` migration table and JSONB storage for episode payloads. Print the migration SQL with:
+PostgreSQL support includes an `episodes` migration table and JSONB storage for episode payloads, including optional reliability values. Print the migration SQL with:
 
 ```bash
 sce print-migration
@@ -442,7 +443,8 @@ sce visualize-graph --out graph.txt
 
 - Constraint-aware decision backbone extraction
 - Memory-aware decision backbone extraction
-- Reliability-aware memory updates
+- Reliability decay over time
+- Reliability-aware exploration triggers
 - Rule persistence
 - Replay / audit tooling
 - Advanced abstraction / causal rules
