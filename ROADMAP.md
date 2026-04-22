@@ -6,7 +6,7 @@
 Decide. Explain. Improve.
 ```
 
-SCE Core is a decision engine for AI agents.
+SCE Core is a decision engine for AI agents and a research platform for explainable adaptive decision systems.
 
 It helps an agent:
 
@@ -15,7 +15,11 @@ It helps an agent:
 3. remember outcomes and reliability,
 4. improve the next choice.
 
-The roadmap is now focused on making that loop simple, visible, and useful in one concrete domain first: **supplier risk**.
+The supplier-risk scenario is the first simple demo, not the final purpose of the project.
+
+The broader aim is to study and build decision systems that are explainable, memory-aware, reliability-aware, and structurally inspectable.
+
+Research vision: [`docs/RESEARCH_VISION.md`](docs/RESEARCH_VISION.md)
 
 ---
 
@@ -48,6 +52,8 @@ This demo shows the whole SCE loop:
 ```text
 supplier risk → plan choice → decision backbone → reliability → memory → improved next choice
 ```
+
+The demo is intentionally concrete so the research idea is easy to see.
 
 ---
 
@@ -103,50 +109,49 @@ supplier risk → plan choice → decision backbone → reliability → memory �
 - README simplified around Decide / Explain / Improve
 - Visual guide simplified around the main demo
 - Advanced demos moved below the main story
+- Research vision added
 
 ---
 
 ## Next Priorities
 
-### v0.7 — Supplier Risk Product Demo
-Goal: make the current demo feel like a real product scenario.
+### v0.7 — Better Research Demo, Not Just Supplier Risk
+Goal: keep one simple story, but make it clear that SCE is a general decision research engine.
 
-- Add richer supplier inputs:
-  - delivery delays
-  - invoice risk
-  - missing certificates
-  - contract exceptions
-  - dependency risk
-- Add domain constraints for supplier risk
-- Add clearer business decision actions:
-  - monitor
-  - request documents
-  - escalate
-  - block / pause supplier
+- Keep supplier risk as the concrete entry point
+- Add a short “generalized mapping” section:
+  - supplier facts → evidence
+  - supplier risk → state
+  - escalation → target decision
+  - remembered reliability → adaptive memory
+- Add a second tiny research-flavored scenario if needed:
+  - hypothesis evaluation
+  - literature evidence graph
+  - scientific workflow decision
 - Add before/after explanation:
-  - what a plain LLM would say
-  - what SCE explains structurally
-- Keep the demo one command and one story
+  - plain LLM answer
+  - SCE structured decision path
+- Keep the main demo one command and one story
 
 ### v0.8 — Minimal Web UI
 Goal: make the idea visible without reading terminal output.
 
 - Simple browser page
-- Left: supplier facts
+- Left: evidence / facts
 - Middle: decision backbone
 - Right: selected plan and reliability
 - Bottom: remembered episodes
 - Use existing graph export and demo outputs where possible
 
-### v0.9 — Product API
+### v0.9 — Research/Product API
 Goal: expose the useful loop through API endpoints.
 
-- Endpoint for supplier risk decision
+- Endpoint for a generic decision request
+- Endpoint for supplier risk demo request
 - Endpoint for decision backbone
 - Endpoint for reliability report
 - Endpoint for memory episodes
-- Basic API stabilization
-- Clear JSON response shape for product demos
+- Clear JSON response shape for product and research demos
 
 ### v1.0 — Hardening
 Goal: make the project robust enough for external testers.
@@ -162,7 +167,7 @@ Goal: make the project robust enough for external testers.
 
 ## Research Backlog
 
-These are valuable, but should not distract from the simple product path.
+These are valuable and should guide the long-term direction.
 
 - Critical decision nodes and edges
 - Constraint-aware decision backbone extraction
@@ -175,21 +180,26 @@ These are valuable, but should not distract from the simple product path.
 - Topological reasoning over decision graphs
 - Multi-agent coordination
 - Voice-native interfaces
+- Scientific hypothesis evaluation demos
+- Research literature graph demos
+- General constrained state evolution benchmarks
 
 ---
 
 ## Status
 
-SCE Core has moved from a broad research prototype to a focused early product/research system.
+SCE Core has moved from a broad research prototype to a focused early research/product system.
 
 Current focus:
 
 ```text
-Supplier Risk Agent
+One simple demo
 ↓
 Decide. Explain. Improve.
 ↓
+General research engine for explainable adaptive decisions
+↓
 Web UI
 ↓
-Product API
+Research/Product API
 ```
