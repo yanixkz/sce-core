@@ -17,6 +17,12 @@ SCE helps an agent choose a plan, explain which facts carried the decision, reme
 Run the main story:
 
 ```bash
+sce demo
+```
+
+Explicit alias:
+
+```bash
 sce run-supplier-risk-demo-pretty
 ```
 
@@ -77,7 +83,7 @@ Improve next choice
 ## Main demo: Supplier Risk Agent
 
 ```bash
-sce run-supplier-risk-demo-pretty
+sce demo
 ```
 
 The demo shows:
@@ -246,6 +252,7 @@ curl -X POST http://127.0.0.1:8000/ask \
 ## Advanced demos
 
 ```bash
+sce run-hypothesis-research-demo-pretty
 sce run-adaptive-agent-demo-pretty
 sce run-decision-backbone-demo-pretty
 sce run-controlled-evolution-demo-pretty
@@ -262,6 +269,7 @@ All visual/demo commands are documented in [`docs/VISUAL_DEMO.md`](docs/VISUAL_D
 
 ## Current gaps / next work
 
+- CLI simplification: `sce demo supplier-risk`, `sce demo hypothesis`
 - Critical decision nodes and edges
 - Constraint-aware decision backbone extraction
 - Reliability decay over time
