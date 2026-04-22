@@ -5,6 +5,12 @@ SCE Core can be inspected from the terminal without a separate UI.
 The main demo is:
 
 ```bash
+sce demo
+```
+
+Explicit alias:
+
+```bash
 sce run-supplier-risk-demo-pretty
 ```
 
@@ -21,7 +27,7 @@ Decide. Explain. Improve.
 Run:
 
 ```bash
-sce run-supplier-risk-demo-pretty
+sce demo
 ```
 
 The demo shows:
@@ -87,6 +93,14 @@ This is the shortest way to understand the project.
 ## 2. Focused demos
 
 These demos isolate one mechanism at a time.
+
+### Hypothesis research
+
+```bash
+sce run-hypothesis-research-demo-pretty
+```
+
+Shows SCE as a research tool for evidence, hypothesis, backbone, reliability, and belief updates.
 
 ### Adaptive agent
 
