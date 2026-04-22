@@ -6,12 +6,13 @@ from sce.core.types import State
 
 
 def run_reliability_aware_planning_demo() -> dict:
-    """Show trajectory reliability changing plan ranking."""
+    """Show remembered trajectory reliability changing plan ranking."""
 
     state = State("supplier_context", {"entity": "supplier A", "risk": "high"})
     goal = "assess supplier risk"
     base_planner = ToolPlanner()
-    memory_planner = MemoryAwarePlanner(base_planner, EpisodeMemory())
+    memory = EpisodeMemory()
+    memory_planner = MemoryAwarePlanner(base_planner, memory)
     candidates = base_planner.candidates(state, goal)
 
     memory_scores = [
@@ -24,13 +25,24 @@ def run_reliability_aware_planning_demo() -> dict:
         for score in memory_planner.score(candidates, state, goal)
     ]
 
-    reliability_planner = ReliabilityAwarePlanner(
-        memory_planner,
-        reliability_by_plan={
+    for plan in candidates:
+        remembered_reliability = {
             "supplier_risk_plan": 0.1,
             "escalation_plan": 0.95,
             "monitor_plan": 0.2,
-        },
+        }[plan.name]
+        memory.remember(
+            state,
+            goal,
+            plan,
+            success=True,
+            reward=0.0,
+            reason="controlled_evolution_report",
+            reliability=remembered_reliability,
+        )
+
+    reliability_planner = ReliabilityAwarePlanner(
+        memory_planner,
         reliability_weight=1.0,
     )
     reliability_scores = [
@@ -51,14 +63,16 @@ def run_reliability_aware_planning_demo() -> dict:
     return {
         "goal": goal,
         "state": state.data,
+        "remembered_reliability_count": len(memory.episodes),
         "selected_without_reliability": selected_without_reliability,
         "selected_with_reliability": selected_with_reliability,
         "changed_choice": selected_without_reliability != selected_with_reliability,
         "memory_scores": memory_scores,
         "reliability_scores": reliability_scores,
         "explanation": (
-            "Reliability-aware planning adds trajectory reliability to base score and memory bias. "
-            "A lower-base plan can become preferable when its past trajectory is more reliable."
+            "Reliability-aware planning reads trajectory reliability from episodic memory and adds it to "
+            "base score and memory bias. A lower-base plan can become preferable when its remembered "
+            "trajectory is more reliable."
         ),
     }
 
@@ -107,8 +121,12 @@ def format_reliability_aware_planning_demo(result: dict) -> str:
             "",
             f"Selected plan: {result['selected_without_reliability']}",
             "",
-            "2) With trajectory reliability",
-            "------------------------------",
+            "2) Remembered reliability",
+            "-------------------------",
+            f"Stored reliability episodes: {result['remembered_reliability_count']}",
+            "",
+            "3) With trajectory reliability from memory",
+            "-----------------------------------------",
             _format_reliability_scores(result["reliability_scores"]),
             "",
             f"Selected plan: {result['selected_with_reliability']}",
