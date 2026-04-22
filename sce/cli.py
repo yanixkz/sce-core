@@ -4,6 +4,8 @@ import argparse
 import json
 from pathlib import Path
 
+DEMO_CHOICES = ("supplier-risk", "hypothesis")
+
 
 def _print_json(payload: dict) -> None:
     print(json.dumps(payload, indent=2, ensure_ascii=False))
@@ -18,6 +20,19 @@ def render_ascii_graph(graph: dict) -> str:
 
 def _format_state_graph(graph: dict) -> str:
     return "\n".join(["State Graph", "===========", "", render_ascii_graph(graph)])
+
+
+def _run_named_demo(name: str) -> None:
+    if name == "supplier-risk":
+        from sce.scenarios.supplier_risk_demo import format_supplier_risk_demo, run_supplier_risk_demo
+
+        print(format_supplier_risk_demo(run_supplier_risk_demo()))
+    elif name == "hypothesis":
+        from sce.scenarios.hypothesis_research_demo import format_hypothesis_research_demo, run_hypothesis_research_demo
+
+        print(format_hypothesis_research_demo(run_hypothesis_research_demo()))
+    else:
+        raise ValueError(f"Unknown demo: {name}")
 
 
 def _export_supplier_graph() -> dict:
@@ -36,7 +51,8 @@ def _export_supplier_graph() -> dict:
 def main() -> None:
     parser = argparse.ArgumentParser(prog="sce")
     sub = parser.add_subparsers(dest="command", required=True)
-    sub.add_parser("demo")
+    demo_parser = sub.add_parser("demo")
+    demo_parser.add_argument("name", nargs="?", choices=DEMO_CHOICES, default="supplier-risk")
     sub.add_parser("run-demo")
     sub.add_parser("run-supplier-risk-demo")
     sub.add_parser("run-supplier-risk-demo-pretty")
@@ -77,9 +93,7 @@ def main() -> None:
     args = parser.parse_args()
 
     if args.command == "demo":
-        from sce.scenarios.supplier_risk_demo import format_supplier_risk_demo, run_supplier_risk_demo
-
-        print(format_supplier_risk_demo(run_supplier_risk_demo()))
+        _run_named_demo(args.name)
     elif args.command == "run-demo":
         from sce.scenarios.supplier_reliability import run_demo
 
@@ -89,9 +103,7 @@ def main() -> None:
 
         _print_json(run_supplier_risk_demo())
     elif args.command == "run-supplier-risk-demo-pretty":
-        from sce.scenarios.supplier_risk_demo import format_supplier_risk_demo, run_supplier_risk_demo
-
-        print(format_supplier_risk_demo(run_supplier_risk_demo()))
+        _run_named_demo("supplier-risk")
     elif args.command == "run-conflict-demo":
         from sce.scenarios.conflicting_memory import run_conflicting_memory_demo
 
@@ -180,9 +192,7 @@ def main() -> None:
 
         _print_json(run_hypothesis_research_demo())
     elif args.command == "run-hypothesis-research-demo-pretty":
-        from sce.scenarios.hypothesis_research_demo import format_hypothesis_research_demo, run_hypothesis_research_demo
-
-        print(format_hypothesis_research_demo(run_hypothesis_research_demo()))
+        _run_named_demo("hypothesis")
     elif args.command == "run-multi-agent-demo":
         from sce.scenarios.multi_agent_demo import run_multi_agent_demo
 
