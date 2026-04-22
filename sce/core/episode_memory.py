@@ -27,6 +27,7 @@ class Episode:
     success: bool
     reward: float
     reason: str = ""
+    reliability: float | None = None
     episode_id: UUID = field(default_factory=uuid4)
     created_at: datetime = field(default_factory=utc_now)
 
@@ -41,6 +42,7 @@ class Episode:
             "success": self.success,
             "reward": self.reward,
             "reason": self.reason,
+            "reliability": self.reliability,
         }
 
     @classmethod
@@ -53,6 +55,7 @@ class Episode:
             success=data["success"],
             reward=data["reward"],
             reason=data.get("reason", ""),
+            reliability=data.get("reliability"),
             episode_id=UUID(data["episode_id"]),
             created_at=datetime.fromisoformat(data["created_at"]),
         )
@@ -73,6 +76,7 @@ class EpisodeMemory:
         success: bool,
         reward: float,
         reason: str = "",
+        reliability: float | None = None,
     ) -> Episode:
         episode = Episode(
             state_snapshot=dict(state.data),
@@ -82,6 +86,7 @@ class EpisodeMemory:
             success=success,
             reward=reward,
             reason=reason,
+            reliability=self._clamp_reliability(reliability) if reliability is not None else None,
         )
         self.episodes.append(episode)
         if self._repository is not None:
@@ -110,6 +115,21 @@ class EpisodeMemory:
                 reward += episode.reward
         return reward / len(related)
 
+    def plan_reliability(self, plan: Plan, state: State, goal: str, default: float = 0.5) -> float:
+        """Return average remembered reliability for a candidate plan."""
+
+        related = self.similar(state, goal, limit=10)
+        plan_actions = {action.name for action in plan.actions}
+        values = [
+            episode.reliability
+            for episode in related
+            if episode.reliability is not None
+            and (episode.plan_name == plan.name or plan_actions.intersection(episode.action_names))
+        ]
+        if not values:
+            return self._clamp_reliability(default)
+        return self._clamp_reliability(sum(values) / len(values))
+
     def _similarity(self, episode: Episode, state: State, goal: str) -> float:
         score = 0.0
         if episode.goal.lower() == goal.lower():
@@ -121,3 +141,6 @@ class EpisodeMemory:
         score += len(overlap) * 0.5
 
         return score
+
+    def _clamp_reliability(self, value: float) -> float:
+        return max(0.0, min(1.0, float(value)))
