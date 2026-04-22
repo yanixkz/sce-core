@@ -1,8 +1,8 @@
-# SCE Core Roadmap (Updated)
+# SCE Core Roadmap
 
-## Current State (v0.3-alpha)
+## Current State (v0.4-alpha)
 
-SCE Core has evolved into a cognitive AI system with:
+SCE Core has evolved into an explainable, adaptive, and controlled decision system with:
 
 - CognitiveAgent (closed decision loop)
 - Learning + Memory + Abstraction
@@ -14,6 +14,12 @@ SCE Core has evolved into a cognitive AI system with:
 - Constraint DSL (safe text constraints compiled to predicates)
 - Graph export (JSON) and ASCII visualization
 - Persistent episodic memory (in-memory + PostgreSQL)
+- Memory-aware planning
+- Exploration-aware plan selection
+- Adaptive agent terminal demo
+- Decision backbone extraction
+- Controlled evolution error tracking
+- PostgreSQL-backed CI tests
 
 ---
 
@@ -46,31 +52,53 @@ SCE Core has evolved into a cognitive AI system with:
 - PostgresEpisodeRepository
 - PostgreSQL migration (episodes table)
 - JSONB storage (psycopg Jsonb)
+- PostgreSQL service container in CI
+
+### v0.4 — Adaptive Decision Observability
+- Adaptive agent demo
+- Pretty terminal output for adaptive planning
+- Exploration-aware planner
+- Exploration demo
+- Decision backbone extractor
+- Decision backbone demo
+- Controlled evolution error tracker
+- Controlled evolution demo
 
 ---
 
 ## Next Priorities
 
-### v0.4 — Persistent Memory Hardening
-- PostgreSQL integration tests in CI
-- Connection lifecycle improvements
-- Batch inserts / performance tuning
-- Error handling and retries
+### v0.5 — Reliability-Aware Planning
+- Integrate controlled evolution reports into plan scoring
+- Use accumulated step error to adjust future plan bias
+- Add reliability-aware memory updates
+- Add trajectory replay and audit output
 
-### v0.5 — Advanced Abstraction
-- Causal pattern extraction
-- Condition-based rules
-- Rule scoring
+### v0.6 — Criticality + Backbone Hardening
+- Critical backbone node detection
+- Critical edge / bridge detection
+- Alternative path detection
+- Constraint-aware decision backbone extraction
+- Memory-aware decision backbone extraction
 
-### v0.6 — Production API Hardening
+### v0.7 — Supplier Risk Product Demo
+- Domain-specific supplier risk scenario
+- Evidence → constraints → risk state → decision backbone → action
+- Contract/risk constraints
+- Pretty output suitable for business demos
+
+### v0.8 — Production API Hardening
 - API stabilization
 - Auth
 - Rate limiting
 - Deployment configs
+- API endpoints for backbone and controlled evolution reports
 
-### v0.7 — Richer Visual UI (Later)
-- Rich graph UI beyond ASCII
-- Interactive exploration
+### v0.9 — Richer Visual UI
+- Browser graph UI beyond ASCII
+- Interactive decision backbone visualization
+- Reliability timeline visualization
+- Memory episode browser
 
 ---
 
@@ -80,9 +108,11 @@ SCE Core has evolved into a cognitive AI system with:
 - Real-time systems
 - Voice-native interfaces
 - Multi-agent coordination
+- Topological reasoning over decision graphs
+- Reliability-aware cognitive systems
 
 ---
 
 ## Status
 
-Transitioned from research prototype → cognitive architecture → early product system with persistent memory.
+Transitioned from research prototype → cognitive architecture → early product system with persistent memory, decision backbone extraction, exploration-aware planning, and controlled evolution tracking.
