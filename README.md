@@ -2,122 +2,195 @@
 
 ![Tests](https://github.com/yanixkz/sce-core/actions/workflows/tests.yml/badge.svg)
 
-**State–Constraint–Evolution Core** is an experimental cognitive architecture for building explainable, adaptive, and controlled decision-making AI systems.
+**State–Constraint–Evolution Core** is a decision engine for AI agents.
 
 ```text
-Input / Voice / API
-↓
-LLM Intent
-↓
-Planning → Validation → Scoring → Execution
-↓
-Learning → Memory → Abstraction
-↓
-Decision Backbone → Controlled Evolution → Graph Observability
+Decide. Explain. Improve.
 ```
+
+SCE helps an agent choose a plan, explain which facts carried the decision, remember what happened, and improve the next choice.
 
 ---
 
-## Quick visual demo
+## Quick demo
 
-SCE Core can be inspected from the terminal:
+Run the main story:
 
 ```bash
-sce run-adaptive-agent-demo-pretty
-sce run-decision-backbone-demo-pretty
-sce run-controlled-evolution-demo-pretty
-sce run-reliability-aware-planning-demo-pretty
-sce visualize-graph
+sce run-supplier-risk-demo-pretty
 ```
 
-The adaptive demo shows an agent changing its plan after episodic memory shifts the decision score.
+It shows one complete loop:
 
-The decision backbone demo shows which reasoning nodes actually carry a decision and which branches are dangling.
+```text
+supplier risk → plan choice → decision backbone → reliability → memory → improved next choice
+```
 
-The controlled evolution demo shows how local prediction errors accumulate into trajectory-level reliability.
+In plain terms:
 
-The reliability-aware planning demo shows remembered reliability changing the selected plan.
-
-More visual/demo commands are documented in [`docs/VISUAL_DEMO.md`](docs/VISUAL_DEMO.md).
-
----
-
-## What is SCE Core
-
-SCE Core is a **self-improving decision system** where:
-
-- states evolve
-- constraints define valid actions
-- plans are generated
-- plans are validated
-- plans are scored and selected
-- planners can explore alternatives instead of only exploiting the current top score
-- trajectory reliability can influence plan selection
-- actions are executed through tools
-- outcomes update learning weights
-- experiences are stored as episodes
-- reliability is stored in episodic memory
-- memory biases future planning decisions
-- reasoning graphs are reduced to decision-carrying backbones
-- dangling branches can be exposed for audit and pruning
-- local prediction errors are tracked across decision trajectories
-- trajectory reliability can be estimated from accumulated step error
-- rules are extracted from repeated successful episodes
+- **Decide** — choose the best plan
+- **Explain** — show which facts actually led to the decision
+- **Improve** — remember reliability and use it in the next decision
 
 ---
 
-## Full Cognitive Loop
+## What problem does SCE solve?
+
+Many AI agents can produce an answer, but they often cannot clearly show:
+
+```text
+why this plan?
+which facts mattered?
+what was ignored?
+was the trajectory reliable?
+will the next decision improve?
+```
+
+SCE Core adds that missing decision layer.
+
+---
+
+## Core loop
 
 ```text
 State
 ↓
-Planner (LLM / rules)
+Candidate plans
 ↓
-Validator
+Score with memory + reliability
 ↓
-Scorer (learning + memory + reliability)
+Select plan
 ↓
-Selector (exploit / explore)
+Explain decision path
 ↓
-Executor
+Execute / observe outcome
 ↓
-Outcome
+Track prediction error
 ↓
-Learning
+Remember reliability
 ↓
-Memory
-↓
-Abstraction
-↓
-Decision Backbone
-↓
-Controlled Evolution
-↓
-Next decision is improved, explainable, and reliability-aware
+Improve next choice
 ```
 
 ---
 
-## Core Components
+## Main demo: Supplier Risk Agent
 
-- **Core state model** — State, Transition, Constraint, Link, Event, Attractor, Rule
-- **Scoring** — stability formula and state scoring
-- **Planning** — deterministic and LLM-based planners
-- **Validation** — plan and constraint checks
-- **Constraint DSL** — compile safe textual constraints into predicates
-- **Execution** — action and tool layers
-- **Learning** — adaptive weight updates
-- **Memory** — episodic experience storage with pluggable repositories
-- **Persistent memory** — EpisodeRepository, InMemoryEpisodeRepository, PostgresEpisodeRepository
-- **Memory-aware planning** — remembered outcomes bias future plan selection
-- **Exploration-aware selection** — optional epsilon-style exploration of non-top candidate plans
-- **Reliability-aware planning** — remembered trajectory reliability can rerank candidate plans
-- **Decision backbone** — graph extraction of decision-carrying nodes vs dangling reasoning branches
-- **Controlled evolution** — local prediction error tracking and trajectory reliability reports
-- **Abstraction** — rule extraction from experience
-- **Graph observability** — JSON graph export and ASCII visualization
-- **Voice OS bridge** — text/voice intent to cognitive agent
-- **FastAPI API** — `/health` and `/ask`
+```bash
+sce run-supplier-risk-demo-pretty
+```
+
+The demo shows:
+
+```text
+1. Decide
+   supplier_risk_plan is selected first by base score
+
+2. Explain
+   late_delivery + invoice_risk + missing_certificate carry the decision
+   marketing_tag and old_positive_history are dangling context
+
+3. Measure reliability
+   prediction errors become a reliability score
+
+4. Improve
+   remembered reliability changes the next selected plan
+```
+
+Expected shape:
+
+```text
+SCE Supplier Risk Demo
+======================
+
+Decide. Explain. Improve.
+
+1) Decide
+---------
+plan                         base    memory   total
+------------------------------------------------------
+supplier_risk_plan           0.60     0.00    0.60
+escalation_plan              0.40     0.00    0.40
+monitor_plan                 0.10     0.00    0.10
+
+Initial selected plan: supplier_risk_plan
+
+2) Explain
+----------
+Decision-carrying facts:
+- late_delivery
+- invoice_risk
+- missing_certificate
+- supplier_risk
+- escalation_plan
+
+Dangling context:
+- marketing_tag
+- old_positive_history
+
+3) Measure reliability
+----------------------
+cumulative_error: 0.27
+reliability:      0.79
+trend:            improving
+
+4) Improve
+----------
+Final selected plan: escalation_plan
+Changed choice: YES
+```
+
+---
+
+## Key ideas
+
+### Decision backbone
+
+SCE shows which facts actually carry the decision.
+
+```text
+forward  = nodes reachable from evidence
+backward = nodes that can reach the target decision
+backbone = forward ∩ backward
+dangling = forward - backbone
+```
+
+Details: [`docs/DECISION_BACKBONE.md`](docs/DECISION_BACKBONE.md)
+
+### Reliability tracking
+
+SCE tracks local prediction error:
+
+```text
+predicted value → actual value → step error → reliability
+```
+
+Details: [`docs/CONTROLLED_EVOLUTION.md`](docs/CONTROLLED_EVOLUTION.md)
+
+### Reliability-aware planning
+
+SCE can use remembered reliability in future scoring:
+
+```text
+base score + memory bias + remembered reliability bonus → selected plan
+```
+
+Details: [`docs/RELIABILITY_AWARE_PLANNING.md`](docs/RELIABILITY_AWARE_PLANNING.md)
+
+---
+
+## Core components
+
+- **Planning** — generate candidate plans
+- **Scoring** — rank plans with base score, memory, and reliability
+- **Memory** — store outcomes and reliability as episodes
+- **Decision backbone** — identify decision-carrying facts vs dangling context
+- **Reliability tracking** — convert prediction error into trajectory reliability
+- **Exploration** — optionally try non-top plans
+- **Constraint DSL** — safe human-readable constraints without `eval`/`exec`
+- **Graph observability** — JSON export and ASCII visualization
+- **Persistence** — in-memory and PostgreSQL episodic memory
+- **API** — FastAPI `/health` and `/ask`
 - **LLM providers** — OpenAI and Anthropic JSON clients
 
 ---
@@ -168,294 +241,39 @@ curl -X POST http://127.0.0.1:8000/ask \
   -d '{"text":"check supplier risk"}'
 ```
 
-With real LLM intent parsing:
-
-```bash
-export OPENAI_API_KEY=...
-curl -X POST http://127.0.0.1:8000/ask \
-  -H "Content-Type: application/json" \
-  -d '{"text":"check supplier risk","use_llm_intent":true,"provider":"openai"}'
-```
-
 ---
 
-## CLI demos
+## Advanced demos
 
 ```bash
-sce run-demo
-sce run-conflict-demo
-sce run-llm-demo
-sce run-llm-planning-demo
-sce run-contract-demo
-sce run-agent-demo
-sce run-goal-agent-demo
-sce run-action-demo
-sce run-learning-demo
-sce run-learning-planning-demo
-sce run-memory-aware-planning-demo
-sce run-adaptive-agent-demo
 sce run-adaptive-agent-demo-pretty
-sce run-exploration-demo
+sce run-decision-backbone-demo-pretty
+sce run-controlled-evolution-demo-pretty
+sce run-reliability-aware-planning-demo-pretty
 sce run-exploration-demo-pretty
-sce run-decision-backbone-demo
-sce run-decision-backbone-demo-pretty
-sce run-controlled-evolution-demo
-sce run-controlled-evolution-demo-pretty
-sce run-reliability-aware-planning-demo
-sce run-reliability-aware-planning-demo-pretty
-sce run-multi-agent-demo
-sce run-tools-demo
-sce run-planning-demo
-sce run-plan-scoring-demo
-sce run-cognitive-agent-demo
-sce run-llm-voice-demo
-sce explain-demo
-sce print-migration
-sce export-graph
-sce export-graph --out graph.json
-sce visualize-graph
-sce visualize-graph --out graph.txt
-```
-
----
-
-## Adaptive agent demo
-
-Run:
-
-```bash
-sce run-adaptive-agent-demo-pretty
-```
-
-The demo shows a complete decision loop:
-
-```text
-candidate plans → scoring → execution → memory → re-scoring → changed plan
-```
-
-It prints:
-
-- before-learning scores
-- execution trace
-- learning event
-- after-learning scores
-- why the decision changed
-
-This is the quickest way to see SCE Core behaving as an adaptive decision system.
-
----
-
-## Decision backbone demo
-
-Run:
-
-```bash
-sce run-decision-backbone-demo-pretty
-```
-
-The demo shows a supplier-risk reasoning graph and separates:
-
-- nodes that carry the decision from evidence to target action
-- dangling branches that are connected but do not influence the target decision
-
-Conceptually:
-
-```text
-forward  = nodes reachable from evidence
-backward = nodes that can reach the decision target
-backbone = forward ∩ backward
-dangling = forward - backbone
-```
-
-This adds structural explainability on top of scores and generated explanations.
-
-More details: [`docs/DECISION_BACKBONE.md`](docs/DECISION_BACKBONE.md).
-
----
-
-## Controlled evolution demo
-
-Run:
-
-```bash
-sce run-controlled-evolution-demo-pretty
-```
-
-The demo tracks local prediction error across a decision trajectory:
-
-```text
-predicted step value → actual observed value → step error → cumulative reliability
-```
-
-This adds a practical control layer: SCE can reason not only about which decision was selected, but also how reliable the stepwise evolution was.
-
-More details: [`docs/CONTROLLED_EVOLUTION.md`](docs/CONTROLLED_EVOLUTION.md).
-
----
-
-## Reliability-aware planning demo
-
-Run:
-
-```bash
-sce run-reliability-aware-planning-demo-pretty
-```
-
-The demo shows remembered trajectory reliability influencing plan selection:
-
-```text
-base score + memory bias + remembered reliability bonus → selected plan
-```
-
-This closes the loop between controlled evolution, memory, and planning: reliability is no longer only observed after the fact; it is remembered and can affect the next decision.
-
-More details: [`docs/RELIABILITY_AWARE_PLANNING.md`](docs/RELIABILITY_AWARE_PLANNING.md).
-
----
-
-## Memory-aware planning demo
-
-Run:
-
-```bash
 sce run-memory-aware-planning-demo
-```
-
-The demo records past decision episodes, scores candidate plans with `EpisodeMemory.plan_bias(...)`, and selects the plan with the strongest positive memory signal.
-
-Example shape:
-
-```json
-{
-  "remembered_episode_count": 3,
-  "candidate_scores": [
-    {"plan_name": "slow_monitoring_plan", "memory_bias": -0.8},
-    {"plan_name": "escalation_plan", "memory_bias": 0.9}
-  ],
-  "selected_plan": "escalation_plan"
-}
-```
-
----
-
-## Exploration-aware planning
-
-`MemoryAwarePlanner` supports optional exploration:
-
-```python
-import random
-from sce.core.planning import MemoryAwarePlanner, ToolPlanner
-
-planner = MemoryAwarePlanner(
-    ToolPlanner(),
-    memory,
-    exploration_rate=0.1,
-    rng=random.Random(42),
-)
-```
-
-When exploration is enabled, the planner can occasionally try a non-top plan. This helps the agent discover useful alternatives instead of always exploiting the current highest-scoring plan.
-
----
-
-## Stability formula
-
-```text
-Stab(x) = a·Coh(x) − b·Cost(x) − c·Conf(x) − d·Ent(x) + e·Support(x)
-```
-
----
-
-## Constraint DSL (safe predicates)
-
-You can define constraints as strings and compile them without `eval`/`exec`:
-
-```python
-from sce.core.constraint_dsl import compile_constraint_dsl
-from sce.core.types import Constraint, State
-
-predicate = compile_constraint_dsl(
-    '(late_delivery_rate <= 0.30 AND breach_reported == false) OR tier == "gold"'
-)
-
-constraint = Constraint(name="supplier_policy", predicate=predicate)
-ok = constraint.is_satisfied(
-    State("supplier", {"late_delivery_rate": 0.25, "breach_reported": False, "tier": "silver"})
-)
-```
-
-Supported syntax:
-
-- comparisons: `==`, `!=`, `<`, `<=`, `>`, `>=`
-- boolean operators: `AND`, `OR`, `NOT`
-- parentheses
-- numbers, quoted strings, booleans (`true`, `false`)
-- identifiers are read from `State.data`
-
----
-
-## Persistent episodic memory
-
-SCE Core supports pluggable episodic memory repositories:
-
-- `EpisodeRepository` protocol
-- `InMemoryEpisodeRepository`
-- `PostgresEpisodeRepository`
-- `Episode.to_dict()` / `Episode.from_dict()` JSON serialization
-- optional persistence through `EpisodeMemory(repository=...)`
-
-Example:
-
-```python
-from sce.core import EpisodeMemory, InMemoryEpisodeRepository
-
-repo = InMemoryEpisodeRepository()
-memory = EpisodeMemory(repository=repo)
-```
-
-PostgreSQL support includes an `episodes` migration table and JSONB storage for episode payloads, including optional reliability values. Print the migration SQL with:
-
-```bash
-sce print-migration
-```
-
----
-
-## State graph export
-
-Export the current state graph to JSON from the CLI:
-
-```bash
-sce export-graph
-sce export-graph --out graph.json
-```
-
-## ASCII graph visualization
-
-Render a terminal-friendly ASCII view of the current state graph:
-
-```bash
 sce visualize-graph
-sce visualize-graph --out graph.txt
+sce export-graph
 ```
+
+All visual/demo commands are documented in [`docs/VISUAL_DEMO.md`](docs/VISUAL_DEMO.md).
+
+---
 
 ## Current gaps / next work
 
+- Critical decision nodes and edges
 - Constraint-aware decision backbone extraction
-- Memory-aware decision backbone extraction
 - Reliability decay over time
 - Reliability-aware exploration triggers
-- Rule persistence
-- Replay / audit tooling
-- Advanced abstraction / causal rules
-- Production API hardening
+- Supplier risk product demo with real business inputs
 - Browser-based graph UI
 
 ---
 
 ## Status
 
-Prototype of a cognitive AI system with self-improving behavior, graph observability, exploration-aware memory planning, reliability-aware planning, decision backbone extraction, controlled evolution tracking, and pluggable persistent episodic memory.
+Early product/research system for explainable, memory-aware, reliability-aware AI decisions.
 
 ---
 
