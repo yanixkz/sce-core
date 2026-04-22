@@ -1,8 +1,8 @@
 # SCE Core Roadmap
 
-## Current State (v0.4-alpha)
+## Current State (v0.5-alpha)
 
-SCE Core has evolved into an explainable, adaptive, and controlled decision system with:
+SCE Core has evolved into an explainable, adaptive, reliability-aware, and controlled decision system with:
 
 - CognitiveAgent (closed decision loop)
 - Learning + Memory + Abstraction
@@ -16,6 +16,8 @@ SCE Core has evolved into an explainable, adaptive, and controlled decision syst
 - Persistent episodic memory (in-memory + PostgreSQL)
 - Memory-aware planning
 - Exploration-aware plan selection
+- Reliability-aware plan selection
+- Reliability stored in episodic memory
 - Adaptive agent terminal demo
 - Decision backbone extraction
 - Controlled evolution error tracking
@@ -64,15 +66,17 @@ SCE Core has evolved into an explainable, adaptive, and controlled decision syst
 - Controlled evolution error tracker
 - Controlled evolution demo
 
+### v0.5 — Reliability-Aware Planning
+- Reliability-aware planner
+- Reliability-aware planning demo
+- Controlled evolution reports can be stored as episode reliability
+- Episode serialization includes optional reliability
+- Remembered reliability can rerank candidate plans
+- Reliability-aware learning executor
+
 ---
 
 ## Next Priorities
-
-### v0.5 — Reliability-Aware Planning
-- Integrate controlled evolution reports into plan scoring
-- Use accumulated step error to adjust future plan bias
-- Add reliability-aware memory updates
-- Add trajectory replay and audit output
 
 ### v0.6 — Criticality + Backbone Hardening
 - Critical backbone node detection
@@ -81,20 +85,27 @@ SCE Core has evolved into an explainable, adaptive, and controlled decision syst
 - Constraint-aware decision backbone extraction
 - Memory-aware decision backbone extraction
 
-### v0.7 — Supplier Risk Product Demo
+### v0.7 — Reliability Dynamics
+- Reliability decay over time
+- Reliability by state/goal/context, not only by plan name
+- Reliability-aware exploration triggers
+- Reliability-aware memory pruning
+- Trajectory replay and audit output
+
+### v0.8 — Supplier Risk Product Demo
 - Domain-specific supplier risk scenario
 - Evidence → constraints → risk state → decision backbone → action
 - Contract/risk constraints
 - Pretty output suitable for business demos
 
-### v0.8 — Production API Hardening
+### v0.9 — Production API Hardening
 - API stabilization
 - Auth
 - Rate limiting
 - Deployment configs
 - API endpoints for backbone and controlled evolution reports
 
-### v0.9 — Richer Visual UI
+### v1.0 — Richer Visual UI
 - Browser graph UI beyond ASCII
 - Interactive decision backbone visualization
 - Reliability timeline visualization
@@ -115,4 +126,4 @@ SCE Core has evolved into an explainable, adaptive, and controlled decision syst
 
 ## Status
 
-Transitioned from research prototype → cognitive architecture → early product system with persistent memory, decision backbone extraction, exploration-aware planning, and controlled evolution tracking.
+Transitioned from research prototype → cognitive architecture → early product system with persistent memory, decision backbone extraction, exploration-aware planning, reliability-aware planning, and controlled evolution tracking.
