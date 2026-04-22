@@ -36,6 +36,25 @@ class PlanScore:
 
 
 @dataclass(frozen=True)
+class ReliabilityAwarePlanScore:
+    """Inspectable score that includes trajectory reliability."""
+
+    plan: Plan
+    base_score: float
+    memory_bias: float
+    reliability: float
+    reliability_weight: float
+
+    @property
+    def reliability_bonus(self) -> float:
+        return self.reliability * self.reliability_weight
+
+    @property
+    def total_score(self) -> float:
+        return self.base_score + self.memory_bias + self.reliability_bonus
+
+
+@dataclass(frozen=True)
 class PlanExecutionResult:
     """Result of executing a plan."""
 
@@ -160,6 +179,51 @@ class MemoryAwarePlanner:
             for plan in candidates
         ]
         return sorted(scores, key=lambda item: item.total_score, reverse=True)
+
+
+class ReliabilityAwarePlanner:
+    """Rank plans using base score, memory bias, and trajectory reliability."""
+
+    def __init__(
+        self,
+        memory_planner: MemoryAwarePlanner,
+        reliability_by_plan: dict[str, float] | None = None,
+        reliability_weight: float = 1.0,
+    ) -> None:
+        if reliability_weight < 0:
+            raise ValueError("reliability_weight must be non-negative")
+        self.memory_planner = memory_planner
+        self.reliability_by_plan = reliability_by_plan or {}
+        self.reliability_weight = reliability_weight
+
+    def plan(self, state: State, goal: str, candidates: List[Plan] | None = None) -> Plan:
+        candidate_plans = candidates or self.memory_planner.base_planner.candidates(state, goal)
+        return self.score(candidate_plans, state, goal)[0].plan
+
+    def score(self, candidates: List[Plan], state: State, goal: str) -> List[ReliabilityAwarePlanScore]:
+        memory_scores = self.memory_planner.score(candidates, state, goal)
+        scores = [
+            ReliabilityAwarePlanScore(
+                plan=score.plan,
+                base_score=score.base_score,
+                memory_bias=score.memory_bias,
+                reliability=self._plan_reliability(score.plan),
+                reliability_weight=self.reliability_weight,
+            )
+            for score in memory_scores
+        ]
+        return sorted(scores, key=lambda item: item.total_score, reverse=True)
+
+    def update_reliability(self, plan_name: str, reliability: float) -> None:
+        self.reliability_by_plan[plan_name] = self._clamp_reliability(reliability)
+
+    def _plan_reliability(self, plan: Plan) -> float:
+        if plan.name in self.reliability_by_plan:
+            return self._clamp_reliability(self.reliability_by_plan[plan.name])
+        return self._clamp_reliability(float(plan.meta.get("reliability", 0.5)))
+
+    def _clamp_reliability(self, value: float) -> float:
+        return max(0.0, min(1.0, float(value)))
 
 
 class PlanExecutor:
