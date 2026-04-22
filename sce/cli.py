@@ -215,9 +215,9 @@ def main() -> None:
             args.out.write_text(graph_json, encoding="utf-8")
     elif args.command == "visualize-graph":
         graph = _export_supplier_graph()
-        ascii_graph = _format_state_graph(graph)
+        ascii_graph = render_ascii_graph(graph)
         if args.out is None:
-            print(ascii_graph)
+            print("\n".join(["State Graph", "===========", "", ascii_graph]))
         else:
             args.out.write_text(ascii_graph, encoding="utf-8")
     elif args.command == "explain-demo":
