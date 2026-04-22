@@ -26,6 +26,10 @@ from sce.scenarios.memory_aware_planning_demo import run_memory_aware_planning_d
 from sce.scenarios.multi_agent_demo import run_multi_agent_demo
 from sce.scenarios.plan_scoring_demo import run_plan_scoring_demo
 from sce.scenarios.planning_demo import run_planning_demo
+from sce.scenarios.reliability_aware_planning_demo import (
+    format_reliability_aware_planning_demo,
+    run_reliability_aware_planning_demo,
+)
 from sce.scenarios.supplier_reliability import make_supplier_reliability_scenario, run_demo
 from sce.scenarios.tools_demo import run_tools_demo
 from sce.storage.postgres import POSTGRES_MIGRATION_SQL
@@ -62,6 +66,8 @@ def main() -> None:
     sub.add_parser("run-decision-backbone-demo-pretty")
     sub.add_parser("run-controlled-evolution-demo")
     sub.add_parser("run-controlled-evolution-demo-pretty")
+    sub.add_parser("run-reliability-aware-planning-demo")
+    sub.add_parser("run-reliability-aware-planning-demo-pretty")
     sub.add_parser("run-multi-agent-demo")
     sub.add_parser("run-tools-demo")
     sub.add_parser("run-planning-demo")
@@ -118,6 +124,11 @@ def main() -> None:
     elif args.command == "run-controlled-evolution-demo-pretty":
         result = run_controlled_evolution_demo()
         print(format_controlled_evolution_demo(result))
+    elif args.command == "run-reliability-aware-planning-demo":
+        print(json.dumps(run_reliability_aware_planning_demo(), indent=2, ensure_ascii=False))
+    elif args.command == "run-reliability-aware-planning-demo-pretty":
+        result = run_reliability_aware_planning_demo()
+        print(format_reliability_aware_planning_demo(result))
     elif args.command == "run-multi-agent-demo":
         print(json.dumps(run_multi_agent_demo(), indent=2, ensure_ascii=False))
     elif args.command == "run-tools-demo":
