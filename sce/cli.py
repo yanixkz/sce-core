@@ -4,41 +4,17 @@ import argparse
 import json
 from pathlib import Path
 
-from sce.core.evolution import SCEEvolver
-from sce.core.queries import GraphQueryLayer
-from sce.core.scoring import SCEScoringEngine
-from sce.scenarios.action_demo import run_action_demo
-from sce.scenarios.adaptive_agent_demo import run_adaptive_agent_demo, format_adaptive_agent_demo
-from sce.scenarios.agent_demo import run_agent_demo
-from sce.scenarios.cognitive_agent_demo import run_cognitive_agent_demo
-from sce.scenarios.conflicting_memory import run_conflicting_memory_demo
-from sce.scenarios.contract_risk import run_contract_risk_demo
-from sce.scenarios.controlled_evolution_demo import run_controlled_evolution_demo, format_controlled_evolution_demo
-from sce.scenarios.decision_backbone_demo import run_decision_backbone_demo, format_decision_backbone_demo
-from sce.scenarios.exploration_demo import run_exploration_demo, format_exploration_demo
-from sce.scenarios.goal_agent_demo import run_goal_agent_demo
-from sce.scenarios.hypothesis_research_demo import format_hypothesis_research_demo, run_hypothesis_research_demo
-from sce.scenarios.learning_demo import run_learning_demo
-from sce.scenarios.learning_planning_demo import run_learning_planning_demo
-from sce.scenarios.llm_memory import run_llm_memory_demo
-from sce.scenarios.llm_planning_demo import run_llm_planning_demo
-from sce.scenarios.llm_voice_demo import run_llm_voice_demo
-from sce.scenarios.memory_aware_planning_demo import run_memory_aware_planning_demo
-from sce.scenarios.multi_agent_demo import run_multi_agent_demo
-from sce.scenarios.plan_scoring_demo import run_plan_scoring_demo
-from sce.scenarios.planning_demo import run_planning_demo
-from sce.scenarios.reliability_aware_planning_demo import (
-    format_reliability_aware_planning_demo,
-    run_reliability_aware_planning_demo,
-)
-from sce.scenarios.supplier_reliability import make_supplier_reliability_scenario, run_demo
-from sce.scenarios.supplier_risk_demo import format_supplier_risk_demo, run_supplier_risk_demo
-from sce.scenarios.tools_demo import run_tools_demo
-from sce.storage.postgres import POSTGRES_MIGRATION_SQL
-from sce.visualization.graph_ascii import render_ascii_graph
+
+def _print_json(payload: dict) -> None:
+    print(json.dumps(payload, indent=2, ensure_ascii=False))
 
 
 def _export_supplier_graph() -> dict:
+    from sce.core.evolution import SCEEvolver
+    from sce.core.queries import GraphQueryLayer
+    from sce.core.scoring import SCEScoringEngine
+    from sce.scenarios.supplier_reliability import make_supplier_reliability_scenario
+
     repo, start_state = make_supplier_reliability_scenario()
     scorer = SCEScoringEngine(repo)
     evolver = SCEEvolver(repo, scorer)
@@ -90,76 +66,136 @@ def main() -> None:
     args = parser.parse_args()
 
     if args.command == "demo":
+        from sce.scenarios.supplier_risk_demo import format_supplier_risk_demo, run_supplier_risk_demo
+
         print(format_supplier_risk_demo(run_supplier_risk_demo()))
     elif args.command == "run-demo":
-        print(json.dumps(run_demo(), indent=2, ensure_ascii=False))
+        from sce.scenarios.supplier_reliability import run_demo
+
+        _print_json(run_demo())
     elif args.command == "run-supplier-risk-demo":
-        print(json.dumps(run_supplier_risk_demo(), indent=2, ensure_ascii=False))
+        from sce.scenarios.supplier_risk_demo import run_supplier_risk_demo
+
+        _print_json(run_supplier_risk_demo())
     elif args.command == "run-supplier-risk-demo-pretty":
-        result = run_supplier_risk_demo()
-        print(format_supplier_risk_demo(result))
+        from sce.scenarios.supplier_risk_demo import format_supplier_risk_demo, run_supplier_risk_demo
+
+        print(format_supplier_risk_demo(run_supplier_risk_demo()))
     elif args.command == "run-conflict-demo":
-        print(json.dumps(run_conflicting_memory_demo(), indent=2, ensure_ascii=False))
+        from sce.scenarios.conflicting_memory import run_conflicting_memory_demo
+
+        _print_json(run_conflicting_memory_demo())
     elif args.command == "run-llm-demo":
-        print(json.dumps(run_llm_memory_demo(), indent=2, ensure_ascii=False))
+        from sce.scenarios.llm_memory import run_llm_memory_demo
+
+        _print_json(run_llm_memory_demo())
     elif args.command == "run-llm-planning-demo":
-        print(json.dumps(run_llm_planning_demo(), indent=2, ensure_ascii=False))
+        from sce.scenarios.llm_planning_demo import run_llm_planning_demo
+
+        _print_json(run_llm_planning_demo())
     elif args.command == "run-contract-demo":
-        print(json.dumps(run_contract_risk_demo(), indent=2, ensure_ascii=False))
+        from sce.scenarios.contract_risk import run_contract_risk_demo
+
+        _print_json(run_contract_risk_demo())
     elif args.command == "run-agent-demo":
-        print(json.dumps(run_agent_demo(), indent=2, ensure_ascii=False))
+        from sce.scenarios.agent_demo import run_agent_demo
+
+        _print_json(run_agent_demo())
     elif args.command == "run-goal-agent-demo":
-        print(json.dumps(run_goal_agent_demo(), indent=2, ensure_ascii=False))
+        from sce.scenarios.goal_agent_demo import run_goal_agent_demo
+
+        _print_json(run_goal_agent_demo())
     elif args.command == "run-action-demo":
-        print(json.dumps(run_action_demo(), indent=2, ensure_ascii=False))
+        from sce.scenarios.action_demo import run_action_demo
+
+        _print_json(run_action_demo())
     elif args.command == "run-learning-demo":
-        print(json.dumps(run_learning_demo(), indent=2, ensure_ascii=False))
+        from sce.scenarios.learning_demo import run_learning_demo
+
+        _print_json(run_learning_demo())
     elif args.command == "run-learning-planning-demo":
-        print(json.dumps(run_learning_planning_demo(), indent=2, ensure_ascii=False))
+        from sce.scenarios.learning_planning_demo import run_learning_planning_demo
+
+        _print_json(run_learning_planning_demo())
     elif args.command == "run-memory-aware-planning-demo":
-        print(json.dumps(run_memory_aware_planning_demo(), indent=2, ensure_ascii=False))
+        from sce.scenarios.memory_aware_planning_demo import run_memory_aware_planning_demo
+
+        _print_json(run_memory_aware_planning_demo())
     elif args.command == "run-adaptive-agent-demo":
-        print(json.dumps(run_adaptive_agent_demo(), indent=2, ensure_ascii=False))
+        from sce.scenarios.adaptive_agent_demo import run_adaptive_agent_demo
+
+        _print_json(run_adaptive_agent_demo())
     elif args.command == "run-adaptive-agent-demo-pretty":
-        result = run_adaptive_agent_demo()
-        print(format_adaptive_agent_demo(result))
+        from sce.scenarios.adaptive_agent_demo import format_adaptive_agent_demo, run_adaptive_agent_demo
+
+        print(format_adaptive_agent_demo(run_adaptive_agent_demo()))
     elif args.command == "run-exploration-demo":
-        print(json.dumps(run_exploration_demo(), indent=2, ensure_ascii=False))
+        from sce.scenarios.exploration_demo import run_exploration_demo
+
+        _print_json(run_exploration_demo())
     elif args.command == "run-exploration-demo-pretty":
-        result = run_exploration_demo()
-        print(format_exploration_demo(result))
+        from sce.scenarios.exploration_demo import format_exploration_demo, run_exploration_demo
+
+        print(format_exploration_demo(run_exploration_demo()))
     elif args.command == "run-decision-backbone-demo":
-        print(json.dumps(run_decision_backbone_demo(), indent=2, ensure_ascii=False))
+        from sce.scenarios.decision_backbone_demo import run_decision_backbone_demo
+
+        _print_json(run_decision_backbone_demo())
     elif args.command == "run-decision-backbone-demo-pretty":
-        result = run_decision_backbone_demo()
-        print(format_decision_backbone_demo(result))
+        from sce.scenarios.decision_backbone_demo import format_decision_backbone_demo, run_decision_backbone_demo
+
+        print(format_decision_backbone_demo(run_decision_backbone_demo()))
     elif args.command == "run-controlled-evolution-demo":
-        print(json.dumps(run_controlled_evolution_demo(), indent=2, ensure_ascii=False))
+        from sce.scenarios.controlled_evolution_demo import run_controlled_evolution_demo
+
+        _print_json(run_controlled_evolution_demo())
     elif args.command == "run-controlled-evolution-demo-pretty":
-        result = run_controlled_evolution_demo()
-        print(format_controlled_evolution_demo(result))
+        from sce.scenarios.controlled_evolution_demo import format_controlled_evolution_demo, run_controlled_evolution_demo
+
+        print(format_controlled_evolution_demo(run_controlled_evolution_demo()))
     elif args.command == "run-reliability-aware-planning-demo":
-        print(json.dumps(run_reliability_aware_planning_demo(), indent=2, ensure_ascii=False))
+        from sce.scenarios.reliability_aware_planning_demo import run_reliability_aware_planning_demo
+
+        _print_json(run_reliability_aware_planning_demo())
     elif args.command == "run-reliability-aware-planning-demo-pretty":
-        result = run_reliability_aware_planning_demo()
-        print(format_reliability_aware_planning_demo(result))
+        from sce.scenarios.reliability_aware_planning_demo import (
+            format_reliability_aware_planning_demo,
+            run_reliability_aware_planning_demo,
+        )
+
+        print(format_reliability_aware_planning_demo(run_reliability_aware_planning_demo()))
     elif args.command == "run-hypothesis-research-demo":
-        print(json.dumps(run_hypothesis_research_demo(), indent=2, ensure_ascii=False))
+        from sce.scenarios.hypothesis_research_demo import run_hypothesis_research_demo
+
+        _print_json(run_hypothesis_research_demo())
     elif args.command == "run-hypothesis-research-demo-pretty":
-        result = run_hypothesis_research_demo()
-        print(format_hypothesis_research_demo(result))
+        from sce.scenarios.hypothesis_research_demo import format_hypothesis_research_demo, run_hypothesis_research_demo
+
+        print(format_hypothesis_research_demo(run_hypothesis_research_demo()))
     elif args.command == "run-multi-agent-demo":
-        print(json.dumps(run_multi_agent_demo(), indent=2, ensure_ascii=False))
+        from sce.scenarios.multi_agent_demo import run_multi_agent_demo
+
+        _print_json(run_multi_agent_demo())
     elif args.command == "run-tools-demo":
-        print(json.dumps(run_tools_demo(), indent=2, ensure_ascii=False))
+        from sce.scenarios.tools_demo import run_tools_demo
+
+        _print_json(run_tools_demo())
     elif args.command == "run-planning-demo":
-        print(json.dumps(run_planning_demo(), indent=2, ensure_ascii=False))
+        from sce.scenarios.planning_demo import run_planning_demo
+
+        _print_json(run_planning_demo())
     elif args.command == "run-plan-scoring-demo":
-        print(json.dumps(run_plan_scoring_demo(), indent=2, ensure_ascii=False))
+        from sce.scenarios.plan_scoring_demo import run_plan_scoring_demo
+
+        _print_json(run_plan_scoring_demo())
     elif args.command == "run-cognitive-agent-demo":
-        print(json.dumps(run_cognitive_agent_demo(), indent=2, ensure_ascii=False))
+        from sce.scenarios.cognitive_agent_demo import run_cognitive_agent_demo
+
+        _print_json(run_cognitive_agent_demo())
     elif args.command == "run-llm-voice-demo":
-        print(json.dumps(run_llm_voice_demo(), indent=2, ensure_ascii=False))
+        from sce.scenarios.llm_voice_demo import run_llm_voice_demo
+
+        _print_json(run_llm_voice_demo())
     elif args.command == "export-graph":
         graph_json = json.dumps(_export_supplier_graph(), indent=2, ensure_ascii=False)
         if args.out is None:
@@ -167,6 +203,8 @@ def main() -> None:
         else:
             args.out.write_text(graph_json, encoding="utf-8")
     elif args.command == "visualize-graph":
+        from sce.visualization.graph_ascii import render_ascii_graph
+
         graph = _export_supplier_graph()
         ascii_graph = render_ascii_graph(graph)
         if args.out is None:
@@ -174,8 +212,12 @@ def main() -> None:
         else:
             args.out.write_text(ascii_graph, encoding="utf-8")
     elif args.command == "explain-demo":
-        print(json.dumps(run_demo()["explanation"], indent=2, ensure_ascii=False))
+        from sce.scenarios.supplier_reliability import run_demo
+
+        _print_json(run_demo()["explanation"])
     elif args.command == "print-migration":
+        from sce.storage.postgres import POSTGRES_MIGRATION_SQL
+
         print(POSTGRES_MIGRATION_SQL)
 
 
