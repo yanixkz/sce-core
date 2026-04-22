@@ -1,27 +1,53 @@
 # SCE Core Roadmap
 
-## Current State (v0.5-alpha)
+## North Star
 
-SCE Core has evolved into an explainable, adaptive, reliability-aware, and controlled decision system with:
+```text
+Decide. Explain. Improve.
+```
 
-- CognitiveAgent (closed decision loop)
-- Learning + Memory + Abstraction
-- LLM integration (OpenAI + Anthropic)
-- Voice OS bridge
-- FastAPI REST API
-- Multi-agent world
-- Graph query layer
-- Constraint DSL (safe text constraints compiled to predicates)
-- Graph export (JSON) and ASCII visualization
-- Persistent episodic memory (in-memory + PostgreSQL)
-- Memory-aware planning
-- Exploration-aware plan selection
-- Reliability-aware plan selection
-- Reliability stored in episodic memory
-- Adaptive agent terminal demo
-- Decision backbone extraction
-- Controlled evolution error tracking
+SCE Core is a decision engine for AI agents.
+
+It helps an agent:
+
+1. choose a plan,
+2. explain which facts carried the decision,
+3. remember outcomes and reliability,
+4. improve the next choice.
+
+The roadmap is now focused on making that loop simple, visible, and useful in one concrete domain first: **supplier risk**.
+
+---
+
+## Current State (v0.6-alpha)
+
+SCE Core currently has:
+
+- main supplier-risk terminal demo
+- memory-aware planning
+- reliability-aware planning
+- reliability stored in episodic memory
+- decision backbone extraction
+- controlled evolution / prediction error tracking
+- exploration-aware plan selection
+- constraint DSL
+- graph export and ASCII visualization
+- persistent episodic memory with PostgreSQL support
+- FastAPI API
+- LLM provider clients
 - PostgreSQL-backed CI tests
+
+The main command is:
+
+```bash
+sce run-supplier-risk-demo-pretty
+```
+
+This demo shows the whole SCE loop:
+
+```text
+supplier risk → plan choice → decision backbone → reliability → memory → improved next choice
+```
 
 ---
 
@@ -52,78 +78,118 @@ SCE Core has evolved into an explainable, adaptive, reliability-aware, and contr
 - EpisodeRepository abstraction
 - InMemoryEpisodeRepository
 - PostgresEpisodeRepository
-- PostgreSQL migration (episodes table)
-- JSONB storage (psycopg Jsonb)
+- PostgreSQL migration
+- JSONB storage
 - PostgreSQL service container in CI
 
 ### v0.4 — Adaptive Decision Observability
 - Adaptive agent demo
-- Pretty terminal output for adaptive planning
 - Exploration-aware planner
-- Exploration demo
 - Decision backbone extractor
-- Decision backbone demo
 - Controlled evolution error tracker
-- Controlled evolution demo
+- Pretty terminal demos
 
 ### v0.5 — Reliability-Aware Planning
 - Reliability-aware planner
 - Reliability-aware planning demo
-- Controlled evolution reports can be stored as episode reliability
+- Controlled evolution reports stored as episode reliability
 - Episode serialization includes optional reliability
 - Remembered reliability can rerank candidate plans
 - Reliability-aware learning executor
+
+### v0.6 — Simple Main Demo
+- Main supplier-risk demo
+- One-command story: `sce run-supplier-risk-demo-pretty`
+- README simplified around Decide / Explain / Improve
+- Visual guide simplified around the main demo
+- Advanced demos moved below the main story
 
 ---
 
 ## Next Priorities
 
-### v0.6 — Criticality + Backbone Hardening
-- Critical backbone node detection
-- Critical edge / bridge detection
-- Alternative path detection
-- Constraint-aware decision backbone extraction
-- Memory-aware decision backbone extraction
+### v0.7 — Supplier Risk Product Demo
+Goal: make the current demo feel like a real product scenario.
 
-### v0.7 — Reliability Dynamics
-- Reliability decay over time
-- Reliability by state/goal/context, not only by plan name
-- Reliability-aware exploration triggers
-- Reliability-aware memory pruning
-- Trajectory replay and audit output
+- Add richer supplier inputs:
+  - delivery delays
+  - invoice risk
+  - missing certificates
+  - contract exceptions
+  - dependency risk
+- Add domain constraints for supplier risk
+- Add clearer business decision actions:
+  - monitor
+  - request documents
+  - escalate
+  - block / pause supplier
+- Add before/after explanation:
+  - what a plain LLM would say
+  - what SCE explains structurally
+- Keep the demo one command and one story
 
-### v0.8 — Supplier Risk Product Demo
-- Domain-specific supplier risk scenario
-- Evidence → constraints → risk state → decision backbone → action
-- Contract/risk constraints
-- Pretty output suitable for business demos
+### v0.8 — Minimal Web UI
+Goal: make the idea visible without reading terminal output.
 
-### v0.9 — Production API Hardening
-- API stabilization
-- Auth
-- Rate limiting
-- Deployment configs
-- API endpoints for backbone and controlled evolution reports
+- Simple browser page
+- Left: supplier facts
+- Middle: decision backbone
+- Right: selected plan and reliability
+- Bottom: remembered episodes
+- Use existing graph export and demo outputs where possible
 
-### v1.0 — Richer Visual UI
-- Browser graph UI beyond ASCII
-- Interactive decision backbone visualization
-- Reliability timeline visualization
-- Memory episode browser
+### v0.9 — Product API
+Goal: expose the useful loop through API endpoints.
+
+- Endpoint for supplier risk decision
+- Endpoint for decision backbone
+- Endpoint for reliability report
+- Endpoint for memory episodes
+- Basic API stabilization
+- Clear JSON response shape for product demos
+
+### v1.0 — Hardening
+Goal: make the project robust enough for external testers.
+
+- Better docs for first-time users
+- More integration tests
+- API hardening
+- Optional auth
+- Deployment config
+- Better error messages
 
 ---
 
-## Long-Term
+## Research Backlog
 
-- Autonomous agents
-- Real-time systems
-- Voice-native interfaces
-- Multi-agent coordination
+These are valuable, but should not distract from the simple product path.
+
+- Critical decision nodes and edges
+- Constraint-aware decision backbone extraction
+- Memory-aware decision backbone extraction
+- Reliability decay over time
+- Reliability-aware exploration triggers
+- Reliability-aware memory pruning
+- Trajectory replay and audit output
+- Advanced abstraction / causal rules
 - Topological reasoning over decision graphs
-- Reliability-aware cognitive systems
+- Multi-agent coordination
+- Voice-native interfaces
 
 ---
 
 ## Status
 
-Transitioned from research prototype → cognitive architecture → early product system with persistent memory, decision backbone extraction, exploration-aware planning, reliability-aware planning, and controlled evolution tracking.
+SCE Core has moved from a broad research prototype to a focused early product/research system.
+
+Current focus:
+
+```text
+Supplier Risk Agent
+↓
+Decide. Explain. Improve.
+↓
+Web UI
+↓
+Product API
+```
