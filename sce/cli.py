@@ -13,6 +13,7 @@ from sce.scenarios.agent_demo import run_agent_demo
 from sce.scenarios.cognitive_agent_demo import run_cognitive_agent_demo
 from sce.scenarios.conflicting_memory import run_conflicting_memory_demo
 from sce.scenarios.contract_risk import run_contract_risk_demo
+from sce.scenarios.exploration_demo import run_exploration_demo, format_exploration_demo
 from sce.scenarios.goal_agent_demo import run_goal_agent_demo
 from sce.scenarios.learning_demo import run_learning_demo
 from sce.scenarios.learning_planning_demo import run_learning_planning_demo
@@ -53,6 +54,8 @@ def main() -> None:
     sub.add_parser("run-memory-aware-planning-demo")
     sub.add_parser("run-adaptive-agent-demo")
     sub.add_parser("run-adaptive-agent-demo-pretty")
+    sub.add_parser("run-exploration-demo")
+    sub.add_parser("run-exploration-demo-pretty")
     sub.add_parser("run-multi-agent-demo")
     sub.add_parser("run-tools-demo")
     sub.add_parser("run-planning-demo")
@@ -94,6 +97,11 @@ def main() -> None:
     elif args.command == "run-adaptive-agent-demo-pretty":
         result = run_adaptive_agent_demo()
         print(format_adaptive_agent_demo(result))
+    elif args.command == "run-exploration-demo":
+        print(json.dumps(run_exploration_demo(), indent=2, ensure_ascii=False))
+    elif args.command == "run-exploration-demo-pretty":
+        result = run_exploration_demo()
+        print(format_exploration_demo(result))
     elif args.command == "run-multi-agent-demo":
         print(json.dumps(run_multi_agent_demo(), indent=2, ensure_ascii=False))
     elif args.command == "run-tools-demo":
