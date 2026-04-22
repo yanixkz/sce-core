@@ -2,7 +2,7 @@
 
 ![Tests](https://github.com/yanixkz/sce-core/actions/workflows/tests.yml/badge.svg)
 
-**State–Constraint–Evolution Core** is an experimental cognitive architecture for building explainable, adaptive decision-making AI systems.
+**State–Constraint–Evolution Core** is an experimental cognitive architecture for building explainable, adaptive, and controlled decision-making AI systems.
 
 ```text
 Input / Voice / API
@@ -13,7 +13,7 @@ Planning → Validation → Scoring → Execution
 ↓
 Learning → Memory → Abstraction
 ↓
-Decision Backbone / Graph Observability
+Decision Backbone → Controlled Evolution → Graph Observability
 ```
 
 ---
@@ -25,12 +25,15 @@ SCE Core can be inspected from the terminal:
 ```bash
 sce run-adaptive-agent-demo-pretty
 sce run-decision-backbone-demo-pretty
+sce run-controlled-evolution-demo-pretty
 sce visualize-graph
 ```
 
 The adaptive demo shows an agent changing its plan after episodic memory shifts the decision score.
 
 The decision backbone demo shows which reasoning nodes actually carry a decision and which branches are dangling.
+
+The controlled evolution demo shows how local prediction errors accumulate into trajectory-level reliability.
 
 More visual/demo commands are documented in [`docs/VISUAL_DEMO.md`](docs/VISUAL_DEMO.md).
 
@@ -52,6 +55,8 @@ SCE Core is a **self-improving decision system** where:
 - memory biases future planning decisions
 - reasoning graphs are reduced to decision-carrying backbones
 - dangling branches can be exposed for audit and pruning
+- local prediction errors are tracked across decision trajectories
+- trajectory reliability can be estimated from accumulated step error
 - rules are extracted from repeated successful episodes
 
 ---
@@ -81,7 +86,9 @@ Abstraction
 ↓
 Decision Backbone
 ↓
-Next decision is improved and explainable
+Controlled Evolution
+↓
+Next decision is improved, explainable, and reliability-aware
 ```
 
 ---
@@ -100,6 +107,7 @@ Next decision is improved and explainable
 - **Memory-aware planning** — remembered outcomes bias future plan selection
 - **Exploration-aware selection** — optional epsilon-style exploration of non-top candidate plans
 - **Decision backbone** — graph extraction of decision-carrying nodes vs dangling reasoning branches
+- **Controlled evolution** — local prediction error tracking and trajectory reliability reports
 - **Abstraction** — rule extraction from experience
 - **Graph observability** — JSON graph export and ASCII visualization
 - **Voice OS bridge** — text/voice intent to cognitive agent
@@ -185,6 +193,8 @@ sce run-exploration-demo
 sce run-exploration-demo-pretty
 sce run-decision-backbone-demo
 sce run-decision-backbone-demo-pretty
+sce run-controlled-evolution-demo
+sce run-controlled-evolution-demo-pretty
 sce run-multi-agent-demo
 sce run-tools-demo
 sce run-planning-demo
@@ -252,6 +262,24 @@ dangling = forward - backbone
 This adds structural explainability on top of scores and generated explanations.
 
 More details: [`docs/DECISION_BACKBONE.md`](docs/DECISION_BACKBONE.md).
+
+---
+
+## Controlled evolution demo
+
+Run:
+
+```bash
+sce run-controlled-evolution-demo-pretty
+```
+
+The demo tracks local prediction error across a decision trajectory:
+
+```text
+predicted step value → actual observed value → step error → cumulative reliability
+```
+
+This adds a practical control layer: SCE can reason not only about which decision was selected, but also how reliable the stepwise evolution was.
 
 ---
 
@@ -385,6 +413,7 @@ sce visualize-graph --out graph.txt
 
 - Constraint-aware decision backbone extraction
 - Memory-aware decision backbone extraction
+- Planner integration for controlled evolution
 - Rule persistence
 - Replay / audit tooling
 - Advanced abstraction / causal rules
@@ -395,7 +424,7 @@ sce visualize-graph --out graph.txt
 
 ## Status
 
-Prototype of a cognitive AI system with self-improving behavior, graph observability, exploration-aware memory planning, decision backbone extraction, and pluggable persistent episodic memory.
+Prototype of a cognitive AI system with self-improving behavior, graph observability, exploration-aware memory planning, decision backbone extraction, controlled evolution tracking, and pluggable persistent episodic memory.
 
 ---
 
