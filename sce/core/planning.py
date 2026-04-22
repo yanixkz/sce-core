@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import random
 from dataclasses import dataclass, field
 from typing import TYPE_CHECKING, Any, Dict, List
 
@@ -125,12 +126,25 @@ class ToolPlanner:
 class MemoryAwarePlanner:
     """Rank candidate plans using base scores plus episodic memory bias."""
 
-    def __init__(self, base_planner: ToolPlanner, memory: "EpisodeMemory") -> None:
+    def __init__(
+        self,
+        base_planner: ToolPlanner,
+        memory: "EpisodeMemory",
+        exploration_rate: float = 0.0,
+        rng: random.Random | None = None,
+    ) -> None:
+        if not 0.0 <= exploration_rate <= 1.0:
+            raise ValueError("exploration_rate must be between 0.0 and 1.0")
         self.base_planner = base_planner
         self.memory = memory
+        self.exploration_rate = exploration_rate
+        self.rng = rng or random.Random()
 
     def plan(self, state: State, goal: str, candidates: List[Plan] | None = None) -> Plan:
-        ranked = self.score(candidates or self.base_planner.candidates(state, goal), state, goal)
+        candidate_plans = candidates or self.base_planner.candidates(state, goal)
+        ranked = self.score(candidate_plans, state, goal)
+        if len(ranked) > 1 and self.rng.random() < self.exploration_rate:
+            return self.rng.choice(ranked[1:]).plan
         return ranked[0].plan
 
     def rank(self, candidates: List[Plan], state: State, goal: str) -> List[Plan]:
