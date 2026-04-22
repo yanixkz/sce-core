@@ -9,6 +9,17 @@ def _print_json(payload: dict) -> None:
     print(json.dumps(payload, indent=2, ensure_ascii=False))
 
 
+def render_ascii_graph(graph: dict) -> str:
+    """Compatibility wrapper kept for tests and monkeypatching."""
+    from sce.visualization.graph_ascii import render_ascii_graph as _render_ascii_graph
+
+    return _render_ascii_graph(graph)
+
+
+def _format_state_graph(graph: dict) -> str:
+    return "\n".join(["State Graph", "===========", "", render_ascii_graph(graph)])
+
+
 def _export_supplier_graph() -> dict:
     from sce.core.evolution import SCEEvolver
     from sce.core.queries import GraphQueryLayer
@@ -203,10 +214,8 @@ def main() -> None:
         else:
             args.out.write_text(graph_json, encoding="utf-8")
     elif args.command == "visualize-graph":
-        from sce.visualization.graph_ascii import render_ascii_graph
-
         graph = _export_supplier_graph()
-        ascii_graph = render_ascii_graph(graph)
+        ascii_graph = _format_state_graph(graph)
         if args.out is None:
             print(ascii_graph)
         else:
