@@ -6,7 +6,7 @@ import pytest
 
 from sce.core.actions import Action
 from sce.core.episode_memory import EpisodeMemory
-from sce.core.planning import MemoryAwarePlanner, Plan, PlanExecutor, ToolPlanner
+from sce.core.planning import MemoryAwarePlanner, Plan, PlanExecutor, ReliabilityAwarePlanner, ToolPlanner
 from sce.core.tools import MockSupplierRiskAPI, ToolActionBridge, ToolRegistry
 from sce.core.types import State
 
@@ -126,6 +126,33 @@ def test_memory_aware_planner_can_explore_non_top_plan():
 def test_memory_aware_planner_rejects_invalid_exploration_rate():
     with pytest.raises(ValueError, match="exploration_rate"):
         MemoryAwarePlanner(ToolPlanner(), EpisodeMemory(), exploration_rate=1.5)
+
+
+def test_reliability_aware_planner_can_rerank_by_reliability():
+    state = State("planning_context", {"entity": "supplier A", "risk": "high"})
+    goal = "assess supplier risk"
+    memory_planner = MemoryAwarePlanner(ToolPlanner(), EpisodeMemory())
+    planner = ReliabilityAwarePlanner(
+        memory_planner,
+        reliability_by_plan={
+            "supplier_risk_plan": 0.1,
+            "escalation_plan": 0.95,
+        },
+        reliability_weight=1.0,
+    )
+    candidates = ToolPlanner().candidates(state, goal)
+
+    selected = planner.plan(state, goal, candidates)
+    scores = planner.score(candidates, state, goal)
+
+    assert selected.name == "escalation_plan"
+    assert scores[0].plan.name == "escalation_plan"
+    assert scores[0].reliability_bonus == pytest.approx(0.95)
+
+
+def test_reliability_aware_planner_rejects_negative_weight():
+    with pytest.raises(ValueError, match="reliability_weight"):
+        ReliabilityAwarePlanner(MemoryAwarePlanner(ToolPlanner(), EpisodeMemory()), reliability_weight=-1.0)
 
 
 def test_plan_executor_runs_tool_plan_and_returns_tool_result_state():
