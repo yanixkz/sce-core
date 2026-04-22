@@ -13,6 +13,7 @@ from sce.scenarios.agent_demo import run_agent_demo
 from sce.scenarios.cognitive_agent_demo import run_cognitive_agent_demo
 from sce.scenarios.conflicting_memory import run_conflicting_memory_demo
 from sce.scenarios.contract_risk import run_contract_risk_demo
+from sce.scenarios.decision_backbone_demo import run_decision_backbone_demo, format_decision_backbone_demo
 from sce.scenarios.exploration_demo import run_exploration_demo, format_exploration_demo
 from sce.scenarios.goal_agent_demo import run_goal_agent_demo
 from sce.scenarios.learning_demo import run_learning_demo
@@ -56,6 +57,8 @@ def main() -> None:
     sub.add_parser("run-adaptive-agent-demo-pretty")
     sub.add_parser("run-exploration-demo")
     sub.add_parser("run-exploration-demo-pretty")
+    sub.add_parser("run-decision-backbone-demo")
+    sub.add_parser("run-decision-backbone-demo-pretty")
     sub.add_parser("run-multi-agent-demo")
     sub.add_parser("run-tools-demo")
     sub.add_parser("run-planning-demo")
@@ -102,6 +105,11 @@ def main() -> None:
     elif args.command == "run-exploration-demo-pretty":
         result = run_exploration_demo()
         print(format_exploration_demo(result))
+    elif args.command == "run-decision-backbone-demo":
+        print(json.dumps(run_decision_backbone_demo(), indent=2, ensure_ascii=False))
+    elif args.command == "run-decision-backbone-demo-pretty":
+        result = run_decision_backbone_demo()
+        print(format_decision_backbone_demo(result))
     elif args.command == "run-multi-agent-demo":
         print(json.dumps(run_multi_agent_demo(), indent=2, ensure_ascii=False))
     elif args.command == "run-tools-demo":
