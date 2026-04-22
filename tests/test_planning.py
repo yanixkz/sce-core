@@ -6,7 +6,15 @@ import pytest
 
 from sce.core.actions import Action
 from sce.core.episode_memory import EpisodeMemory
-from sce.core.planning import MemoryAwarePlanner, Plan, PlanExecutor, ReliabilityAwarePlanner, ToolPlanner
+from sce.core.evolution_control import EvolutionErrorTracker
+from sce.core.planning import (
+    MemoryAwarePlanner,
+    Plan,
+    PlanExecutor,
+    ReliabilityAwareLearningPlanExecutor,
+    ReliabilityAwarePlanner,
+    ToolPlanner,
+)
 from sce.core.tools import MockSupplierRiskAPI, ToolActionBridge, ToolRegistry
 from sce.core.types import State
 
@@ -148,6 +156,43 @@ def test_reliability_aware_planner_can_rerank_by_reliability():
     assert selected.name == "escalation_plan"
     assert scores[0].plan.name == "escalation_plan"
     assert scores[0].reliability_bonus == pytest.approx(0.95)
+
+
+def test_reliability_aware_planner_uses_reliability_from_memory():
+    state = State("planning_context", {"entity": "supplier A", "risk": "high"})
+    goal = "assess supplier risk"
+    memory = EpisodeMemory()
+    base_planner = ToolPlanner()
+    candidates = base_planner.candidates(state, goal)
+    supplier_plan = next(plan for plan in candidates if plan.name == "supplier_risk_plan")
+    escalation_plan = next(plan for plan in candidates if plan.name == "escalation_plan")
+
+    memory.remember(state, goal, supplier_plan, success=True, reward=0.0, reliability=0.1)
+    memory.remember(state, goal, escalation_plan, success=True, reward=0.0, reliability=0.95)
+
+    planner = ReliabilityAwarePlanner(
+        MemoryAwarePlanner(base_planner, memory),
+        reliability_weight=1.0,
+    )
+
+    assert planner.plan(state, goal, candidates).name == "escalation_plan"
+
+
+def test_reliability_aware_learning_executor_records_report_reliability():
+    registry = ToolRegistry()
+    registry.register("supplier_risk_api", MockSupplierRiskAPI())
+    bridge = ToolActionBridge(registry)
+    memory = EpisodeMemory()
+    executor = ReliabilityAwareLearningPlanExecutor(PlanExecutor(bridge), memory)
+    state = State("planning_context", {"entity": "supplier A", "risk": "high"})
+    plan = ToolPlanner().plan(state, goal="assess supplier risk")
+    tracker = EvolutionErrorTracker()
+    tracker.record_step("risk_prediction", predicted_value=0.9, actual_value=0.8)
+
+    executor.execute(plan, state, "assess supplier risk", report=tracker.report())
+
+    assert len(memory.episodes) == 1
+    assert memory.episodes[0].reliability is not None
 
 
 def test_reliability_aware_planner_rejects_negative_weight():
