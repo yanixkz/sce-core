@@ -26,6 +26,7 @@ SCE Core can be inspected from the terminal:
 sce run-adaptive-agent-demo-pretty
 sce run-decision-backbone-demo-pretty
 sce run-controlled-evolution-demo-pretty
+sce run-reliability-aware-planning-demo-pretty
 sce visualize-graph
 ```
 
@@ -34,6 +35,8 @@ The adaptive demo shows an agent changing its plan after episodic memory shifts 
 The decision backbone demo shows which reasoning nodes actually carry a decision and which branches are dangling.
 
 The controlled evolution demo shows how local prediction errors accumulate into trajectory-level reliability.
+
+The reliability-aware planning demo shows reliability changing the selected plan.
 
 More visual/demo commands are documented in [`docs/VISUAL_DEMO.md`](docs/VISUAL_DEMO.md).
 
@@ -49,6 +52,7 @@ SCE Core is a **self-improving decision system** where:
 - plans are validated
 - plans are scored and selected
 - planners can explore alternatives instead of only exploiting the current top score
+- trajectory reliability can influence plan selection
 - actions are executed through tools
 - outcomes update learning weights
 - experiences are stored as episodes
@@ -70,7 +74,7 @@ Planner (LLM / rules)
 ↓
 Validator
 ↓
-Scorer (learning + memory + rules)
+Scorer (learning + memory + reliability)
 ↓
 Selector (exploit / explore)
 ↓
@@ -106,6 +110,7 @@ Next decision is improved, explainable, and reliability-aware
 - **Persistent memory** — EpisodeRepository, InMemoryEpisodeRepository, PostgresEpisodeRepository
 - **Memory-aware planning** — remembered outcomes bias future plan selection
 - **Exploration-aware selection** — optional epsilon-style exploration of non-top candidate plans
+- **Reliability-aware planning** — trajectory reliability can rerank candidate plans
 - **Decision backbone** — graph extraction of decision-carrying nodes vs dangling reasoning branches
 - **Controlled evolution** — local prediction error tracking and trajectory reliability reports
 - **Abstraction** — rule extraction from experience
@@ -195,6 +200,8 @@ sce run-decision-backbone-demo
 sce run-decision-backbone-demo-pretty
 sce run-controlled-evolution-demo
 sce run-controlled-evolution-demo-pretty
+sce run-reliability-aware-planning-demo
+sce run-reliability-aware-planning-demo-pretty
 sce run-multi-agent-demo
 sce run-tools-demo
 sce run-planning-demo
@@ -282,6 +289,24 @@ predicted step value → actual observed value → step error → cumulative rel
 This adds a practical control layer: SCE can reason not only about which decision was selected, but also how reliable the stepwise evolution was.
 
 More details: [`docs/CONTROLLED_EVOLUTION.md`](docs/CONTROLLED_EVOLUTION.md).
+
+---
+
+## Reliability-aware planning demo
+
+Run:
+
+```bash
+sce run-reliability-aware-planning-demo-pretty
+```
+
+The demo shows trajectory reliability influencing plan selection:
+
+```text
+base score + memory bias + reliability bonus → selected plan
+```
+
+This closes the loop between controlled evolution and planning: reliability is no longer only observed after the fact; it can affect the next decision.
 
 ---
 
@@ -415,7 +440,7 @@ sce visualize-graph --out graph.txt
 
 - Constraint-aware decision backbone extraction
 - Memory-aware decision backbone extraction
-- Planner integration for controlled evolution
+- Reliability-aware memory updates
 - Rule persistence
 - Replay / audit tooling
 - Advanced abstraction / causal rules
@@ -426,7 +451,7 @@ sce visualize-graph --out graph.txt
 
 ## Status
 
-Prototype of a cognitive AI system with self-improving behavior, graph observability, exploration-aware memory planning, decision backbone extraction, controlled evolution tracking, and pluggable persistent episodic memory.
+Prototype of a cognitive AI system with self-improving behavior, graph observability, exploration-aware memory planning, reliability-aware planning, decision backbone extraction, controlled evolution tracking, and pluggable persistent episodic memory.
 
 ---
 
