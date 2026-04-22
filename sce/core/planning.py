@@ -10,6 +10,7 @@ from sce.core.types import State
 
 if TYPE_CHECKING:
     from sce.core.episode_memory import EpisodeMemory
+    from sce.core.evolution_control import EvolutionControlReport
 
 
 @dataclass(frozen=True)
@@ -207,7 +208,7 @@ class ReliabilityAwarePlanner:
                 plan=score.plan,
                 base_score=score.base_score,
                 memory_bias=score.memory_bias,
-                reliability=self._plan_reliability(score.plan),
+                reliability=self._plan_reliability(score.plan, state, goal),
                 reliability_weight=self.reliability_weight,
             )
             for score in memory_scores
@@ -217,10 +218,15 @@ class ReliabilityAwarePlanner:
     def update_reliability(self, plan_name: str, reliability: float) -> None:
         self.reliability_by_plan[plan_name] = self._clamp_reliability(reliability)
 
-    def _plan_reliability(self, plan: Plan) -> float:
+    def _plan_reliability(self, plan: Plan, state: State, goal: str) -> float:
         if plan.name in self.reliability_by_plan:
             return self._clamp_reliability(self.reliability_by_plan[plan.name])
-        return self._clamp_reliability(float(plan.meta.get("reliability", 0.5)))
+        return self.memory_planner.memory.plan_reliability(
+            plan,
+            state,
+            goal,
+            default=float(plan.meta.get("reliability", 0.5)),
+        )
 
     def _clamp_reliability(self, value: float) -> float:
         return max(0.0, min(1.0, float(value)))
@@ -260,5 +266,33 @@ class LearningPlanExecutor:
             success=result.success,
             reward=result.reward,
             reason="execution_success" if result.success else "execution_failed",
+        )
+        return result
+
+
+class ReliabilityAwareLearningPlanExecutor:
+    """Executes a plan and records both outcome and trajectory reliability."""
+
+    def __init__(self, executor: PlanExecutor, memory: "EpisodeMemory") -> None:
+        self.executor = executor
+        self.memory = memory
+
+    def execute(
+        self,
+        plan: Plan,
+        initial_state: State,
+        goal: str,
+        report: "EvolutionControlReport | None" = None,
+    ) -> PlanExecutionResult:
+        result = self.executor.execute(plan, initial_state)
+        reliability = report.reliability if report is not None else None
+        self.memory.remember(
+            initial_state,
+            goal,
+            plan,
+            success=result.success,
+            reward=result.reward,
+            reason="execution_success" if result.success else "execution_failed",
+            reliability=reliability,
         )
         return result
