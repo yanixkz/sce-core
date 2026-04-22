@@ -1,6 +1,6 @@
 # SCE Core
 
-![Tests](https://github.com/yanixkz/sce-core/actions/workflows/tests.yml/badge.svg)
+[![Tests](https://img.shields.io/github/actions/workflow/status/yanixkz/sce-core/tests.yml?branch=main&label=tests)](https://github.com/yanixkz/sce-core/actions/workflows/tests.yml)
 
 **State–Constraint–Evolution Core** is a decision engine for AI agents.
 
