@@ -2,16 +2,19 @@
 
 SCE Core can be inspected from the terminal without a separate UI.
 
-The two quickest demos are:
+The three quickest demos are:
 
 ```bash
 sce run-adaptive-agent-demo-pretty
 sce run-decision-backbone-demo-pretty
+sce run-controlled-evolution-demo-pretty
 ```
 
 The adaptive demo shows an agent generating candidate plans, scoring them, executing a plan, writing the outcome to memory, re-scoring, and changing its future decision.
 
 The decision backbone demo shows which reasoning nodes carry the decision from evidence to target action, and which branches are dangling.
+
+The controlled evolution demo shows how local prediction errors accumulate into a reliability score for the trajectory.
 
 ---
 
@@ -103,18 +106,6 @@ Reasoning graph
 - marketing_tag -> unrelated_note
 - unrelated_note -> ∅
 
-Sources / evidence
-------------------
-- invoice_risk
-- late_delivery
-- marketing_tag
-- missing_certificate
-- old_positive_history
-
-Targets / decisions
--------------------
-- escalate
-
 Decision backbone
 -----------------
 - escalate
@@ -135,7 +126,42 @@ This is the quickest way to see structural explainability: not every connected f
 
 ---
 
-## 3. ASCII graph
+## 3. Controlled evolution demo
+
+Run:
+
+```bash
+sce run-controlled-evolution-demo-pretty
+```
+
+The output shows local prediction error and trajectory reliability:
+
+```text
+SCE Controlled Evolution Demo
+=============================
+
+Step errors
+-----------
+step                         predicted   actual   error
+-------------------------------------------------------
+score_supplier_risk              0.90     0.72    0.18
+select_escalation_plan           0.78     0.70    0.08
+execute_followup                 0.74     0.73    0.01
+
+Trajectory report
+-----------------
+cumulative_error: 0.27
+mean_error:       0.09
+reliability:      0.79
+trend:            improving
+is_reliable:      True
+```
+
+This is the quickest way to see the control idea: local errors are tracked and summarized as trajectory-level reliability.
+
+---
+
+## 4. ASCII graph
 
 Run:
 
@@ -157,24 +183,9 @@ The ASCII renderer shows:
 - constraint status
 - graph edges and relation types
 
-Example shape:
-
-```text
-State Graph
-===========
-
-⭐ supplier_reliable (stab=0.82)
-  ✓ constraints satisfied
-  └─[supports]→ supplier_contract_safe
-
-supplier_risky (stab=-0.21)
-  ✗ constraints unsatisfied
-  └─[conflicts]→ supplier_contract_safe
-```
-
 ---
 
-## 4. JSON graph export
+## 5. JSON graph export
 
 Run:
 
@@ -192,7 +203,7 @@ The JSON export is useful for building a browser UI later.
 
 ---
 
-## 5. Exploration demo
+## 6. Exploration demo
 
 Run:
 
@@ -204,7 +215,7 @@ This demo shows the difference between exploiting the current top-scoring plan a
 
 ---
 
-## 6. Memory-aware planning demo
+## 7. Memory-aware planning demo
 
 Run:
 
@@ -214,22 +225,9 @@ sce run-memory-aware-planning-demo
 
 This lower-level demo demonstrates how previous episodes bias future plan selection.
 
-Expected shape:
-
-```json
-{
-  "remembered_episode_count": 3,
-  "candidate_scores": [
-    {"plan_name": "slow_monitoring_plan", "memory_bias": -0.8},
-    {"plan_name": "escalation_plan", "memory_bias": 0.9}
-  ],
-  "selected_plan": "escalation_plan"
-}
-```
-
 ---
 
-## 7. API docs
+## 8. API docs
 
 Run:
 
@@ -251,9 +249,10 @@ SCE Core currently supports:
 
 - adaptive terminal demo
 - decision backbone terminal demo
+- controlled evolution terminal demo
 - exploration terminal demo
 - ASCII graph visualization
 - JSON graph export
 - FastAPI Swagger docs
 
-A richer browser UI can be built on top of `sce export-graph` and decision backbone extraction.
+A richer browser UI can be built on top of `sce export-graph`, decision backbone extraction, and controlled evolution reports.
