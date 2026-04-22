@@ -2,9 +2,47 @@ from __future__ import annotations
 
 import argparse
 import json
+from dataclasses import dataclass
 from pathlib import Path
+from typing import Callable
 
-DEMO_CHOICES = ("supplier-risk", "hypothesis")
+
+@dataclass(frozen=True)
+class DemoSpec:
+    name: str
+    title: str
+    runner: Callable[[], dict]
+    formatter: Callable[[dict], str]
+
+
+def _supplier_risk_demo() -> DemoSpec:
+    from sce.scenarios.supplier_risk_demo import format_supplier_risk_demo, run_supplier_risk_demo
+
+    return DemoSpec(
+        name="supplier-risk",
+        title="Supplier Risk Agent",
+        runner=run_supplier_risk_demo,
+        formatter=format_supplier_risk_demo,
+    )
+
+
+def _hypothesis_demo() -> DemoSpec:
+    from sce.scenarios.hypothesis_research_demo import format_hypothesis_research_demo, run_hypothesis_research_demo
+
+    return DemoSpec(
+        name="hypothesis",
+        title="Hypothesis Research",
+        runner=run_hypothesis_research_demo,
+        formatter=format_hypothesis_research_demo,
+    )
+
+
+DEMO_REGISTRY: dict[str, Callable[[], DemoSpec]] = {
+    "supplier-risk": _supplier_risk_demo,
+    "hypothesis": _hypothesis_demo,
+}
+DEMO_CHOICES = tuple(DEMO_REGISTRY)
+DEFAULT_DEMO = "supplier-risk"
 
 
 def _print_json(payload: dict) -> None:
@@ -23,16 +61,14 @@ def _format_state_graph(graph: dict) -> str:
 
 
 def _run_named_demo(name: str) -> None:
-    if name == "supplier-risk":
-        from sce.scenarios.supplier_risk_demo import format_supplier_risk_demo, run_supplier_risk_demo
+    spec = DEMO_REGISTRY[name]()
+    print(spec.formatter(spec.runner()))
 
-        print(format_supplier_risk_demo(run_supplier_risk_demo()))
-    elif name == "hypothesis":
-        from sce.scenarios.hypothesis_research_demo import format_hypothesis_research_demo, run_hypothesis_research_demo
 
-        print(format_hypothesis_research_demo(run_hypothesis_research_demo()))
-    else:
-        raise ValueError(f"Unknown demo: {name}")
+def _list_demos() -> None:
+    for name in DEMO_CHOICES:
+        spec = DEMO_REGISTRY[name]()
+        print(f"{spec.name}\t{spec.title}")
 
 
 def _export_supplier_graph() -> dict:
@@ -52,7 +88,7 @@ def main() -> None:
     parser = argparse.ArgumentParser(prog="sce")
     sub = parser.add_subparsers(dest="command", required=True)
     demo_parser = sub.add_parser("demo")
-    demo_parser.add_argument("name", nargs="?", choices=DEMO_CHOICES, default="supplier-risk")
+    demo_parser.add_argument("name", nargs="?", choices=("list", *DEMO_CHOICES), default=DEFAULT_DEMO)
     sub.add_parser("run-demo")
     sub.add_parser("run-supplier-risk-demo")
     sub.add_parser("run-supplier-risk-demo-pretty")
@@ -93,7 +129,10 @@ def main() -> None:
     args = parser.parse_args()
 
     if args.command == "demo":
-        _run_named_demo(args.name)
+        if args.name == "list":
+            _list_demos()
+        else:
+            _run_named_demo(args.name)
     elif args.command == "run-demo":
         from sce.scenarios.supplier_reliability import run_demo
 
