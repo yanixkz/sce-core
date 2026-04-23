@@ -1,10 +1,14 @@
 from __future__ import annotations
 
 from dataclasses import dataclass, field
-from datetime import datetime
+from datetime import UTC, datetime
 from enum import Enum
 from typing import Any, Callable, Dict, List, Optional
 from uuid import UUID, uuid4
+
+
+def utc_now() -> datetime:
+    return datetime.now(UTC)
 
 
 class RelationType(str, Enum):
@@ -44,7 +48,7 @@ class State:
     conflict: float = 0.0
     stability: float = 0.0
     support: float = 0.0
-    created_at: datetime = field(default_factory=datetime.utcnow)
+    created_at: datetime = field(default_factory=utc_now)
     valid_from: Optional[datetime] = None
     valid_to: Optional[datetime] = None
     status: str = "active"
@@ -60,7 +64,7 @@ class Link:
     strength: float = 1.0
     directed: bool = True
     link_id: UUID = field(default_factory=uuid4)
-    created_at: datetime = field(default_factory=datetime.utcnow)
+    created_at: datetime = field(default_factory=utc_now)
     meta: Dict[str, Any] = field(default_factory=dict)
 
 
@@ -118,7 +122,7 @@ class Transition:
     admissible: bool = True
     selected: bool = False
     transition_id: UUID = field(default_factory=uuid4)
-    created_at: datetime = field(default_factory=datetime.utcnow)
+    created_at: datetime = field(default_factory=utc_now)
     meta: Dict[str, Any] = field(default_factory=dict)
 
 
@@ -129,7 +133,7 @@ class Event:
     transition_id: Optional[UUID] = None
     payload: Dict[str, Any] = field(default_factory=dict)
     event_id: UUID = field(default_factory=uuid4)
-    event_time: datetime = field(default_factory=datetime.utcnow)
+    event_time: datetime = field(default_factory=utc_now)
     meta: Dict[str, Any] = field(default_factory=dict)
 
 
@@ -141,7 +145,7 @@ class Attractor:
     member_state_ids: List[UUID]
     stability_score: float
     attractor_id: UUID = field(default_factory=uuid4)
-    discovered_at: datetime = field(default_factory=datetime.utcnow)
+    discovered_at: datetime = field(default_factory=utc_now)
     meta: Dict[str, Any] = field(default_factory=dict)
 
 
