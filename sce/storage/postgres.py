@@ -87,7 +87,10 @@ CREATE TABLE IF NOT EXISTS episodes (
     action_names         JSONB NOT NULL,
     success              BOOLEAN NOT NULL,
     reward               DOUBLE PRECISION NOT NULL,
-    reason               TEXT NOT NULL DEFAULT ''
+    reason               TEXT NOT NULL DEFAULT '',
+    reliability          DOUBLE PRECISION,
+    source               TEXT NOT NULL DEFAULT 'unknown',
+    scope                TEXT NOT NULL DEFAULT 'decision'
 );
 
 CREATE INDEX IF NOT EXISTS idx_episodes_created_at ON episodes(created_at);
@@ -359,9 +362,9 @@ class PostgresEpisodeRepository:
                 """
                 INSERT INTO episodes (
                     episode_id, created_at, state_snapshot, goal, plan_name,
-                    action_names, success, reward, reason
+                    action_names, success, reward, reason, reliability, source, scope
                 )
-                VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)
+                VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
                 ON CONFLICT (episode_id) DO UPDATE SET
                     created_at = EXCLUDED.created_at,
                     state_snapshot = EXCLUDED.state_snapshot,
@@ -370,7 +373,10 @@ class PostgresEpisodeRepository:
                     action_names = EXCLUDED.action_names,
                     success = EXCLUDED.success,
                     reward = EXCLUDED.reward,
-                    reason = EXCLUDED.reason
+                    reason = EXCLUDED.reason,
+                    reliability = EXCLUDED.reliability,
+                    source = EXCLUDED.source,
+                    scope = EXCLUDED.scope
                 """,
                 (
                     payload["episode_id"],
@@ -382,6 +388,9 @@ class PostgresEpisodeRepository:
                     payload["success"],
                     payload["reward"],
                     payload["reason"],
+                    payload["reliability"],
+                    payload.get("source", "unknown"),
+                    payload.get("scope", "decision"),
                 ),
             )
         self.conn.commit()
@@ -397,7 +406,10 @@ class PostgresEpisodeRepository:
                 action_names,
                 success,
                 reward,
-                reason
+                reason,
+                reliability,
+                source,
+                scope
             FROM episodes
             ORDER BY created_at DESC
         """
@@ -420,6 +432,9 @@ class PostgresEpisodeRepository:
                     "success": row[6],
                     "reward": row[7],
                     "reason": row[8],
+                    "reliability": row[9],
+                    "source": row[10],
+                    "scope": row[11],
                 }
             )
             for row in rows

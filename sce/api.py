@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import os
 from pathlib import Path
 from typing import Any, Dict, Literal, Optional
 
@@ -19,6 +20,7 @@ from sce.core.types import State
 from sce.core.tools import MockSupplierRiskAPI, ToolActionBridge, ToolRegistry
 from sce.core.voice_os import SimpleIntentParser, VoiceOSBridge
 from sce.scenarios.supplier_reliability import make_supplier_reliability_scenario
+from sce.storage.postgres import PostgresEpisodeRepository
 
 API_VERSION = "v1"
 
@@ -225,9 +227,26 @@ def _build_demo_ui_meta(name: str, raw_result: dict) -> Dict[str, Any]:
     return {"view": "generic", "panel_order": ["summary"], "panels": {"summary": {"label": "Summary"}}}
 
 
+def _build_durable_episode_repository() -> PostgresEpisodeRepository | None:
+    dsn = os.getenv("SCE_DATABASE_URL")
+    if not dsn:
+        return None
+    repo = PostgresEpisodeRepository(dsn)
+    repo.init_schema()
+    return repo
+
+
 def build_app() -> FastAPI:
     app = FastAPI(title="SCE Core API", version="0.1.0a0")
-    shared_episode_memory = EpisodeMemory()
+    durable_episode_repository: PostgresEpisodeRepository | None = None
+    durable_status = "disabled"
+    try:
+        durable_episode_repository = _build_durable_episode_repository()
+        if durable_episode_repository is not None:
+            durable_status = "enabled"
+    except Exception:
+        durable_status = "error-fallback-in-memory"
+    shared_episode_memory = EpisodeMemory(repository=durable_episode_repository)
 
     @app.get("/ui", response_class=HTMLResponse)
     def ui() -> HTMLResponse:
@@ -318,6 +337,8 @@ def build_app() -> FastAPI:
                 reward=1.0 if execution.success else -1.0,
                 reason="decide_execute",
                 reliability=1.0 if execution.success else 0.0,
+                source="/decide",
+                scope="api_execute",
             )
             execution_trace = [
                 DecisionExecutionStep(
@@ -356,12 +377,21 @@ def build_app() -> FastAPI:
                 "candidate_count": len(ranked_scores),
                 "memory_matches": len(shared_episode_memory.similar(state, request.goal, limit=5)),
                 "memory_scope": "process-local in-memory episodes collected by /decide with execute=true",
+                "memory_persistence": "postgres+memory" if durable_episode_repository is not None else "memory-only",
+                "memory_durable_status": durable_status,
             },
         )
 
     @app.get("/memory", response_model=MemoryResponse)
     def memory(limit: int = Query(default=10, ge=1, le=100)) -> MemoryResponse:
-        recent = shared_episode_memory.episodes[-limit:]
+        if durable_episode_repository is not None:
+            recent = durable_episode_repository.list_episodes(limit=limit)
+            scope = "durable postgres + process-local in-memory runtime"
+            persistence = "postgres"
+        else:
+            recent = list(reversed(shared_episode_memory.episodes[-limit:]))
+            scope = "process-local in-memory"
+            persistence = "none"
         episodes = [
             MemoryEpisodeView(
                 episode_id=str(episode.episode_id),
@@ -374,23 +404,31 @@ def build_app() -> FastAPI:
                 reliability=episode.reliability,
                 reason=episode.reason,
             )
-            for episode in reversed(recent)
+            for episode in recent
         ]
         return MemoryResponse(
             version=API_VERSION,
             episodes=episodes,
             meta={
-                "scope": "process-local in-memory",
+                "scope": scope,
                 "source": "/decide with execute=true",
-                "persistence": "none",
-                "total_episodes": len(shared_episode_memory.episodes),
+                "persistence": persistence,
+                "durable_status": durable_status,
+                "total_episodes": len(recent) if durable_episode_repository is not None else len(shared_episode_memory.episodes),
                 "returned_episodes": len(episodes),
             },
         )
 
     @app.get("/reliability", response_model=ReliabilityResponse)
     def reliability(limit: int = Query(default=25, ge=1, le=100)) -> ReliabilityResponse:
-        recent = shared_episode_memory.episodes[-limit:]
+        if durable_episode_repository is not None:
+            recent = durable_episode_repository.list_episodes(limit=limit)
+            scope = "durable postgres + process-local in-memory runtime"
+            persistence = "postgres"
+        else:
+            recent = list(reversed(shared_episode_memory.episodes[-limit:]))
+            scope = "process-local in-memory"
+            persistence = "none"
         reliability_values = [episode.reliability for episode in recent if episode.reliability is not None]
         successful = [episode for episode in recent if episode.success]
         return ReliabilityResponse(
@@ -410,14 +448,15 @@ def build_app() -> FastAPI:
                         "reliability": episode.reliability,
                         "reward": episode.reward,
                     }
-                    for episode in reversed(recent[-5:])
+                    for episode in recent[:5]
                 ],
             },
             meta={
-                "scope": "process-local in-memory",
+                "scope": scope,
                 "source": "/decide with execute=true",
-                "persistence": "none",
-                "note": "Reliability values are derived from remembered execution outcomes in this process only.",
+                "persistence": persistence,
+                "durable_status": durable_status,
+                "note": "Reliability values are derived from remembered execution outcomes.",
             },
         )
 

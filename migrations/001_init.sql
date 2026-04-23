@@ -73,7 +73,10 @@ CREATE TABLE IF NOT EXISTS episodes (
     action_names         JSONB NOT NULL,
     success              BOOLEAN NOT NULL,
     reward               DOUBLE PRECISION NOT NULL,
-    reason               TEXT NOT NULL DEFAULT ''
+    reason               TEXT NOT NULL DEFAULT '',
+    reliability          DOUBLE PRECISION,
+    source               TEXT NOT NULL DEFAULT 'unknown',
+    scope                TEXT NOT NULL DEFAULT 'decision'
 );
 
 CREATE INDEX IF NOT EXISTS idx_states_type ON states(state_type);

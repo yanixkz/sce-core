@@ -52,6 +52,9 @@ def test_postgres_migration_includes_episodes_table():
     assert "created_at           TIMESTAMPTZ NOT NULL" in POSTGRES_MIGRATION_SQL
     assert "state_snapshot       JSONB NOT NULL" in POSTGRES_MIGRATION_SQL
     assert "action_names         JSONB NOT NULL" in POSTGRES_MIGRATION_SQL
+    assert "reliability          DOUBLE PRECISION" in POSTGRES_MIGRATION_SQL
+    assert "source               TEXT NOT NULL DEFAULT 'unknown'" in POSTGRES_MIGRATION_SQL
+    assert "scope                TEXT NOT NULL DEFAULT 'decision'" in POSTGRES_MIGRATION_SQL
     assert "CREATE INDEX IF NOT EXISTS idx_episodes_created_at ON episodes(created_at);" in POSTGRES_MIGRATION_SQL
     assert "CREATE INDEX IF NOT EXISTS idx_episodes_goal ON episodes(goal);" in POSTGRES_MIGRATION_SQL
     assert "CREATE INDEX IF NOT EXISTS idx_episodes_plan_name ON episodes(plan_name);" in POSTGRES_MIGRATION_SQL
@@ -77,6 +80,9 @@ def test_postgres_episode_repository_save_list_clear_without_db(monkeypatch):
         success=False,
         reward=0.1,
         reason="r1",
+        reliability=0.25,
+        source="/decide",
+        scope="api_execute",
     )
     newer = Episode(
         episode_id=uuid4(),
@@ -88,6 +94,9 @@ def test_postgres_episode_repository_save_list_clear_without_db(monkeypatch):
         success=True,
         reward=0.9,
         reason="r2",
+        reliability=0.9,
+        source="/decide",
+        scope="api_execute",
     )
 
     repo.save_episode(older)
@@ -96,6 +105,9 @@ def test_postgres_episode_repository_save_list_clear_without_db(monkeypatch):
     assert insert_params[0] == str(older.episode_id)
     assert isinstance(insert_params[2], Jsonb)
     assert isinstance(insert_params[5], Jsonb)
+    assert insert_params[9] == older.reliability
+    assert insert_params[10] == older.source
+    assert insert_params[11] == older.scope
 
     fake_cursor.fetchall.return_value = [
         (
@@ -108,6 +120,9 @@ def test_postgres_episode_repository_save_list_clear_without_db(monkeypatch):
             newer.success,
             newer.reward,
             newer.reason,
+            newer.reliability,
+            newer.source,
+            newer.scope,
         ),
         (
             older.episode_id,
@@ -119,6 +134,9 @@ def test_postgres_episode_repository_save_list_clear_without_db(monkeypatch):
             older.success,
             older.reward,
             older.reason,
+            older.reliability,
+            older.source,
+            older.scope,
         ),
     ]
     fake_cursor.execute.reset_mock()
@@ -129,6 +147,7 @@ def test_postgres_episode_repository_save_list_clear_without_db(monkeypatch):
     assert "LIMIT %s" in select_query
     assert select_params == (1,)
     assert episodes[0].episode_id == newer.episode_id
+    assert episodes[0].reliability == newer.reliability
 
     fake_cursor.execute.reset_mock()
     repo.clear()
@@ -156,6 +175,9 @@ def test_postgres_episode_repository_integration_round_trip():
         success=False,
         reward=0.2,
         reason="too_slow",
+        reliability=0.3,
+        source="/decide",
+        scope="api_execute",
     )
     newer = Episode(
         episode_id=uuid4(),
@@ -167,6 +189,9 @@ def test_postgres_episode_repository_integration_round_trip():
         success=True,
         reward=1.0,
         reason="done",
+        reliability=0.95,
+        source="/decide",
+        scope="api_execute",
     )
 
     repo.save_episode(older)
@@ -177,6 +202,7 @@ def test_postgres_episode_repository_integration_round_trip():
     assert episodes[0].episode_id == newer.episode_id
     assert episodes[1].episode_id == older.episode_id
     assert episodes[0].state_snapshot["priority"] == "high"
+    assert episodes[0].reliability == pytest.approx(0.95)
 
     limited = repo.list_episodes(limit=1)
     assert len(limited) == 1
