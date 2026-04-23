@@ -2,9 +2,9 @@
 
 ## How to read this document
 
-This file captures the **historical origin and conceptual seed** of SCE Core.
+This document captures the historical and philosophical origin of SCE Core.
 
-For the explicit operational mapping from Constraint-Driven Stability (CDS) to implemented SCE Core mechanisms, see [`constraint_driven_stability.md`](constraint_driven_stability.md).
+For the explicit operational mapping from Constraint-Driven Stability (CDS) to implemented SCE Core mechanisms, see [constraint_driven_stability.md](constraint_driven_stability.md).
 
 Layering:
 
@@ -22,11 +22,13 @@ It started with a question:
 
 > *Why does chaos become structure? Why do stable things exist at all?*
 
-From vortices to biological systems to large-scale structures, ordered configurations appear and persist across very different substrates. The earliest motivation for SCE was to look for a common principle behind that persistence.
+From water vortices to galaxies, from cells to neural networks, ordered configurations appear and persist across vastly different scales and substrates. The earliest motivation for SCE was to look for a common principle behind that persistence.
+
+That question led to a conversation. Then to a model. Then to a framework. Then to this repository.
 
 ---
 
-## Conceptual seed
+## The core insight
 
 The early conversation converged on one idea:
 
@@ -46,7 +48,7 @@ SCE Core grew from that conceptual seed into an engineering loop for adaptive de
 - explanation of decision-carrying structure,
 - reliability tracking from outcomes,
 - episodic memory that influences the next choice,
-- inspectable API/graph surfaces.
+- inspectable API and graph surfaces.
 
 The operational description of that loop is intentionally maintained in the theory bridge document rather than duplicated here.
 
@@ -56,7 +58,7 @@ The operational description of that loop is intentionally maintained in the theo
 
 The origin discussion also surfaced questions that remain open research topics, including:
 
-- deeper mathematical formalization of stability/coherence,
+- deeper mathematical formalization of stability and coherence,
 - richer theory of constraint formation and evolution,
 - stronger links between graph dynamics and topology-aware analysis,
 - broader benchmarks for constrained adaptive decision systems.
