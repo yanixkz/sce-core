@@ -8,6 +8,13 @@ from sce.api import API_VERSION, build_app
 client = TestClient(build_app())
 
 
+def _assert_memory_scope_matches_persistence(meta: dict) -> None:
+    if meta["persistence"] == "postgres":
+        assert meta["scope"] == "durable postgres + process-local in-memory runtime"
+    else:
+        assert meta["scope"] == "process-local in-memory"
+
+
 def test_demo_json_contract_includes_version_and_expected_shape():
     resp = client.post("/demo", json={"name": "hypothesis", "format": "json"})
 
@@ -123,9 +130,9 @@ def test_memory_contract_reports_process_local_episodes_after_decide_execute():
     assert {"episode_id", "created_at", "goal", "selected_plan", "success", "reward", "reliability"}.issubset(
         data["episodes"][0]
     )
-    assert data["meta"]["scope"] == "process-local in-memory"
+    _assert_memory_scope_matches_persistence(data["meta"])
     assert data["meta"]["source"] == "/decide with execute=true"
-    assert data["meta"]["persistence"] == "none"
+    assert data["meta"]["persistence"] in {"none", "postgres"}
 
 
 def test_reliability_contract_reports_summary_over_recent_window():
@@ -147,5 +154,5 @@ def test_reliability_contract_reports_summary_over_recent_window():
         data["reliability"]
     )
     assert isinstance(data["reliability"]["latest"], list)
-    assert data["meta"]["scope"] == "process-local in-memory"
+    _assert_memory_scope_matches_persistence(data["meta"])
     assert data["meta"]["source"] == "/decide with execute=true"

@@ -38,7 +38,10 @@ def test_memory_and_reliability_empty_state():
     memory_data = memory_resp.json()
     assert memory_data["version"] == "v1"
     assert memory_data["episodes"] == []
-    assert memory_data["meta"]["scope"] == "process-local in-memory"
+    if memory_data["meta"]["persistence"] == "postgres":
+        assert memory_data["meta"]["scope"] == "durable postgres + process-local in-memory runtime"
+    else:
+        assert memory_data["meta"]["scope"] == "process-local in-memory"
 
     reliability_resp = client.get("/reliability")
     assert reliability_resp.status_code == 200
@@ -46,6 +49,10 @@ def test_memory_and_reliability_empty_state():
     assert reliability_data["version"] == "v1"
     assert reliability_data["reliability"]["recent_window_size"] == 0
     assert reliability_data["reliability"]["average_reliability"] is None
+    if reliability_data["meta"]["persistence"] == "postgres":
+        assert reliability_data["meta"]["scope"] == "durable postgres + process-local in-memory runtime"
+    else:
+        assert reliability_data["meta"]["scope"] == "process-local in-memory"
 
 
 def test_durable_memory_and_reliability_when_database_configured(monkeypatch):
