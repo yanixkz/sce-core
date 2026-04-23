@@ -17,3 +17,14 @@ def test_ask_simple():
     data = resp.json()
     assert "intent" in data
     assert "selected_plan" in data
+
+
+def test_decide_minimal_request():
+    client = TestClient(build_app())
+    resp = client.post("/decide", json={"goal": "assess supplier risk", "context": {"supplier_id": "supplier A"}})
+    assert resp.status_code == 200
+    data = resp.json()
+    assert data["version"] == "v1"
+    assert data["goal"] == "assess supplier risk"
+    assert data["selected_plan"]
+    assert isinstance(data["scores"], list)

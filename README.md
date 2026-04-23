@@ -219,14 +219,18 @@ sce demo supplier-risk --json
 
 ```text
 POST /ask
+POST /decide
 POST /demo
 POST /demo/explain
 GET  /graph
 ```
 
-Responses keep existing contracts and now include additive UI-readiness metadata
-for minimal web integration (for example `meta.ui` panel hints on demo endpoints
-and graph schema/count hints on `/graph`).
+`/decide` is the generalized decision-facing API surface (goal + context -> ranked
+decision response). Demo endpoints remain intact as showcase/product-story routes.
+
+Responses keep existing contracts and include additive UI-readiness metadata for
+minimal web integration (for example `meta.ui` panel hints on demo endpoints and
+graph schema/count hints on `/graph`).
 
 ### Run API locally
 
@@ -244,6 +248,18 @@ http://127.0.0.1:8000/ui
 `/ui` is a minimal web skeleton that lets you run `supplier-risk` and `hypothesis` demos and inspect `/graph` payloads in-browser.
 
 ### Example
+
+```bash
+curl -X POST http://127.0.0.1:8000/decide \
+  -H "Content-Type: application/json" \
+  -d '{
+    "goal":"assess supplier risk",
+    "context":{"supplier_id":"supplier A","claim":"supplier may be unreliable"},
+    "execute":true
+  }'
+```
+
+### Demo run (showcase endpoints)
 
 ```bash
 curl -X POST http://127.0.0.1:8000/demo \
