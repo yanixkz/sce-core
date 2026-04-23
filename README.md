@@ -2,7 +2,7 @@
 
 [![Tests](https://img.shields.io/github/actions/workflow/status/yanixkz/sce-core/tests.yml?branch=main&label=tests)](https://github.com/yanixkz/sce-core/actions/workflows/tests.yml)
 
-SCE Core is a decision engine for AI agents.
+SCE Core is an **early alpha** decision engine for AI agents.
 
 It combines:
 - constrained decision selection,
@@ -15,6 +15,34 @@ It combines:
 Decide → Explain → Remember/Reliability → Improve
 ```
 
+## Alpha release status
+
+- **Release channel:** `v0.1-alpha`
+- **Python package version (PEP 440):** `0.1.0a0`
+- **Maturity:** usable for exploration, demos, and API prototyping; not a stable production contract yet.
+
+## Fastest path to value (5 minutes)
+
+```bash
+python -m venv .venv
+source .venv/bin/activate
+pip install -e .[api]
+```
+
+Run the core demo and the research demo:
+
+```bash
+sce demo
+sce demo hypothesis
+```
+
+Run the API and open UI:
+
+```bash
+uvicorn sce.api:app --reload
+# then open http://127.0.0.1:8000/ui
+```
+
 ## What SCE Core is (and is not)
 
 SCE Core is not a chat wrapper and not only a demo collection.
@@ -25,43 +53,16 @@ It is a reusable decision layer that currently ships with demos, API endpoints, 
 - **Research layer:** open problems grounded in the implemented loop.
 - **Origin layer:** historical and philosophical motivation.
 
-## Start in one command
+## Canonical CLI and graph commands
 
 ```bash
 sce demo
-```
-
-Canonical demo commands:
-
-```bash
 sce demo supplier-risk
 sce demo hypothesis
 sce demo list
-```
-
-Graph inspection:
-
-```bash
 sce export-graph
 sce visualize-graph
 ```
-
-## Flagship demos
-
-### `supplier-risk` (product-facing)
-
-Practical window into the core loop:
-
-```text
-supplier context → plan choice → backbone explanation → reliability signal → memory influence → improved next choice
-```
-
-### `hypothesis` (research-facing)
-
-Research window into the same engine:
-- competing hypothesis ranking,
-- decision-carrying evidence vs dangling context,
-- concrete next research actions.
 
 ## Reusable API surface
 
@@ -114,6 +115,23 @@ curl -X POST http://127.0.0.1:8000/decide \
   }'
 ```
 
+## Flagship demos
+
+### `supplier-risk` (product-facing)
+
+Practical window into the core loop:
+
+```text
+supplier context → plan choice → backbone explanation → reliability signal → memory influence → improved next choice
+```
+
+### `hypothesis` (research-facing)
+
+Research window into the same engine:
+- competing hypothesis ranking,
+- decision-carrying evidence vs dangling context,
+- concrete next research actions.
+
 ## Why this architecture matters
 
 SCE Core keeps four mechanisms coupled in one inspectable loop:
@@ -128,6 +146,7 @@ This coupling is what makes the system both practical and research-relevant.
 ## Documentation map
 
 - **Product entrypoint:** `README.md` (this file)
+- **Release notes:** [`CHANGELOG.md`](CHANGELOG.md)
 - **Roadmap / delivery priorities:** [`ROADMAP.md`](ROADMAP.md)
 - **Origin (history and motivation):** [`docs/origin.md`](docs/origin.md)
 - **Theory bridge (CDS → SCE):** [`docs/constraint_driven_stability.md`](docs/constraint_driven_stability.md)
@@ -135,6 +154,7 @@ This coupling is what makes the system both practical and research-relevant.
 - **Russian overview:** [`docs/OVERVIEW_RU.md`](docs/OVERVIEW_RU.md)
 - **Extended docs index:** [`docs/README.md`](docs/README.md)
 - **Governance/workflow guide:** [`docs/governance.md`](docs/governance.md)
+- **Release checklist:** [`docs/release_readiness.md`](docs/release_readiness.md)
 
 ## Near-term direction (concise)
 
@@ -147,7 +167,7 @@ Near-term work stays split across product and research, on one engine:
 
 Details: [`ROADMAP.md`](ROADMAP.md) and [`docs/research_program.md`](docs/research_program.md).
 
-## Install
+## Full install options
 
 ```bash
 python -m venv .venv
@@ -168,10 +188,6 @@ pip install -e .[api,anthropic]
 ```bash
 pytest
 ```
-
-## Status
-
-Early product/research system for explainable adaptive decision workflows.
 
 ## License
 

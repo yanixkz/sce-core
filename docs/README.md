@@ -25,7 +25,10 @@ This folder contains layered documentation for SCE Core.
 6. **Governance/workflow** — [`governance.md`](governance.md)
    - compact workstream model for issues/PRs and contribution flow.
 
-7. **Russian overview** — [`OVERVIEW_RU.md`](OVERVIEW_RU.md)
+7. **Release readiness** — [`release_readiness.md`](release_readiness.md)
+   - compact alpha release checklist and naming guidance.
+
+8. **Russian overview** — [`OVERVIEW_RU.md`](OVERVIEW_RU.md)
    - concise, up-to-date Russian summary aligned with current layers.
 
 ## Additional technical notes
