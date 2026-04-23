@@ -1,8 +1,10 @@
 from __future__ import annotations
 
+from pathlib import Path
 from typing import Any, Dict, Literal, Optional
 
 from fastapi import FastAPI, HTTPException
+from fastapi.responses import HTMLResponse
 from pydantic import BaseModel, Field
 
 from sce.cli import DEMO_CHOICES, DEMO_REGISTRY, format_demo, run_demo
@@ -72,6 +74,10 @@ def _export_supplier_graph() -> dict:
     evolver = SCEEvolver(repo, scorer)
     evolver.evolve(start_state, max_steps=5, epsilon=0.001)
     return GraphQueryLayer(repo).export_graph_json()
+
+
+def _load_ui_html() -> str:
+    return (Path(__file__).with_name("ui.html")).read_text(encoding="utf-8")
 
 
 def _build_demo_ui_meta(name: str, raw_result: dict) -> Dict[str, Any]:
@@ -158,6 +164,10 @@ def _build_demo_ui_meta(name: str, raw_result: dict) -> Dict[str, Any]:
 
 def build_app() -> FastAPI:
     app = FastAPI(title="SCE Core API", version="0.1.0-alpha")
+
+    @app.get("/ui", response_class=HTMLResponse)
+    def ui() -> HTMLResponse:
+        return HTMLResponse(content=_load_ui_html())
 
     @app.get("/health")
     def health() -> Dict[str, str]:
