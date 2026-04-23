@@ -10,28 +10,13 @@ SCE Core is a decision engine for AI agents with explainability, reliability tra
 Decide. Explain. Improve.
 ```
 
-### What you can do right now
+---
 
-- Run a full end-to-end demo with one command
-- Inspect why a decision was made
-- Track reliability and improvement over time
-- Expose the system through a versioned API
-- Inspect the internal graph behind the decision process
+## Positioning in one line
 
-### Start in one command
+**SCE Core is the decision layer for AI agents when you need auditable choices, not just generated answers.**
 
-```bash
-sce demo
-```
-
-### API endpoints
-
-```text
-POST /ask
-POST /demo
-POST /demo/explain
-GET  /graph
-```
+For Russian-speaking readers: see [docs/OVERVIEW_RU.md](docs/OVERVIEW_RU.md).
 
 ---
 
@@ -49,6 +34,74 @@ did the next decision improve?
 ```
 
 SCE Core provides that missing layer.
+
+---
+
+## What you can do right now
+
+- Run a full end-to-end demo with one command
+- Inspect why a decision was made
+- Track reliability and improvement over time
+- Expose the system through a versioned API
+- Inspect the internal graph behind the decision process
+
+### Start in one command
+
+```bash
+sce demo
+```
+
+---
+
+## Who it is for
+
+### 1) Product and platform teams building AI agents
+
+Use SCE when your team needs a reusable, inspectable decision substrate under multiple agent workflows.
+
+### 2) Operations and risk teams
+
+Use SCE when decisions must be traceable over time (e.g., supply chain, incident response, policy workflows).
+
+### 3) Research and applied AI teams
+
+Use SCE when you want to study how decision quality evolves with memory and reliability feedback.
+
+---
+
+## Who gets value (ICP)
+
+### Primary users
+
+- AI/ML engineers building agent backends
+- Platform engineers responsible for agent reliability
+- Applied researchers in explainable/adaptive decision systems
+
+### Business stakeholders
+
+- Risk and compliance leaders
+- Operations managers
+- CTO/Head of AI evaluating production-readiness of agent decisions
+
+---
+
+## Core capabilities
+
+### Decide
+
+Rank candidate plans and choose the best next action.
+
+### Explain
+
+Use decision backbone extraction to separate decision-carrying facts from dangling context.
+
+### Improve
+
+Track local prediction error, compute reliability, remember the outcome, and influence the next decision.
+
+### Observe
+
+Export and inspect the system graph through CLI and API.
 
 ---
 
@@ -76,22 +129,6 @@ Improve next choice
 
 ---
 
-## Core capabilities
-
-### Decide
-Rank candidate plans and choose the best next action.
-
-### Explain
-Use decision backbone extraction to separate decision-carrying facts from dangling context.
-
-### Improve
-Track local prediction error, compute reliability, remember the outcome, and influence the next decision.
-
-### Observe
-Export and inspect the system graph through CLI and API.
-
----
-
 ## Why SCE is different
 
 ### Decision backbone extraction
@@ -116,6 +153,17 @@ SCE remembers outcomes and uses them to change later behavior.
 ### Graph observability
 
 SCE can export a real graph representation of system state for debugging, visualization, and product integration.
+
+---
+
+## Use cases
+
+- Explainable AI copilots
+- Operations and workflow agents
+- Supplier risk systems
+- Research agents
+- Auditable autonomous systems
+- Internal decision infrastructure for agent platforms
 
 ---
 
@@ -147,9 +195,16 @@ sce demo supplier-risk --json
 
 ---
 
-## API
+## API endpoints
 
-Run locally:
+```text
+POST /ask
+POST /demo
+POST /demo/explain
+GET  /graph
+```
+
+### Run API locally
 
 ```bash
 uvicorn sce.api:app --reload
@@ -185,14 +240,30 @@ curl http://127.0.0.1:8000/graph
 
 ---
 
-## Use cases
+## Adoption path (practical)
 
-- Explainable AI copilots
-- Operations and workflow agents
-- Supplier risk systems
-- Research agents
-- Auditable autonomous systems
-- Internal decision infrastructure for agent platforms
+### Day 1
+
+Run demos and inspect backbone + reliability outputs.
+
+### Week 1
+
+Integrate `/ask` or `/demo` in a staging workflow and log explanations.
+
+### Month 1
+
+Use reliability and memory feedback to tune decision policies and compare trajectories over time.
+
+---
+
+## When not to use SCE
+
+SCE may be unnecessary if your use case only needs one-shot text generation and does not require:
+
+- decision traceability,
+- reliability monitoring,
+- memory-aware policy improvement,
+- or graph-level observability.
 
 ---
 
