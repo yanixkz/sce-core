@@ -238,7 +238,10 @@ Open:
 
 ```text
 http://127.0.0.1:8000/docs
+http://127.0.0.1:8000/ui
 ```
+
+`/ui` is a minimal web skeleton that lets you run `supplier-risk` and `hypothesis` demos and inspect `/graph` payloads in-browser.
 
 ### Example
 

@@ -1,0 +1,168 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>SCE Core UI Skeleton</title>
+    <style>
+      :root {
+        font-family: Arial, sans-serif;
+        color-scheme: light;
+      }
+      body {
+        margin: 0;
+        padding: 1rem;
+        max-width: 1000px;
+      }
+      h1, h2, h3 {
+        margin-bottom: 0.5rem;
+      }
+      .row {
+        display: flex;
+        gap: 0.5rem;
+        flex-wrap: wrap;
+        margin-bottom: 1rem;
+      }
+      button {
+        padding: 0.5rem 0.75rem;
+        cursor: pointer;
+      }
+      .panel {
+        border: 1px solid #d0d0d0;
+        border-radius: 6px;
+        padding: 0.75rem;
+        margin-bottom: 0.75rem;
+        background: #fafafa;
+      }
+      .muted {
+        color: #666;
+      }
+      pre {
+        background: #f3f3f3;
+        border-radius: 6px;
+        padding: 0.75rem;
+        overflow-x: auto;
+      }
+      ul {
+        margin-top: 0.4rem;
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <h1>SCE Core — Minimal Product Surface</h1>
+      <p class="muted">Run flagship demos and inspect graph payloads using the current API/readiness layer.</p>
+    </header>
+
+    <section class="panel">
+      <h2>Demos</h2>
+      <div class="row">
+        <button id="run-supplier">Run supplier-risk demo</button>
+        <button id="run-hypothesis">Run hypothesis demo</button>
+      </div>
+      <div id="demo-status" class="muted">No demo executed yet.</div>
+      <div id="demo-render"></div>
+    </section>
+
+    <section class="panel">
+      <h2>Graph inspection</h2>
+      <div class="row">
+        <button id="load-graph">Load /graph</button>
+      </div>
+      <div id="graph-summary" class="muted">Graph not loaded.</div>
+      <details>
+        <summary>Raw graph JSON</summary>
+        <pre id="graph-json">{}</pre>
+      </details>
+    </section>
+
+    <script>
+      async function fetchDemo(name) {
+        const status = document.getElementById("demo-status");
+        const render = document.getElementById("demo-render");
+        status.textContent = `Loading ${name}...`;
+        render.innerHTML = "";
+
+        const resp = await fetch("/demo", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ name, format: "json" }),
+        });
+
+        if (!resp.ok) {
+          status.textContent = `Failed: ${resp.status}`;
+          return;
+        }
+
+        const payload = await resp.json();
+        status.textContent = `${payload.name} loaded.`;
+        renderDemo(payload);
+      }
+
+      function itemList(items) {
+        if (!Array.isArray(items) || items.length === 0) {
+          return '<div class="muted">No data</div>';
+        }
+        return `<ul>${items.map((v) => `<li>${escapeHtml(JSON.stringify(v))}</li>`).join("")}</ul>`;
+      }
+
+      function escapeHtml(value) {
+        return String(value)
+          .replaceAll("&", "&amp;")
+          .replaceAll("<", "&lt;")
+          .replaceAll(">", "&gt;");
+      }
+
+      function renderDemo(payload) {
+        const metaUi = payload.meta && payload.meta.ui ? payload.meta.ui : {};
+        const result = payload.result || {};
+        const render = document.getElementById("demo-render");
+
+        const blocks = [];
+        blocks.push(`<div class="panel"><h3>Summary</h3><pre>${escapeHtml(JSON.stringify({ name: payload.name, view: metaUi.view }, null, 2))}</pre></div>`);
+
+        if (metaUi.view === "supplier-risk") {
+          blocks.push(`<div class="panel"><h3>Selected plan / main choice</h3><pre>${escapeHtml(JSON.stringify({ first_choice: result.first_choice, final_choice: result.final_choice, changed_choice: result.changed_choice }, null, 2))}</pre></div>`);
+          blocks.push(`<div class="panel"><h3>Explanation backbone</h3>${itemList(result.backbone_nodes)}<h4>Dangling</h4>${itemList(result.dangling_nodes)}</div>`);
+          blocks.push(`<div class="panel"><h3>Reliability / memory / improvement signals</h3><pre>${escapeHtml(JSON.stringify({ reliability: result.reliability, cumulative_error: result.cumulative_error, reliability_trend: result.reliability_trend, remembered_episodes: result.remembered_episodes }, null, 2))}</pre></div>`);
+          blocks.push(`<div class="panel"><h3>Summary block</h3><pre>${escapeHtml(JSON.stringify({ summary: result.summary }, null, 2))}</pre></div>`);
+        } else if (metaUi.view === "hypothesis") {
+          blocks.push(`<div class="panel"><h3>Research question</h3><pre>${escapeHtml(JSON.stringify(result.research_question, null, 2))}</pre></div>`);
+          blocks.push(`<div class="panel"><h3>Ranked hypotheses</h3>${itemList(result.scores)}</div>`);
+          blocks.push(`<div class="panel"><h3>Selected hypothesis</h3><pre>${escapeHtml(JSON.stringify(result.selected_hypothesis, null, 2))}</pre></div>`);
+          blocks.push(`<div class="panel"><h3>Decision-carrying evidence</h3>${itemList(result.backbone_nodes)}</div>`);
+          blocks.push(`<div class="panel"><h3>Dangling context</h3>${itemList(result.dangling_nodes)}</div>`);
+          blocks.push(`<div class="panel"><h3>Next actions</h3>${itemList(result.next_actions)}</div>`);
+        } else {
+          blocks.push(`<div class="panel"><h3>Result</h3><pre>${escapeHtml(JSON.stringify(result, null, 2))}</pre></div>`);
+        }
+
+        blocks.push(`<details><summary>Raw demo JSON</summary><pre>${escapeHtml(JSON.stringify(payload, null, 2))}</pre></details>`);
+        render.innerHTML = blocks.join("\n");
+      }
+
+      async function loadGraph() {
+        const summary = document.getElementById("graph-summary");
+        const raw = document.getElementById("graph-json");
+
+        summary.textContent = "Loading graph...";
+        const resp = await fetch("/graph");
+        if (!resp.ok) {
+          summary.textContent = `Failed: ${resp.status}`;
+          return;
+        }
+
+        const payload = await resp.json();
+        const nodeCount = payload.meta && typeof payload.meta.node_count === "number" ? payload.meta.node_count : (payload.graph.nodes || []).length;
+        const edgeCount = payload.meta && typeof payload.meta.edge_count === "number" ? payload.meta.edge_count : (payload.graph.edges || []).length;
+
+        summary.textContent = `Source: ${payload.meta.source}; nodes: ${nodeCount}; edges: ${edgeCount}`;
+        raw.textContent = JSON.stringify(payload, null, 2);
+      }
+
+      document.getElementById("run-supplier").addEventListener("click", () => fetchDemo("supplier-risk"));
+      document.getElementById("run-hypothesis").addEventListener("click", () => fetchDemo("hypothesis"));
+      document.getElementById("load-graph").addEventListener("click", loadGraph);
+    </script>
+  </body>
+</html>
