@@ -28,6 +28,8 @@ class Episode:
     reward: float
     reason: str = ""
     reliability: float | None = None
+    source: str = "unknown"
+    scope: str = "decision"
     episode_id: UUID = field(default_factory=uuid4)
     created_at: datetime = field(default_factory=utc_now)
 
@@ -43,6 +45,8 @@ class Episode:
             "reward": self.reward,
             "reason": self.reason,
             "reliability": self.reliability,
+            "source": self.source,
+            "scope": self.scope,
         }
 
     @classmethod
@@ -56,6 +60,8 @@ class Episode:
             reward=data["reward"],
             reason=data.get("reason", ""),
             reliability=data.get("reliability"),
+            source=data.get("source", "unknown"),
+            scope=data.get("scope", "decision"),
             episode_id=UUID(data["episode_id"]),
             created_at=datetime.fromisoformat(data["created_at"]),
         )
@@ -77,6 +83,8 @@ class EpisodeMemory:
         reward: float,
         reason: str = "",
         reliability: float | None = None,
+        source: str = "unknown",
+        scope: str = "decision",
     ) -> Episode:
         episode = Episode(
             state_snapshot=dict(state.data),
@@ -87,6 +95,8 @@ class EpisodeMemory:
             reward=reward,
             reason=reason,
             reliability=self._clamp_reliability(reliability) if reliability is not None else None,
+            source=source,
+            scope=scope,
         )
         self.episodes.append(episode)
         if self._repository is not None:

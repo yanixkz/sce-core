@@ -15,6 +15,7 @@ It currently supports persistence for:
 - transitions
 - events
 - attractors
+- episodes (including success/reward/reliability metadata used by `/memory` and `/reliability` when DB is configured)
 
 Callable constraints and executable rules are still primarily handled by the in-memory runtime. This is intentional: Python callables cannot be safely or meaningfully serialized into SQL without a separate constraint/rule expression layer.
 
@@ -92,6 +93,7 @@ If it is set, the test checks:
 ## Design notes
 
 The PostgreSQL backend is not a replacement for the in-memory runtime yet.
+The runtime remains hybrid: in-memory structures are still the fast execution view, while PostgreSQL is used as a durable backing store for episode history.
 
 Current split:
 

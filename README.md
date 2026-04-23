@@ -87,7 +87,7 @@ POST /demo/explain
 
 Notes:
 - `/decide` is the generalized decision endpoint (`goal + context → ranked decision response`).
-- `/memory` and `/reliability` are process-local inspection surfaces based on executed decisions in the current API process.
+- `/memory` and `/reliability` default to process-local in-memory inspection and automatically switch to durable PostgreSQL-backed episode history when `SCE_DATABASE_URL` is configured.
 - Demo endpoints remain as product/story routes over the same engine.
 
 ## Run API locally
