@@ -2,261 +2,94 @@
 
 [![Tests](https://img.shields.io/github/actions/workflow/status/yanixkz/sce-core/tests.yml?branch=main&label=tests)](https://github.com/yanixkz/sce-core/actions/workflows/tests.yml)
 
-## Build AI agents that can decide, explain, and improve
+SCE Core is a decision engine for AI agents.
 
-SCE Core is a decision engine for AI agents with explainability, reliability tracking, memory, and graph observability.
-
-```text
-Decide. Explain. Improve.
-```
-
----
-
-## Positioning in one line
-
-**SCE Core is the decision layer for AI agents when you need auditable choices, not just generated answers.**
-
-For Russian-speaking readers: see [docs/OVERVIEW_RU.md](docs/OVERVIEW_RU.md).
-
-### Theory bridge: Constraint-Driven Stability (CDS)
-
-SCE Core operationalizes CDS for decision systems: choices are made under explicit constraints, evaluated by outcome reliability, retained in episodic memory, and updated on the next decision cycle.
-The practical result is a coupled loop of **Decide → Explain → Improve**, not disconnected features.
-For the explicit CDS→SCE mapping, see [docs/theory.md](docs/theory.md). For the structured open-problems agenda grounded in that mapping, see [docs/research_program.md](docs/research_program.md).
-
----
-
-## Why SCE exists
-
-Most AI agents can produce an answer.
-Few can clearly show:
+It combines:
+- constrained decision selection,
+- explainability via decision backbone extraction,
+- reliability tracking from outcomes,
+- episodic memory that influences later choices,
+- inspectable API/graph/UI surfaces.
 
 ```text
-why this choice?
-which facts actually mattered?
-what was ignored?
-was the trajectory reliable?
-did the next decision improve?
+Decide → Explain → Remember/Reliability → Improve
 ```
 
-SCE Core provides that missing layer.
+## What SCE Core is (and is not)
 
----
+SCE Core is not a chat wrapper and not only a demo collection.
+It is a reusable decision layer that currently ships with demos, API endpoints, and a theory/research documentation stack.
 
-## What you can do right now
+- **Product layer:** runnable demos and API/UI surfaces.
+- **Theory bridge:** CDS → SCE operational mapping.
+- **Research layer:** open problems grounded in the implemented loop.
+- **Origin layer:** historical and philosophical motivation.
 
-- Run a full end-to-end demo with one command
-- Inspect why a decision was made
-- Track reliability and improvement over time
-- Expose the system through a versioned API
-- Inspect the internal graph behind the decision process
-
-### Start in one command
+## Start in one command
 
 ```bash
 sce demo
 ```
 
----
-
-## Who it is for
-
-### 1) Product and platform teams building AI agents
-
-Use SCE when your team needs a reusable, inspectable decision substrate under multiple agent workflows.
-
-### 2) Operations and risk teams
-
-Use SCE when decisions must be traceable over time (e.g., supply chain, incident response, policy workflows).
-
-### 3) Research and applied AI teams
-
-Use SCE when you want to study how decision quality evolves with memory and reliability feedback.
-
----
-
-## Who gets value (ICP)
-
-### Primary users
-
-- AI/ML engineers building agent backends
-- Platform engineers responsible for agent reliability
-- Applied researchers in explainable/adaptive decision systems
-
-### Business stakeholders
-
-- Risk and compliance leaders
-- Operations managers
-- CTO/Head of AI evaluating production-readiness of agent decisions
-
----
-
-## Theory bridge (CDS -> SCE Core)
-
-SCE Core operationalizes **Constraint-Driven Stability (CDS)** for decision systems: constraints shape admissible transitions, candidate trajectories are selected under scoring, outcomes produce reliability signals, and episodic memory influences the next choice.
-
-This is not a rebrand and not a claim beyond current implementation; it is an explicit mapping between the existing engine loop and its theoretical framing.
-
-For the structured mapping, see [`docs/constraint_driven_stability.md`](docs/constraint_driven_stability.md). For the corresponding open-problems layer, see [`docs/research_program.md`](docs/research_program.md). For historical context, see [`docs/origin.md`](docs/origin.md).
-
----
-
-## Core capabilities
-
-### Decide
-
-Rank candidate plans and choose the best next action.
-
-### Explain
-
-Use decision backbone extraction to separate decision-carrying facts from dangling context.
-
-### Improve
-
-Track local prediction error, compute reliability, remember the outcome, and influence the next decision.
-
-### Observe
-
-Export and inspect the system graph through CLI and API.
-
----
-
-## Product loop
-
-```text
-State
-↓
-Candidate plans
-↓
-Score with memory + reliability
-↓
-Select
-↓
-Explain
-↓
-Execute / observe
-↓
-Track prediction error
-↓
-Remember reliability
-↓
-Improve next choice
-```
-
----
-
-## Why SCE is different
-
-### Decision backbone extraction
-
-SCE identifies which nodes actually carried the decision.
-
-```text
-forward  = nodes reachable from evidence
-backward = nodes that can reach the target decision
-backbone = forward ∩ backward
-dangling = forward - backbone
-```
-
-### Reliability-aware planning
-
-SCE does not stop at plan selection. It measures how reliable the trajectory was and feeds that back into future scoring.
-
-### Memory-aware evolution
-
-SCE remembers outcomes and uses them to change later behavior.
-
-### Graph observability
-
-SCE can export a real graph representation of system state for debugging, visualization, and product integration.
-
----
-
-## Use cases
-
-- Explainable AI copilots
-- Operations and workflow agents
-- Supplier risk systems
-- Research agents
-- Auditable autonomous systems
-- Internal decision infrastructure for agent platforms
-
----
-
-## Run the product story
-
-Dual packaging:
-
-- `supplier-risk` = practical product-facing demo
-- `hypothesis` = research-facing flagship demo
-
-### Canonical entrypoints
+Canonical demo commands:
 
 ```bash
-sce demo
 sce demo supplier-risk
 sce demo hypothesis
 sce demo list
 ```
 
-### Graph inspection entrypoints
+Graph inspection:
 
 ```bash
 sce export-graph
 sce visualize-graph
 ```
 
-`sce demo` defaults to `supplier-risk` and shows the complete loop:
+## Flagship demos
+
+### `supplier-risk` (product-facing)
+
+Practical window into the core loop:
 
 ```text
-supplier risk → plan choice → backbone → reliability → memory → improved next choice
+supplier context → plan choice → backbone explanation → reliability signal → memory influence → improved next choice
 ```
 
-### Hypothesis demo
+### `hypothesis` (research-facing)
 
-```bash
-sce demo hypothesis
-```
-
-Research showcase for:
-- competing hypotheses and ranking,
+Research window into the same engine:
+- competing hypothesis ranking,
 - decision-carrying evidence vs dangling context,
 - concrete next research actions.
 
-### JSON output
+## Reusable API surface
 
-```bash
-sce demo supplier-risk --json
+Core reusable endpoints:
+
+```text
+POST /decide
+GET  /memory
+GET  /reliability
+GET  /graph
+GET  /ui
 ```
 
----
-
-## API endpoints
+Showcase/supporting endpoints:
 
 ```text
 POST /ask
-POST /decide
+GET  /demo
 POST /demo
 POST /demo/explain
-GET  /graph
-GET  /memory
-GET  /reliability
 ```
 
-`/decide` is the generalized decision-facing API surface (goal + context -> ranked
-decision response). Demo endpoints remain intact as showcase/product-story routes.
+Notes:
+- `/decide` is the generalized decision endpoint (`goal + context → ranked decision response`).
+- `/memory` and `/reliability` are process-local inspection surfaces based on executed decisions in the current API process.
+- Demo endpoints remain as product/story routes over the same engine.
 
-`/memory` and `/reliability` expose a small, honest inspection surface for adaptive
-loop internals from the current API process:
-- data is **in-memory and process-local**,
-- episodes are collected from `/decide` calls with `execute=true`,
-- there is **no persistent/global history** across restarts.
-
-Responses keep existing contracts and include additive UI-readiness metadata for
-minimal web integration (for example `meta.ui` panel hints on demo endpoints and
-graph schema/count hints on `/graph`).
-
-### Run API locally
+## Run API locally
 
 ```bash
 uvicorn sce.api:app --reload
@@ -269,9 +102,7 @@ http://127.0.0.1:8000/docs
 http://127.0.0.1:8000/ui
 ```
 
-`/ui` is a minimal web skeleton that lets you run `supplier-risk` and `hypothesis` demos and inspect `/graph` payloads in-browser.
-
-### Example
+Example decision call:
 
 ```bash
 curl -X POST http://127.0.0.1:8000/decide \
@@ -283,68 +114,37 @@ curl -X POST http://127.0.0.1:8000/decide \
   }'
 ```
 
-Inspect remembered episodes:
+## Why this architecture matters
 
-```bash
-curl http://127.0.0.1:8000/memory
-```
+SCE Core keeps four mechanisms coupled in one inspectable loop:
 
-Inspect recent reliability summary:
+1. **Constraints + trajectory selection** choose admissible plans.
+2. **Decision backbone** shows what carried the decision.
+3. **Reliability tracking** measures empirical stability quality.
+4. **Episodic memory** changes future reselection pressure.
 
-```bash
-curl http://127.0.0.1:8000/reliability
-```
+This coupling is what makes the system both practical and research-relevant.
 
-### Demo run (showcase endpoints)
+## Documentation map
 
-```bash
-curl -X POST http://127.0.0.1:8000/demo \
-  -H "Content-Type: application/json" \
-  -d '{"name":"supplier-risk","format":"pretty"}'
-```
+- **Product entrypoint:** `README.md` (this file)
+- **Roadmap / delivery priorities:** [`ROADMAP.md`](ROADMAP.md)
+- **Origin (history and motivation):** [`docs/origin.md`](docs/origin.md)
+- **Theory bridge (CDS → SCE):** [`docs/constraint_driven_stability.md`](docs/constraint_driven_stability.md)
+- **Research program (open problems):** [`docs/research_program.md`](docs/research_program.md)
+- **Russian overview:** [`docs/OVERVIEW_RU.md`](docs/OVERVIEW_RU.md)
+- **Extended docs index:** [`docs/README.md`](docs/README.md)
 
-### Explainability only
+## Near-term direction (concise)
 
-```bash
-curl -X POST http://127.0.0.1:8000/demo/explain \
-  -H "Content-Type: application/json" \
-  -d '{"name":"hypothesis"}'
-```
+Near-term work stays split across product and research, on one engine:
 
-### Graph inspection
+- improve decision inspectability and replayability,
+- make reliability/memory policies more robust over time,
+- evolve `supplier-risk` and `hypothesis` into a stronger benchmark pair,
+- continue hardening API/UI surfaces without breaking compatibility.
 
-```bash
-curl http://127.0.0.1:8000/graph
-```
-
----
-
-## Adoption path (practical)
-
-### Day 1
-
-Run demos and inspect backbone + reliability outputs.
-
-### Week 1
-
-Integrate `/ask` or `/demo` in a staging workflow and log explanations.
-
-### Month 1
-
-Use reliability and memory feedback to tune decision policies and compare trajectories over time.
-
----
-
-## When not to use SCE
-
-SCE may be unnecessary if your use case only needs one-shot text generation and does not require:
-
-- decision traceability,
-- reliability monitoring,
-- memory-aware policy improvement,
-- or graph-level observability.
-
----
+Details: [`ROADMAP.md`](ROADMAP.md) and [`docs/research_program.md`](docs/research_program.md).
 
 ## Install
 
@@ -362,21 +162,15 @@ pip install -e .[api,openai]
 pip install -e .[api,anthropic]
 ```
 
----
-
 ## Tests
 
 ```bash
 pytest
 ```
 
----
-
 ## Status
 
-SCE Core is an early product/research system for explainable, memory-aware, reliability-aware AI decisions.
-
----
+Early product/research system for explainable adaptive decision workflows.
 
 ## License
 

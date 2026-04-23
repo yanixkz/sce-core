@@ -1,107 +1,96 @@
-# Constraint-Driven Stability (CDS) and SCE Core
+# Constraint-Driven Stability (CDS) → SCE Core Bridge
 
-This document is the operational bridge between the CDS origin idea and the current SCE Core system.
+This document defines the theory-to-implementation bridge for SCE Core.
+It maps CDS concepts to mechanisms that are already implemented.
 
-- Origin context: [`docs/origin.md`](origin.md)
-- Product/research overview: [`README.md`](../README.md)
-- Decision backbone details: [`docs/DECISION_BACKBONE.md`](DECISION_BACKBONE.md)
-- Research program (open problems): [`docs/research_program.md`](research_program.md)
-- Research direction overview: [`docs/RESEARCH_VISION.md`](RESEARCH_VISION.md)
-- Delivery priorities: [`ROADMAP.md`](../ROADMAP.md)
+Related layers:
+- Product entrypoint: [`../README.md`](../README.md)
+- Historical origin: [`origin.md`](origin.md)
+- Open research agenda: [`research_program.md`](research_program.md)
+- Delivery roadmap: [`../ROADMAP.md`](../ROADMAP.md)
 
 ---
 
-## Constraint-Driven Stability
+## CDS in compact form
 
-CDS states that stable structure appears when system dynamics are shaped by constraints over time. In practical terms, stability is not a static property of an object; it is a selected trajectory that remains viable under admissible transitions, accumulated history, and ongoing feedback.
+Constraint-Driven Stability (CDS) treats stability as a selected trajectory under constraints over time.
 
-A compact decomposition:
-
+Minimal decomposition:
 - **Constraints** define admissible transitions.
-- **Candidate trajectories** compete under scoring and feasibility.
-- **Selection** picks the current best path.
-- **Retained trace** stores outcomes from executed paths.
-- **Update over time** changes future selection pressure.
+- **Trajectory candidates** compete under scoring/feasibility.
+- **Selection** chooses one trajectory now.
+- **Retained trace** stores what happened.
+- **Adaptive reselection** updates later choices from retained outcomes.
 
 ---
 
-## CDS in decision systems
+## CDS interpreted as a decision loop
 
-In decision systems, CDS can be interpreted as:
+For decision systems:
 
-1. define what transitions are allowed;
-2. generate candidate actions/plans;
-3. select a trajectory under current constraints and evidence;
-4. observe outcome quality (including prediction error);
-5. store the outcome as a trace;
-6. reselect next actions under updated memory and reliability.
+1. define admissible transitions,
+2. generate candidate plans/actions,
+3. select under constraints and available evidence,
+4. observe outcomes and prediction error,
+5. retain outcome/reliability traces,
+6. reselect with updated memory/reliability pressure.
 
-This framing is not a claim that CDS is a complete theory of intelligence. It is a disciplined way to design adaptive decision loops that are inspectable and auditable.
+This is a disciplined engineering framing, not a claim of a complete intelligence theory.
 
 ---
 
-## How SCE Core operationalizes CDS
+## Operational mapping (CDS → SCE Core)
 
-The table below maps CDS terms to implemented SCE mechanisms.
-
-| CDS concept | SCE Core operational mechanism |
+| CDS concept | SCE Core mechanism |
 | --- | --- |
-| Constraints / admissible transitions | Constraint DSL and plan validation define feasible actions and filter invalid transitions before selection. |
-| Trajectory selection | Candidate generation + scoring + ranking choose the next plan/action from alternatives. |
-| Structural carrier | Decision backbone extraction identifies which evidence-to-target path actually carried the selected decision. |
-| Empirical stability signal | Reliability tracking from local prediction error provides a measurable signal of trajectory stability quality. |
-| Retained adaptive trace | Episodic memory stores executed episodes and associated reliability/outcome metadata. |
-| Adaptive reselection | Future scoring can incorporate remembered outcomes/reliability, changing subsequent choices. |
-| Inspectability | CLI/API/UI + graph export expose decision path, backbone, memory, and reliability surfaces for audit. |
+| Constraints / admissibility | Constraint DSL + plan validation filter infeasible transitions before selection. |
+| Trajectory selection | Candidate generation + scoring + ranking choose the current plan/action. |
+| Structural carrier / decision backbone | Backbone extraction identifies evidence-to-target structure that carried the selected decision. |
+| Empirical stability signal | Reliability tracking from local prediction error quantifies trajectory quality. |
+| Retained adaptive trace | Episodic memory stores executed episodes with outcome/reliability metadata. |
+| Adaptive reselection | Later scoring incorporates remembered traces and reliability signals. |
+| Inspectability | CLI/API/UI + graph export expose decision path, backbone, memory, and reliability surfaces. |
 
-This mapping is intentionally narrow: it describes mechanisms that already exist in the repository and public interfaces, not speculative future architecture.
+Scope note: this table covers implemented behavior and current public surfaces, not speculative future architecture.
 
 ---
 
-## What SCE already implements
+## What is already implemented
 
-Current SCE Core already provides an end-to-end constrained adaptive decision loop:
+SCE Core already operationalizes an end-to-end constrained adaptive loop:
 
-- candidate planning and ranking,
-- constraint-aware feasibility checks,
-- decision backbone extraction,
-- prediction error and reliability tracking,
+- constrained candidate ranking and selection,
+- structural explainability via decision backbone,
+- reliability tracking from observed outcomes,
 - episodic memory with optional persistence,
-- memory/reliability influence on later decisions,
-- inspectable graph + API/UI surfaces,
-- product-facing and research-facing demos over the same engine.
+- memory/reliability effects on later decisions,
+- inspectable graph/API/UI surfaces,
+- product-facing and research-facing demos on one engine.
 
 ---
 
-## Open research gaps
+## Boundary to research layer
 
-If treated as a CDS engine, SCE still has open work.
+This bridge intentionally stops at mechanism mapping.
 
-The concise, structured agenda is maintained in [`docs/research_program.md`](research_program.md), while this document stays focused on the CDS→SCE mechanism mapping.
-
-Representative gaps include:
-- memory-aware and constraint-aware backbone extraction,
-- reliability decay and richer temporal reliability dynamics,
-- trajectory replay and audit-grade path reconstruction,
-- topology-aware reasoning over decision graphs,
-- stronger generalized constrained-evolution benchmarks,
-- multi-agent constrained adaptation and coordination.
-
-These are active research directions, not hidden limitations.
+Open problems that follow from this mapping (and are not yet fully solved) are tracked in [`research_program.md`](research_program.md), including:
+- constraint- and memory-aware backbone attribution,
+- temporal reliability dynamics,
+- replayable decision trajectories,
+- topology-aware graph reasoning,
+- broader constrained-evolution benchmarks.
 
 ---
 
-## Why this matters
+## Why this bridge matters
 
-This bridge is not a philosophy appendix.
+It keeps terminology stable across product and research discussions:
+- constraints,
+- trajectory selection,
+- structural carrier/backbone,
+- reliability,
+- episodic memory,
+- adaptive reselection,
+- inspectability.
 
-It clarifies that **backbone, reliability, and episodic memory are one adaptive system**:
-
-- backbone explains *why* a decision was selected,
-- reliability measures *how stable* that trajectory was empirically,
-- memory carries *what happened* into the next selection step.
-
-As a result, SCE Core can be read consistently as both:
-
-1. a practical engine for explainable adaptive decisions, and
-2. a research substrate for computational CDS in decision systems.
+With these terms fixed, README/API usage, roadmap planning, and research priorities can stay aligned without duplicate or conflicting explanations.

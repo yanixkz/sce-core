@@ -1,0 +1,35 @@
+# Documentation Map
+
+This folder contains layered documentation for SCE Core.
+
+## Primary layers
+
+1. **Product entrypoint** — [`../README.md`](../README.md)
+   - what SCE Core is,
+   - how to run demos,
+   - reusable API surface,
+   - quick navigation to theory/research/roadmap.
+
+2. **Origin** — [`origin.md`](origin.md)
+   - historical and philosophical motivation.
+
+3. **Theory bridge (CDS → SCE)** — [`constraint_driven_stability.md`](constraint_driven_stability.md)
+   - mapping from CDS concepts to implemented mechanisms.
+
+4. **Research program** — [`research_program.md`](research_program.md)
+   - open problems that follow from current implementation.
+
+5. **Roadmap** — [`../ROADMAP.md`](../ROADMAP.md)
+   - implementation sequencing and near-term priorities.
+
+6. **Russian overview** — [`OVERVIEW_RU.md`](OVERVIEW_RU.md)
+   - concise, up-to-date Russian summary aligned with current layers.
+
+## Additional technical notes
+
+- Decision backbone details: [`DECISION_BACKBONE.md`](DECISION_BACKBONE.md)
+- Reliability-aware planning note: [`RELIABILITY_AWARE_PLANNING.md`](RELIABILITY_AWARE_PLANNING.md)
+- Controlled evolution note: [`CONTROLLED_EVOLUTION.md`](CONTROLLED_EVOLUTION.md)
+- PostgreSQL backend note: [`postgres.md`](postgres.md)
+
+These notes are subordinate to the primary layered docs above.

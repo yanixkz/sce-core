@@ -2,73 +2,69 @@
 
 ## How to read this document
 
-This document captures the historical and philosophical origin of SCE Core.
+This document captures historical and philosophical origin.
+It does **not** define implementation status or product scope.
 
-For the explicit operational mapping from Constraint-Driven Stability (CDS) to implemented SCE Core mechanisms, see [constraint_driven_stability.md](constraint_driven_stability.md).
-
-Layering:
-
-- **Origin** (`origin.md`): where the idea came from.
-- **Theory bridge** (`constraint_driven_stability.md`): how CDS maps to current engine behavior.
-- **README**: product/research packaging and entrypoints.
+Use layers in this order:
+- Product entrypoint: [`README.md`](../README.md)
+- Theory bridge (CDS → SCE mechanisms): [`constraint_driven_stability.md`](constraint_driven_stability.md)
+- Open research agenda: [`research_program.md`](research_program.md)
+- Delivery priorities: [`../ROADMAP.md`](../ROADMAP.md)
 
 ---
 
 ## Where this began
 
-This project did not start with a codebase or a product roadmap.
+The project began from a question rather than a codebase:
 
-It started with a question:
+> Why does chaos become structure? Why do stable things persist?
 
-> *Why does chaos become structure? Why do stable things exist at all?*
-
-From water vortices to galaxies, from cells to neural networks, ordered configurations appear and persist across vastly different scales and substrates. The earliest motivation for SCE was to look for a common principle behind that persistence.
-
-That question led to a conversation. Then to a model. Then to a framework. Then to this repository.
+Across domains (physical, biological, social, computational), stable configurations repeatedly emerge under changing conditions. Early discussions behind SCE focused on whether that persistence could be described as constrained trajectory selection over time.
 
 ---
 
-## The core insight
+## Core seed idea
 
-The early conversation converged on one idea:
+Those discussions converged on a compact intuition:
 
-> Stable structure emerges when dynamics are shaped by constraints over time, and trajectories that remain viable are repeatedly selected.
+> Stable structure emerges when dynamics are shaped by constraints and repeatedly selected trajectories remain viable.
 
-This became the philosophical seed of **Constraint-Driven Stability (CDS)**.
+This became the conceptual seed of **Constraint-Driven Stability (CDS)**.
 
-At this stage, the idea was conceptual and exploratory. It was not yet an implementation contract.
+At this stage, CDS was a philosophical and modeling direction, not yet an implementation contract.
 
 ---
 
-## From concept to system
+## From concept to engine
 
-SCE Core grew from that conceptual seed into an engineering loop for adaptive decisions:
+SCE Core translated that seed into an executable decision loop:
 
-- decision selection under constraints,
-- explanation of decision-carrying structure,
-- reliability tracking from outcomes,
-- episodic memory that influences the next choice,
-- inspectable API and graph surfaces.
+- constrained selection among candidate trajectories,
+- explanation via decision-carrying structural backbone,
+- empirical reliability signals from outcomes,
+- episodic memory that affects later reselection,
+- inspectable graph/API/UI surfaces.
 
-The operational description of that loop is intentionally maintained in the theory bridge document rather than duplicated here.
+The exact CDS→SCE mapping is maintained in [`constraint_driven_stability.md`](constraint_driven_stability.md) to avoid duplication.
 
 ---
 
 ## What remains open
 
-The origin discussion also surfaced questions that remain open research topics, including:
+Origin-level motivation does not imply theoretical closure.
+Open work includes:
 
-- deeper mathematical formalization of stability and coherence,
-- richer theory of constraint formation and evolution,
-- stronger links between graph dynamics and topology-aware analysis,
-- broader benchmarks for constrained adaptive decision systems.
+- deeper formalization of stability/coherence in constrained systems,
+- improved modeling of constraint formation and evolution,
+- stronger graph/topology-aware analysis methods,
+- broader empirical evaluation across decision domains.
 
-These are part of the research program, not hidden claims of completion.
+These are tracked in the research layer, not presented as completed capabilities.
 
 ---
 
 ## Acknowledgements
 
-SCE Core was developed through extended collaboration between a human founder and multiple AI systems, with different roles across ideation and implementation.
+SCE Core developed through collaboration between a human founder and multiple AI systems across ideation and implementation phases.
 
-This project is intentionally transparent about that process.
+The repository keeps this process explicit as part of project transparency.
