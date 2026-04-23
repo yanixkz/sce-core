@@ -5,7 +5,8 @@ This document is the operational bridge between the CDS origin idea and the curr
 - Origin context: [`docs/origin.md`](origin.md)
 - Product/research overview: [`README.md`](../README.md)
 - Decision backbone details: [`docs/DECISION_BACKBONE.md`](DECISION_BACKBONE.md)
-- Research direction: [`docs/RESEARCH_VISION.md`](RESEARCH_VISION.md)
+- Research program (open problems): [`docs/research_program.md`](research_program.md)
+- Research direction overview: [`docs/RESEARCH_VISION.md`](RESEARCH_VISION.md)
 - Delivery priorities: [`ROADMAP.md`](../ROADMAP.md)
 
 ---
@@ -74,8 +75,11 @@ Current SCE Core already provides an end-to-end constrained adaptive decision lo
 
 ## Open research gaps
 
-If treated as a CDS engine, SCE still has open work. The current backlog already points to a coherent research program:
+If treated as a CDS engine, SCE still has open work.
 
+The concise, structured agenda is maintained in [`docs/research_program.md`](research_program.md), while this document stays focused on the CDS→SCE mechanism mapping.
+
+Representative gaps include:
 - memory-aware and constraint-aware backbone extraction,
 - reliability decay and richer temporal reliability dynamics,
 - trajectory replay and audit-grade path reconstruction,

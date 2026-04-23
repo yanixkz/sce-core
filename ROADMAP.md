@@ -20,6 +20,7 @@ The supplier-risk scenario is the first simple demo, not the final purpose of th
 The broader aim is to study and build decision systems that are explainable, memory-aware, reliability-aware, and structurally inspectable.
 
 Research vision: [`docs/RESEARCH_VISION.md`](docs/RESEARCH_VISION.md)
+Research program (open problems): [`docs/research_program.md`](docs/research_program.md)
 
 ---
 
@@ -166,6 +167,8 @@ Goal: make the project robust enough for external testers.
 ---
 
 ## Research Backlog
+
+This backlog is intentionally aligned with the structured research tracks in [`docs/research_program.md`](docs/research_program.md).
 
 These are valuable and should guide the long-term direction.
 

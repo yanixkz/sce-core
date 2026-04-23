@@ -22,7 +22,7 @@ For Russian-speaking readers: see [docs/OVERVIEW_RU.md](docs/OVERVIEW_RU.md).
 
 SCE Core operationalizes CDS for decision systems: choices are made under explicit constraints, evaluated by outcome reliability, retained in episodic memory, and updated on the next decision cycle.
 The practical result is a coupled loop of **Decide → Explain → Improve**, not disconnected features.
-For the explicit mapping from CDS concepts to implemented mechanisms and open research gaps, see [docs/theory.md](docs/theory.md).
+For the explicit CDS→SCE mapping, see [docs/theory.md](docs/theory.md). For the structured open-problems agenda grounded in that mapping, see [docs/research_program.md](docs/research_program.md).
 
 ---
 
@@ -97,7 +97,7 @@ SCE Core operationalizes **Constraint-Driven Stability (CDS)** for decision syst
 
 This is not a rebrand and not a claim beyond current implementation; it is an explicit mapping between the existing engine loop and its theoretical framing.
 
-For the structured mapping, see [`docs/constraint_driven_stability.md`](docs/constraint_driven_stability.md). For historical context, see [`docs/origin.md`](docs/origin.md).
+For the structured mapping, see [`docs/constraint_driven_stability.md`](docs/constraint_driven_stability.md). For the corresponding open-problems layer, see [`docs/research_program.md`](docs/research_program.md). For historical context, see [`docs/origin.md`](docs/origin.md).
 
 ---
 
