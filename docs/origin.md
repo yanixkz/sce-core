@@ -1,5 +1,19 @@
 # The Origin of SCE Core
 
+## How to read this document
+
+`origin.md` is the historical and conceptual starting point.
+
+For the explicit operational mapping from Constraint-Driven Stability (CDS) to current SCE Core mechanisms, see [`constraint_driven_stability.md`](constraint_driven_stability.md).
+
+Use this layering:
+
+- **Origin** (`origin.md`): where the idea came from.
+- **Theory bridge** (`constraint_driven_stability.md`): how CDS maps to implemented engine behavior.
+- **README**: product/research packaging and entrypoints.
+
+---
+
 ## Where this began
 
 This project did not start with a codebase or a product roadmap.
@@ -77,7 +91,7 @@ For AI systems specifically, the stability function becomes:
 Stab(x) = a·Coh(x) − b·Cost(x) − c·Conf(x) − d·Ent(x) + e·Support(x)
 ```
 
-This is the core formula of SCE Core.
+This was an early framing hypothesis for SCE and should be read as conceptual, not as a literal implementation contract.
 
 ---
 

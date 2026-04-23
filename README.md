@@ -85,6 +85,16 @@ Use SCE when you want to study how decision quality evolves with memory and reli
 
 ---
 
+## Theory bridge (CDS -> SCE Core)
+
+SCE Core operationalizes **Constraint-Driven Stability (CDS)** for decision systems: constraints shape admissible transitions, candidate trajectories are selected under scoring, outcomes produce reliability signals, and episodic memory influences the next choice.
+
+This is not a rebrand and not a claim beyond current implementation; it is an explicit mapping between the existing engine loop and its theoretical framing.
+
+For the structured mapping, see [`docs/constraint_driven_stability.md`](docs/constraint_driven_stability.md). For historical context, see [`docs/origin.md`](docs/origin.md).
+
+---
+
 ## Core capabilities
 
 ### Decide
