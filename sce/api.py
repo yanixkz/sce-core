@@ -226,7 +226,7 @@ def _build_demo_ui_meta(name: str, raw_result: dict) -> Dict[str, Any]:
 
 
 def build_app() -> FastAPI:
-    app = FastAPI(title="SCE Core API", version="0.1.0-alpha")
+    app = FastAPI(title="SCE Core API", version="0.1.0a0")
     shared_episode_memory = EpisodeMemory()
 
     @app.get("/ui", response_class=HTMLResponse)

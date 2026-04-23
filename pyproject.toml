@@ -1,7 +1,7 @@
 [project]
 name = "sce-core"
 version = "0.1.0a0"
-description = "Decision engine for AI agents with explainability, reliability tracking, memory, and graph observability."
+description = "Early alpha decision engine for AI agents with explainability, reliability tracking, episodic memory, and graph observability."
 authors = [{ name = "SCE Authors" }]
 requires-python = ">=3.11"
 dependencies = []
