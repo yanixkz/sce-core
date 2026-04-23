@@ -1,87 +1,111 @@
-# SCE Core — краткий обзор (RU)
+# SCE Core — обзор (RU)
 
-## Что это
+## Что такое SCE Core
 
-SCE Core — это **слой принятия решений** для AI-агентов.
+SCE Core — это движок принятия решений для AI-агентов.
 
-Он помогает не просто получить ответ от модели, а пройти полный цикл:
+Он соединяет в одном цикле:
+- выбор допустимого плана,
+- объяснение, что именно несло решение,
+- измерение надёжности по результату,
+- эпизодическую память,
+- адаптацию следующего выбора.
 
 ```text
-Решить → Объяснить → Улучшить
+Решить → Объяснить → Запомнить/Надёжность → Улучшить
 ```
 
-Где:
-
-- «Решить» — выбрать лучший следующий план,
-- «Объяснить» — показать, какие факты реально повлияли,
-- «Улучшить» — запомнить результат и повысить качество следующего выбора.
+SCE Core — не просто набор демо и не «чат-обёртка». Это переиспользуемый decision layer с inspectable API/graph/UI поверхностями.
 
 ---
 
-## Зачем это нужно
+## Что уже реализовано
 
-Во многих агентных системах сложно ответить на вопросы:
+В текущем репозитории уже есть:
 
-- Почему выбран именно этот вариант?
-- На каких фактах основано решение?
-- Что было лишним контекстом?
-- Насколько надёжной была траектория?
-- Стало ли следующее решение лучше?
-
-SCE Core закрывает этот разрыв за счёт:
-
-- explainability,
-- reliability tracking,
-- memory-aware evolution,
-- graph observability.
+- constrained selection (кандидаты, скоринг, ранжирование),
+- decision backbone extraction (несущая структура решения),
+- reliability tracking из prediction error,
+- episodic memory (с опциональной PostgreSQL-персистентностью),
+- adaptive reselection под влиянием памяти и надёжности,
+- inspectable API: `/decide`, `/memory`, `/reliability`, `/graph`, `/ui`,
+- два флагманских демо на одном движке: `supplier-risk` и `hypothesis`.
 
 ---
 
-## Кому полезно
+## Флагманские демо
 
-### 1) Командам, которые делают AI-агентов в проде
+### `supplier-risk` (product-facing)
 
-Если нужно, чтобы решения были проверяемыми и объяснимыми, а не только «убедительно звучали».
+Практический вход в систему:
 
-### 2) Операционным и риск-командам
-
-Если важны аудит, трассируемость и стабильность решений во времени.
-
-### 3) R&D и applied research
-
-Если вы исследуете, как память и обратная связь по надёжности влияют на качество решений.
-
----
-
-## Где применять
-
-- AI-копилоты и workflow-агенты,
-- риск- и compliance-сценарии,
-- supplier risk,
-- научные и исследовательские агентные системы,
-- human-auditable автономные системы.
-
----
-
-## Быстрый старт
-
-```bash
-sce demo
+```text
+контекст поставщика → выбор плана → backbone-объяснение → сигнал надёжности → влияние памяти → улучшенный следующий выбор
 ```
 
-API:
+### `hypothesis` (research-facing)
+
+Исследовательский вход в тот же цикл:
+- ранжирование конкурирующих гипотез,
+- разделение decision-carrying evidence и dangling context,
+- формирование следующих исследовательских шагов.
+
+---
+
+## Переиспользуемая API-поверхность
+
+Базовые endpoints:
+
+- `POST /decide`
+- `GET /memory`
+- `GET /reliability`
+- `GET /graph`
+- `GET /ui`
+
+Поддерживающие showcase endpoints:
 
 - `POST /ask`
+- `GET /demo`
 - `POST /demo`
 - `POST /demo/explain`
-- `GET /graph`
+
+Важно: `/memory` и `/reliability` отражают процесс-локальное состояние текущего API-процесса.
 
 ---
 
-## Ключевая мысль
+## Коротко про bridge CDS → SCE
 
-SCE Core — это не «ещё один чат-интерфейс», а **инфраструктура решений**:
+Теоретическая рамка CDS (Constraint-Driven Stability) интерпретируется в SCE как практический decision loop:
 
-- с понятной логикой выбора,
-- с измерением надёжности,
-- и с механизмом улучшения следующих шагов.
+- constraints задают допустимые переходы,
+- trajectory selection выбирает план,
+- structural carrier/backbone объясняет «почему»,
+- reliability показывает эмпирическую устойчивость траектории,
+- episodic memory переносит результат в следующий цикл,
+- adaptive reselection изменяет будущий выбор.
+
+Полная operational mapping: [`constraint_driven_stability.md`](constraint_driven_stability.md).
+
+---
+
+## Куда проект движется
+
+Ближний фокус:
+
+- усиление inspectability и replayability,
+- улучшение temporal dynamics для reliability/memory,
+- развитие пары `supplier-risk` + `hypothesis` как общего benchmark-минимума,
+- дальнейшее укрепление API/UI без ломки контрактов.
+
+Исследовательские открытые задачи: [`research_program.md`](research_program.md).
+План реализации и приоритеты: [`../ROADMAP.md`](../ROADMAP.md).
+
+---
+
+## Навигация по слоям документации
+
+- Product entrypoint (EN): [`../README.md`](../README.md)
+- Origin / история идеи: [`origin.md`](origin.md)
+- Theory bridge CDS → SCE: [`constraint_driven_stability.md`](constraint_driven_stability.md)
+- Research program: [`research_program.md`](research_program.md)
+- Roadmap: [`../ROADMAP.md`](../ROADMAP.md)

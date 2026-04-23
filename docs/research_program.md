@@ -2,137 +2,137 @@
 
 This document defines the open-problems layer for SCE Core.
 
-It is intentionally compact: the goal is to connect implemented mechanisms to current limitations and research priorities, without turning product docs into a manifesto.
+It starts from implemented mechanisms and identifies what remains unresolved.
+It is not a product guide and not a manifesto.
 
 Related layers:
-- origin and motivation: [`docs/origin.md`](origin.md)
-- CDS → SCE bridge (operational mapping): [`docs/constraint_driven_stability.md`](constraint_driven_stability.md)
-- product entrypoints: [`README.md`](../README.md)
+- Product entrypoint: [`../README.md`](../README.md)
+- Theory bridge (CDS → SCE): [`constraint_driven_stability.md`](constraint_driven_stability.md)
+- Historical origin: [`origin.md`](origin.md)
+- Delivery sequencing: [`../ROADMAP.md`](../ROADMAP.md)
 
 ---
 
-## Why a research program exists
+## Implemented baseline (starting point)
 
-SCE Core already implements a **partial operationalization of CDS for decision systems**.
+SCE Core already provides:
 
-Once constraints, selection, reliability, and memory are coupled in a running engine, open questions become concrete and testable:
-- which structures are truly decision-carrying,
-- how stability signals should evolve over time,
-- and how adaptation should be measured across trajectories and domains.
-
-This is why SCE needs a research-program layer: to make future work coherent, cumulative, and grounded in the existing loop.
-
----
-
-## Current implemented core (baseline)
-
-SCE Core currently provides:
-- constrained decision selection (candidate generation, scoring, ranking),
+- constrained decision selection (candidates, scoring, ranking),
 - decision backbone extraction for explainability,
 - prediction-error-based reliability tracking,
-- episodic memory of executed episodes,
+- episodic memory over executed episodes,
 - adaptive reselection influenced by memory/reliability,
-- graph/API/UI inspection surfaces,
-- product-facing (`supplier-risk`) and research-facing (`hypothesis`) demos on the same engine.
+- inspectable API/graph/UI surfaces,
+- two flagship demos (`supplier-risk`, `hypothesis`) on one engine.
 
-The research agenda below starts from this implemented baseline.
-
----
-
-## Research tracks and open problems
-
-### Track A — Structural explainability under constraints
-
-#### 1) Critical decision nodes and edges
-Why it matters: backbone output is useful, but high-stakes settings also need sensitivity to *criticality* (which nodes/edges would most change the decision if perturbed).
-What is missing now: current explainability isolates decision-carrying vs dangling structure, but does not rank causal leverage.
-CDS/SCE link: in CDS terms, critical elements are local control points of trajectory stability under constraints.
-
-#### 2) Constraint-aware backbone extraction
-Why it matters: explanations should reflect not only graph reachability but also admissibility constraints that governed selection.
-What is missing now: backbone computation is mostly structural; explicit constraint impact attribution remains limited.
-CDS/SCE link: CDS treats constraints as first-class selectors of viable trajectories, so explainability should expose that role directly.
-
-#### 3) Memory-aware backbone extraction
-Why it matters: if remembered outcomes influence scoring, explanation should show when memory changed the chosen path.
-What is missing now: memory affects decisions, but backbone outputs do not fully annotate memory-mediated influence on structural choice.
-CDS/SCE link: retained trace is part of stability formation; explainability should include trace-to-selection pathways.
-
-### Track B — Adaptive reliability and memory dynamics
-
-#### 4) Reliability decay and temporal calibration
-Why it matters: reliability that never decays can overfit stale episodes; reliability that decays incorrectly can erase useful signal.
-What is missing now: reliability is tracked from local prediction error, but richer temporal decay/calibration models are not formalized.
-CDS/SCE link: CDS is explicitly temporal; stability signals must be time-aware to remain meaningful under evolving constraints.
-
-#### 5) Reliability-aware exploration triggers
-Why it matters: adaptation requires switching between exploitation and exploration when reliability degrades or uncertainty rises.
-What is missing now: exploration logic exists, but principled trigger policies tied to reliability dynamics are still limited.
-CDS/SCE link: trajectory reselection is the mechanism of constrained evolution; trigger design controls when reselection pressure changes.
-
-#### 6) Reliability-aware memory pruning
-Why it matters: memory growth needs selective retention to preserve useful traces and remove misleading or obsolete ones.
-What is missing now: episodic storage exists, but pruning strategies coupled to reliability quality and recency are open.
-CDS/SCE link: retained trace is not just storage; it is the adaptive substrate shaping future admissible choices.
-
-### Track C — Trajectory and graph-level analysis
-
-#### 7) Trajectory replay and audit-grade reconstruction
-Why it matters: practical governance and scientific evaluation both need reproducible reconstruction of why a path was selected.
-What is missing now: inspectability surfaces exist, but complete replay/audit artifacts across decision cycles are limited.
-CDS/SCE link: CDS frames stability as trajectory persistence, so trajectory-level evidence should be reconstructible end-to-end.
-
-#### 8) Advanced abstraction and causal rule layers
-Why it matters: larger decision spaces require compressed abstractions that remain faithful to constrained dynamics.
-What is missing now: abstraction/rule capabilities are present in parts of the system but are not yet a mature causal layer.
-CDS/SCE link: abstractions define effective constraints and state partitions; better abstractions improve tractable constrained evolution.
-
-#### 9) Topological reasoning over decision graphs
-Why it matters: graph topology can reveal bottlenecks, fragility, and stable motifs not visible from local path metrics alone.
-What is missing now: graph export/inspection is implemented, but topology-aware decision analytics are still early.
-CDS/SCE link: CDS concerns stability of trajectories in structured spaces; topology offers a language for global structure of those spaces.
-
-### Track D — Generalization and scientific evaluation
-
-#### 10) Multi-agent constrained coordination
-Why it matters: many real systems involve interacting decision-makers with partially shared constraints.
-What is missing now: current demos center on single-agent loops; coordination primitives are not yet formalized.
-CDS/SCE link: constrained evolution in multi-agent settings introduces coupled trajectories and negotiated admissibility.
-
-#### 11) Scientific hypothesis evaluation workflows
-Why it matters: the hypothesis demo indicates a reusable pattern for evidence ranking, competing explanations, and adaptive updates.
-What is missing now: the pattern is demonstrated but not yet benchmarked as a robust scientific workflow protocol.
-CDS/SCE link: hypothesis evaluation is a concrete domain where constraints, reliability, memory, and reselection naturally couple.
-
-#### 12) Generalized constrained-evolution benchmarks
-Why it matters: progress requires comparable tasks, metrics, and failure modes beyond one domain demo.
-What is missing now: current examples prove viability, but benchmark suites for cross-domain constrained adaptation are limited.
-CDS/SCE link: CDS claims should be evaluated empirically across environments where admissibility and feedback differ.
+The research agenda below extends this baseline.
 
 ---
 
-## Near-term research priorities (grounded)
+## Track A — Structural explainability under constraints
 
-The next most grounded steps, given current implementation maturity:
+### 1) Critical decision nodes and edges
 
-1. **Constraint- and memory-aware backbone attribution**
-   - extend explanation outputs to show how constraints and remembered episodes changed selection.
-2. **Temporal reliability dynamics**
-   - add explicit decay/calibration policies and evaluate impact on reselection quality.
-3. **Replayable decision trajectories**
-   - standardize audit artifacts from current API/graph/reliability surfaces for reproducible analysis.
-4. **Focused benchmark expansion**
-   - evolve `supplier-risk` and `hypothesis` into a small benchmark pair with shared metrics.
+- **Need:** sensitivity beyond backbone membership (which elements most change the decision if perturbed).
+- **Gap now:** current outputs separate carrying vs dangling structure, but not leverage ranking.
+- **CDS link:** local control points of trajectory stability.
 
-These priorities stay close to current code paths and interfaces; they do not require speculative architecture jumps.
+### 2) Constraint-aware backbone attribution
+
+- **Need:** explanations should expose which active constraints shaped selection.
+- **Gap now:** backbone is mostly structural; explicit constraint influence attribution is limited.
+- **CDS link:** constraints are first-class trajectory selectors.
+
+### 3) Memory-aware backbone attribution
+
+- **Need:** explanations should show when remembered outcomes changed chosen trajectory.
+- **Gap now:** memory affects scoring, but explanation does not fully annotate memory-mediated structural changes.
+- **CDS link:** retained trace is part of stability formation.
 
 ---
 
-## Relationship to the product surface
+## Track B — Reliability and episodic memory dynamics
 
-The two flagship demos are not isolated use cases.
+### 4) Temporal reliability calibration/decay
 
-- `supplier-risk` is a product-facing window into constrained selection, explainability, reliability, and memory loops.
-- `hypothesis` is a research-facing window into the same loop under a different evidence/decision structure.
+- **Need:** avoid both stale overconfidence and premature forgetting.
+- **Gap now:** reliability exists, but richer time-aware calibration policies are not yet formalized.
+- **CDS link:** stability signals must remain meaningful across time-varying conditions.
 
-Together they are practical probes of one research program: computational CDS for auditable adaptive decision systems.
+### 5) Reliability-aware exploration triggers
+
+- **Need:** principled exploitation/exploration switching when reliability degrades or uncertainty rises.
+- **Gap now:** exploration exists, but trigger policy quality is limited.
+- **CDS link:** reselection pressure control.
+
+### 6) Reliability-aware memory pruning
+
+- **Need:** selective retention/removal of traces as memory grows.
+- **Gap now:** episodic storage exists, pruning coupled to reliability and recency remains open.
+- **CDS link:** retained trace is an adaptive mechanism, not passive storage.
+
+---
+
+## Track C — Trajectory and graph-level analysis
+
+### 7) Replayable trajectory reconstruction
+
+- **Need:** reproducible path reconstruction for audits and experiments.
+- **Gap now:** inspectability surfaces exist, but full replay artifacts across cycles are limited.
+- **CDS link:** stability claims should be evidenced at trajectory level.
+
+### 8) Stronger abstraction/causal rule layers
+
+- **Need:** tractable reasoning in larger decision spaces.
+- **Gap now:** abstraction/rule parts exist but are not yet a mature causal layer.
+- **CDS link:** abstractions define effective constraint sets and state partitions.
+
+### 9) Topology-aware decision graph analysis
+
+- **Need:** detect bottlenecks/fragility/stable motifs beyond local path metrics.
+- **Gap now:** graph export is available; topology-level analytics are early.
+- **CDS link:** global structure of constrained trajectory spaces.
+
+---
+
+## Track D — Generalization and scientific evaluation
+
+### 10) Multi-agent constrained coordination
+
+- **Need:** many real systems involve interacting agents with partially shared constraints.
+- **Gap now:** core demos are single-agent-centered.
+- **CDS link:** coupled trajectories and negotiated admissibility.
+
+### 11) Hypothesis-evaluation workflow maturity
+
+- **Need:** move from demonstration to robust research workflow patterns.
+- **Gap now:** `hypothesis` is useful but not yet a benchmark-grade protocol.
+- **CDS link:** explicit coupling of constraints, reliability, memory, reselection.
+
+### 12) General constrained-evolution benchmarks
+
+- **Need:** comparable cross-domain metrics and failure-mode reporting.
+- **Gap now:** examples prove feasibility, but benchmark suite breadth is limited.
+- **CDS link:** empirical evaluation across differing admissibility/feedback environments.
+
+---
+
+## Near-term grounded research priorities
+
+1. **Constraint- and memory-aware explanation outputs**
+2. **Temporal reliability policy evaluation**
+3. **Replay/audit artifact standardization**
+4. **Shared-metric benchmark pair (`supplier-risk`, `hypothesis`)**
+
+These steps stay close to current interfaces and avoid speculative architecture jumps.
+
+---
+
+## Product relationship
+
+The research program is intentionally coupled to product surfaces:
+
+- `supplier-risk` is the product-facing window into the adaptive decision loop.
+- `hypothesis` is the research-facing window into the same loop.
+
+Roadmap sequencing of these priorities is tracked in [`../ROADMAP.md`](../ROADMAP.md).
