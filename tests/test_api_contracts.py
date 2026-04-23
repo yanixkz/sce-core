@@ -68,3 +68,36 @@ def test_graph_contract_returns_version_graph_and_basic_graph_fields():
     assert isinstance(data["meta"]["node_count"], int)
     assert isinstance(data["meta"]["edge_count"], int)
     assert {"node_fields", "edge_fields"}.issubset(data["meta"]["schema"])
+
+
+def test_decide_contract_returns_structured_decision_response():
+    resp = client.post(
+        "/decide",
+        json={
+            "goal": "assess supplier risk",
+            "context": {"supplier_id": "supplier A", "claim": "supplier may be unreliable"},
+            "constraints": ["prefer external verification"],
+            "execute": True,
+        },
+    )
+
+    assert resp.status_code == 200
+    data = resp.json()
+    assert data["version"] == API_VERSION
+    assert data["goal"] == "assess supplier risk"
+    assert data["selected_plan"] == "supplier_risk_plan"
+    assert data["executed"] is True
+    assert data["execution_success"] is True
+    assert isinstance(data["action_names"], list)
+    assert isinstance(data["execution_trace"], list)
+    assert isinstance(data["scores"], list)
+    assert {"plan", "reason", "base_score", "memory_bias", "reliability", "reliability_bonus", "total_score"}.issubset(
+        data["scores"][0]
+    )
+    assert data["meta"]["constraints"] == ["prefer external verification"]
+    assert data["meta"]["constraints_supported"] is False
+
+
+def test_decide_validation_error_for_missing_goal():
+    resp = client.post("/decide", json={"context": {"supplier_id": "supplier A"}})
+    assert resp.status_code == 422

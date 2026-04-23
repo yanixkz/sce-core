@@ -11,9 +11,11 @@ from sce.cli import DEMO_CHOICES, DEMO_REGISTRY, format_demo, run_demo
 from sce.core.cognitive_agent import CognitiveAgent
 from sce.core.evolution import SCEEvolver
 from sce.core.llm_intent import LLMIntentParser
-from sce.core.planning import PlanExecutor
+from sce.core.planning import MemoryAwarePlanner, PlanExecutor, ReliabilityAwarePlanner, ToolPlanner
 from sce.core.queries import GraphQueryLayer
 from sce.core.scoring import SCEScoringEngine
+from sce.core.episode_memory import EpisodeMemory
+from sce.core.types import State
 from sce.core.tools import MockSupplierRiskAPI, ToolActionBridge, ToolRegistry
 from sce.core.voice_os import SimpleIntentParser, VoiceOSBridge
 from sce.scenarios.supplier_reliability import make_supplier_reliability_scenario
@@ -65,6 +67,43 @@ class DemoListItem(BaseModel):
 class GraphResponse(BaseModel):
     version: str
     graph: Dict[str, Any]
+    meta: Dict[str, Any] = Field(default_factory=dict)
+
+
+class DecideRequest(BaseModel):
+    goal: str = Field(..., min_length=1, description="Decision goal, task, or question")
+    context: Dict[str, Any] = Field(default_factory=dict, description="Current known facts")
+    constraints: list[str] = Field(default_factory=list, description="Optional natural-language constraints")
+    execute: bool = Field(False, description="Execute selected plan after ranking")
+    reliability_weight: float = Field(1.0, ge=0.0, le=5.0, description="Weight of reliability in ranking")
+
+
+class DecisionCandidateScore(BaseModel):
+    plan: str
+    reason: str
+    base_score: float
+    memory_bias: float
+    reliability: float
+    reliability_bonus: float
+    total_score: float
+
+
+class DecisionExecutionStep(BaseModel):
+    action: str
+    success: bool
+    message: str
+
+
+class DecideResponse(BaseModel):
+    version: str
+    goal: str
+    selected_plan: str
+    selected_reason: str
+    action_names: list[str]
+    executed: bool
+    execution_success: bool | None = None
+    execution_trace: list[DecisionExecutionStep] = Field(default_factory=list)
+    scores: list[DecisionCandidateScore]
     meta: Dict[str, Any] = Field(default_factory=dict)
 
 
@@ -229,6 +268,63 @@ def build_app() -> FastAPI:
             },
         )
 
+    @app.post("/decide", response_model=DecideResponse)
+    def decide(request: DecideRequest) -> DecideResponse:
+        state = State("decision_request", request.context)
+        memory = EpisodeMemory()
+        base_planner = ToolPlanner()
+        memory_planner = MemoryAwarePlanner(base_planner=base_planner, memory=memory)
+        planner = ReliabilityAwarePlanner(memory_planner=memory_planner, reliability_weight=request.reliability_weight)
+
+        candidates = base_planner.candidates(state, request.goal)
+        ranked_scores = planner.score(candidates, state, request.goal)
+        selected = ranked_scores[0]
+
+        execution_success: bool | None = None
+        execution_trace: list[DecisionExecutionStep] = []
+        if request.execute:
+            executor = _build_plan_executor()
+            execution = executor.execute(selected.plan, state)
+            execution_success = execution.success
+            execution_trace = [
+                DecisionExecutionStep(
+                    action=result.resulting_state.data.get("action", "unknown"),
+                    success=result.success,
+                    message=result.message,
+                )
+                for result in execution.results
+            ]
+
+        return DecideResponse(
+            version=API_VERSION,
+            goal=request.goal,
+            selected_plan=selected.plan.name,
+            selected_reason=selected.plan.reason,
+            action_names=[action.name for action in selected.plan.actions],
+            executed=request.execute,
+            execution_success=execution_success,
+            execution_trace=execution_trace,
+            scores=[
+                DecisionCandidateScore(
+                    plan=score.plan.name,
+                    reason=score.plan.reason,
+                    base_score=score.base_score,
+                    memory_bias=score.memory_bias,
+                    reliability=score.reliability,
+                    reliability_bonus=score.reliability_bonus,
+                    total_score=score.total_score,
+                )
+                for score in ranked_scores
+            ],
+            meta={
+                "constraints": request.constraints,
+                "constraints_supported": False,
+                "context_keys": sorted(request.context.keys()),
+                "candidate_count": len(ranked_scores),
+                "memory_matches": len(memory.similar(state, request.goal, limit=5)),
+            },
+        )
+
     @app.post("/demo", response_model=DemoResponse)
     def demo(request: DemoRequest) -> DemoResponse:
         if request.name not in DEMO_CHOICES:
@@ -277,10 +373,7 @@ def build_app() -> FastAPI:
 
 
 def _build_voice_bridge(request: AskRequest) -> VoiceOSBridge:
-    registry = ToolRegistry()
-    registry.register("supplier_risk_api", MockSupplierRiskAPI())
-    bridge = ToolActionBridge(registry)
-    executor = PlanExecutor(bridge)
+    executor = _build_plan_executor()
     agent = CognitiveAgent(executor)
 
     parser = SimpleIntentParser()
@@ -288,6 +381,13 @@ def _build_voice_bridge(request: AskRequest) -> VoiceOSBridge:
         parser = _build_llm_parser(request.provider)
 
     return VoiceOSBridge(agent, parser=parser)
+
+
+def _build_plan_executor() -> PlanExecutor:
+    registry = ToolRegistry()
+    registry.register("supplier_risk_api", MockSupplierRiskAPI())
+    bridge = ToolActionBridge(registry)
+    return PlanExecutor(bridge)
 
 
 def _build_llm_parser(provider: Optional[str]) -> LLMIntentParser:
