@@ -2,61 +2,57 @@
 
 [![Tests](https://img.shields.io/github/actions/workflow/status/yanixkz/sce-core/tests.yml?branch=main&label=tests)](https://github.com/yanixkz/sce-core/actions/workflows/tests.yml)
 
-**State–Constraint–Evolution Core** is a decision engine for AI agents.
+## Build AI agents that can decide, explain, and improve
+
+SCE Core is a decision engine for AI agents with explainability, reliability tracking, memory, and graph observability.
 
 ```text
 Decide. Explain. Improve.
 ```
 
-SCE helps an agent choose a plan, explain which facts carried the decision, remember what happened, and improve the next choice.
+### What you can do right now
 
----
+- Run a full end-to-end demo with one command
+- Inspect why a decision was made
+- Track reliability and improvement over time
+- Expose the system through a versioned API
+- Inspect the internal graph behind the decision process
 
-## Quick demo
-
-Run the main story:
+### Start in one command
 
 ```bash
 sce demo
 ```
 
-Explicit alias:
-
-```bash
-sce run-supplier-risk-demo-pretty
-```
-
-It shows one complete loop:
+### API endpoints
 
 ```text
-supplier risk → plan choice → decision backbone → reliability → memory → improved next choice
+POST /ask
+POST /demo
+POST /demo/explain
+GET  /graph
 ```
-
-In plain terms:
-
-- **Decide** — choose the best plan
-- **Explain** — show which facts actually led to the decision
-- **Improve** — remember reliability and use it in the next decision
 
 ---
 
-## What problem does SCE solve?
+## Why SCE exists
 
-Many AI agents can produce an answer, but they often cannot clearly show:
+Most AI agents can produce an answer.
+Few can clearly show:
 
 ```text
-why this plan?
-which facts mattered?
+why this choice?
+which facts actually mattered?
 what was ignored?
 was the trajectory reliable?
-will the next decision improve?
+did the next decision improve?
 ```
 
-SCE Core adds that missing decision layer.
+SCE Core provides that missing layer.
 
 ---
 
-## Core loop
+## Product loop
 
 ```text
 State
@@ -65,11 +61,11 @@ Candidate plans
 ↓
 Score with memory + reliability
 ↓
-Select plan
+Select
 ↓
-Explain decision path
+Explain
 ↓
-Execute / observe outcome
+Execute / observe
 ↓
 Track prediction error
 ↓
@@ -80,79 +76,27 @@ Improve next choice
 
 ---
 
-## Main demo: Supplier Risk Agent
+## Core capabilities
 
-```bash
-sce demo
-```
+### Decide
+Rank candidate plans and choose the best next action.
 
-The demo shows:
+### Explain
+Use decision backbone extraction to separate decision-carrying facts from dangling context.
 
-```text
-1. Decide
-   supplier_risk_plan is selected first by base score
+### Improve
+Track local prediction error, compute reliability, remember the outcome, and influence the next decision.
 
-2. Explain
-   late_delivery + invoice_risk + missing_certificate carry the decision
-   marketing_tag and old_positive_history are dangling context
-
-3. Measure reliability
-   prediction errors become a reliability score
-
-4. Improve
-   remembered reliability changes the next selected plan
-```
-
-Expected shape:
-
-```text
-SCE Supplier Risk Demo
-======================
-
-Decide. Explain. Improve.
-
-1) Decide
----------
-plan                         base    memory   total
-------------------------------------------------------
-supplier_risk_plan           0.60     0.00    0.60
-escalation_plan              0.40     0.00    0.40
-monitor_plan                 0.10     0.00    0.10
-
-Initial selected plan: supplier_risk_plan
-
-2) Explain
-----------
-Decision-carrying facts:
-- late_delivery
-- invoice_risk
-- missing_certificate
-- supplier_risk
-- escalation_plan
-
-Dangling context:
-- marketing_tag
-- old_positive_history
-
-3) Measure reliability
-----------------------
-cumulative_error: 0.27
-reliability:      0.79
-trend:            improving
-
-4) Improve
-----------
-Final selected plan: escalation_plan
-Changed choice: YES
-```
+### Observe
+Export and inspect the system graph through CLI and API.
 
 ---
 
-## Key ideas
+## Why SCE is different
 
-### Decision backbone
+### Decision backbone extraction
 
-SCE shows which facts actually carry the decision.
+SCE identifies which nodes actually carried the decision.
 
 ```text
 forward  = nodes reachable from evidence
@@ -161,43 +105,94 @@ backbone = forward ∩ backward
 dangling = forward - backbone
 ```
 
-Details: [`docs/DECISION_BACKBONE.md`](docs/DECISION_BACKBONE.md)
-
-### Reliability tracking
-
-SCE tracks local prediction error:
-
-```text
-predicted value → actual value → step error → reliability
-```
-
-Details: [`docs/CONTROLLED_EVOLUTION.md`](docs/CONTROLLED_EVOLUTION.md)
-
 ### Reliability-aware planning
 
-SCE can use remembered reliability in future scoring:
+SCE does not stop at plan selection. It measures how reliable the trajectory was and feeds that back into future scoring.
 
-```text
-base score + memory bias + remembered reliability bonus → selected plan
-```
+### Memory-aware evolution
 
-Details: [`docs/RELIABILITY_AWARE_PLANNING.md`](docs/RELIABILITY_AWARE_PLANNING.md)
+SCE remembers outcomes and uses them to change later behavior.
+
+### Graph observability
+
+SCE can export a real graph representation of system state for debugging, visualization, and product integration.
 
 ---
 
-## Core components
+## Run the product story
 
-- **Planning** — generate candidate plans
-- **Scoring** — rank plans with base score, memory, and reliability
-- **Memory** — store outcomes and reliability as episodes
-- **Decision backbone** — identify decision-carrying facts vs dangling context
-- **Reliability tracking** — convert prediction error into trajectory reliability
-- **Exploration** — optionally try non-top plans
-- **Constraint DSL** — safe human-readable constraints without `eval`/`exec`
-- **Graph observability** — JSON export and ASCII visualization
-- **Persistence** — in-memory and PostgreSQL episodic memory
-- **API** — FastAPI `/health` and `/ask`
-- **LLM providers** — OpenAI and Anthropic JSON clients
+### Main demo
+
+```bash
+sce demo
+```
+
+This shows the complete loop:
+
+```text
+supplier risk → plan choice → backbone → reliability → memory → improved next choice
+```
+
+### Hypothesis demo
+
+```bash
+sce demo hypothesis
+```
+
+### JSON output
+
+```bash
+sce demo supplier-risk --json
+```
+
+---
+
+## API
+
+Run locally:
+
+```bash
+uvicorn sce.api:app --reload
+```
+
+Open:
+
+```text
+http://127.0.0.1:8000/docs
+```
+
+### Example
+
+```bash
+curl -X POST http://127.0.0.1:8000/demo \
+  -H "Content-Type: application/json" \
+  -d '{"name":"supplier-risk","format":"pretty"}'
+```
+
+### Explainability only
+
+```bash
+curl -X POST http://127.0.0.1:8000/demo/explain \
+  -H "Content-Type: application/json" \
+  -d '{"name":"hypothesis"}'
+```
+
+### Graph inspection
+
+```bash
+curl http://127.0.0.1:8000/graph
+```
+
+---
+
+## Use cases
+
+- Explainable AI copilots
+- Operations and workflow agents
+- Supplier risk systems
+- Research agents
+- Auditable autonomous systems
+- Internal decision infrastructure for agent platforms
 
 ---
 
@@ -219,7 +214,7 @@ pip install -e .[api,anthropic]
 
 ---
 
-## Run tests
+## Tests
 
 ```bash
 pytest
@@ -227,61 +222,9 @@ pytest
 
 ---
 
-## Run API
-
-```bash
-uvicorn sce.api:app --reload
-```
-
-Open:
-
-```text
-http://127.0.0.1:8000/docs
-```
-
-Example:
-
-```bash
-curl -X POST http://127.0.0.1:8000/ask \
-  -H "Content-Type: application/json" \
-  -d '{"text":"check supplier risk"}'
-```
-
----
-
-## Advanced demos
-
-```bash
-sce run-hypothesis-research-demo-pretty
-sce run-adaptive-agent-demo-pretty
-sce run-decision-backbone-demo-pretty
-sce run-controlled-evolution-demo-pretty
-sce run-reliability-aware-planning-demo-pretty
-sce run-exploration-demo-pretty
-sce run-memory-aware-planning-demo
-sce visualize-graph
-sce export-graph
-```
-
-All visual/demo commands are documented in [`docs/VISUAL_DEMO.md`](docs/VISUAL_DEMO.md).
-
----
-
-## Current gaps / next work
-
-- CLI simplification: `sce demo supplier-risk`, `sce demo hypothesis`
-- Critical decision nodes and edges
-- Constraint-aware decision backbone extraction
-- Reliability decay over time
-- Reliability-aware exploration triggers
-- Supplier risk product demo with real business inputs
-- Browser-based graph UI
-
----
-
 ## Status
 
-Early product/research system for explainable, memory-aware, reliability-aware AI decisions.
+SCE Core is an early product/research system for explainable, memory-aware, reliability-aware AI decisions.
 
 ---
 
