@@ -1,8 +1,8 @@
 from __future__ import annotations
 
-from typing import Any, Dict, Optional
+from typing import Any, Dict, Literal, Optional
 
-from fastapi import FastAPI
+from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel, Field
 
 from sce.cli import DEMO_CHOICES, DEMO_REGISTRY, format_demo, run_demo
@@ -29,13 +29,16 @@ class AskResponse(BaseModel):
 
 
 class DemoRequest(BaseModel):
-    name: str = Field(..., description="Demo name, e.g. 'hypothesis'")
-    format: str = Field("pretty", description="'pretty' or 'json'")
+    name: str = Field(..., description="Demo name")
+    format: Literal["pretty", "json"] = Field("pretty")
 
 
 class DemoResponse(BaseModel):
     name: str
-    output: Any
+    format: str
+    result: Any
+    explanation: Optional[str] = None
+    meta: Dict[str, Any] = Field(default_factory=dict)
 
 
 class DemoListItem(BaseModel):
@@ -73,10 +76,27 @@ def build_app() -> FastAPI:
 
     @app.post("/demo", response_model=DemoResponse)
     def demo(request: DemoRequest) -> DemoResponse:
-        result = run_demo(request.name)
+        if request.name not in DEMO_CHOICES:
+            raise HTTPException(status_code=400, detail=f"Unknown demo: {request.name}")
+
+        raw_result = run_demo(request.name)
+
         if request.format == "json":
-            return DemoResponse(name=request.name, output=result)
-        return DemoResponse(name=request.name, output=format_demo(request.name, result))
+            return DemoResponse(
+                name=request.name,
+                format="json",
+                result=raw_result,
+                meta={"type": "raw"},
+            )
+
+        pretty = format_demo(request.name, raw_result)
+        return DemoResponse(
+            name=request.name,
+            format="pretty",
+            result=raw_result,
+            explanation=pretty,
+            meta={"type": "formatted"},
+        )
 
     return app
 
