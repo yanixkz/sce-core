@@ -14,6 +14,7 @@ This document tracks implementation and delivery priorities.
 For theory mapping, see [`docs/constraint_driven_stability.md`](docs/constraint_driven_stability.md).
 For open research problems, see [`docs/research_program.md`](docs/research_program.md).
 For historical context, see [`docs/origin.md`](docs/origin.md).
+For issue/PR workstream routing, see [`docs/governance.md`](docs/governance.md).
 
 ---
 

@@ -1,0 +1,5 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Governance and workstream guide
+    url: https://github.com/yanixkz/sce-core/blob/main/docs/governance.md
+    about: Use this guide to map issues to product, research, API, core, docs, and tests workstreams.

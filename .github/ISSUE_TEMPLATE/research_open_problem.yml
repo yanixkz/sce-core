@@ -1,0 +1,40 @@
+name: Research / open problem
+description: Track a theory-grounded open problem or experiment direction.
+title: "[research] "
+labels: [research]
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: Research problem
+      description: What open question are we trying to answer?
+    validations:
+      required: true
+  - type: textarea
+    id: bridge
+    attributes:
+      label: Theory bridge context (CDS → SCE)
+      description: How this connects to implemented SCE mechanisms.
+    validations:
+      required: true
+  - type: textarea
+    id: current
+    attributes:
+      label: Current implementation baseline
+      description: Relevant current behavior, endpoints, demos, or mechanism assumptions.
+    validations:
+      required: true
+  - type: textarea
+    id: plan
+    attributes:
+      label: Proposed experiment or change
+      description: Minimal viable research step.
+    validations:
+      required: true
+  - type: textarea
+    id: signal
+    attributes:
+      label: Success signal / acceptance criteria
+      description: What evidence indicates progress?
+    validations:
+      required: true

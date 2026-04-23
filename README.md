@@ -134,6 +134,7 @@ This coupling is what makes the system both practical and research-relevant.
 - **Research program (open problems):** [`docs/research_program.md`](docs/research_program.md)
 - **Russian overview:** [`docs/OVERVIEW_RU.md`](docs/OVERVIEW_RU.md)
 - **Extended docs index:** [`docs/README.md`](docs/README.md)
+- **Governance/workflow guide:** [`docs/governance.md`](docs/governance.md)
 
 ## Near-term direction (concise)
 

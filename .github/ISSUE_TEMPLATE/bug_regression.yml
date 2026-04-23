@@ -1,0 +1,41 @@
+name: Bug / regression
+description: Report unexpected behavior or a regression.
+title: "[bug] "
+labels: [tests]
+body:
+  - type: textarea
+    id: summary
+    attributes:
+      label: Summary
+      description: Short description of the bug/regression.
+    validations:
+      required: true
+  - type: textarea
+    id: repro
+    attributes:
+      label: Steps to reproduce
+      placeholder: |
+        1. ...
+        2. ...
+        3. ...
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected behavior
+    validations:
+      required: true
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual behavior
+    validations:
+      required: true
+  - type: textarea
+    id: scope
+    attributes:
+      label: Impacted surface
+      description: product / api / core / research / docs / tests
+    validations:
+      required: true
