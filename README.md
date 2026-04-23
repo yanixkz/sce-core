@@ -183,6 +183,13 @@ sce demo hypothesis
 sce demo list
 ```
 
+### Graph inspection entrypoints
+
+```bash
+sce export-graph
+sce visualize-graph
+```
+
 `sce demo` defaults to `supplier-risk` and shows the complete loop:
 
 ```text

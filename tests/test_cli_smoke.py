@@ -62,6 +62,25 @@ def test_cli_demo_help_highlights_canonical_demos():
     assert "list" in result.stdout
 
 
+def test_cli_top_level_help_highlights_product_surface():
+    result = run_cli("--help")
+
+    assert result.returncode == 0, result.stderr
+    assert "Primary surface:" in result.stdout
+    assert "sce demo hypothesis" in result.stdout
+    assert "Graph inspection:" in result.stdout
+    assert "sce export-graph" in result.stdout
+    assert "Compatibility:" in result.stdout
+
+
+def test_cli_top_level_help_marks_legacy_aliases():
+    result = run_cli("--help")
+
+    assert result.returncode == 0, result.stderr
+    assert "run-supplier-risk-demo" in result.stdout
+    assert "Legacy alias (backward compatibility)." in result.stdout
+
+
 def test_cli_demo_list_promotes_hypothesis_entrypoint():
     result = run_cli("demo list")
 
