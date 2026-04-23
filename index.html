@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SCE Core</title>
+  <meta name="description" content="SCE Core is a decision engine for AI agents with explainability, reliability tracking, memory, and graph observability.">
+  <style>
+    :root {
+      --bg: #0b1020;
+      --panel: #121a33;
+      --muted: #9fb0d0;
+      --text: #eef4ff;
+      --accent: #4f8cff;
+      --accent-2: #78e6c4;
+      --border: #223055;
+      --code: #09101f;
+      --shadow: 0 20px 50px rgba(0,0,0,.35);
+      --radius: 16px;
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      font-family: Inter, Arial, sans-serif;
+      background: linear-gradient(180deg, #0b1020 0%, #0f1730 100%);
+      color: var(--text);
+      line-height: 1.6;
+    }
+    .wrap { max-width: 1100px; margin: 0 auto; padding: 28px; }
+    .nav {
+      display: flex; justify-content: space-between; align-items: center;
+      position: sticky; top: 0; backdrop-filter: blur(10px);
+      background: rgba(11,16,32,.75); border-bottom: 1px solid rgba(255,255,255,.06);
+      z-index: 20;
+    }
+    .brand { font-weight: 700; letter-spacing: .3px; }
+    .nav a { color: var(--muted); text-decoration: none; margin-left: 18px; font-size: 14px; }
+    .hero { padding: 72px 0 28px; display: grid; grid-template-columns: 1.2fr .8fr; gap: 28px; align-items: center; }
+    h1 { font-size: 56px; line-height: 1.05; margin: 0 0 16px; letter-spacing: -1px; }
+    .sub { font-size: 20px; color: var(--muted); max-width: 700px; }
+    .cta { margin-top: 28px; display: flex; gap: 14px; flex-wrap: wrap; }
+    .btn {
+      display: inline-block; padding: 12px 18px; border-radius: 10px; text-decoration: none; font-weight: 600;
+      border: 1px solid var(--border); color: var(--text); background: transparent;
+    }
+    .btn.primary { background: var(--accent); border-color: var(--accent); }
+    .hero-card, .card, .code, .terminal {
+      background: rgba(18,26,51,.88); border: 1px solid var(--border); border-radius: var(--radius); box-shadow: var(--shadow);
+    }
+    .hero-card { padding: 22px; }
+    .eyebrow { color: var(--accent-2); font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: .12em; }
+    .stats { display: grid; grid-template-columns: repeat(2,1fr); gap: 12px; margin-top: 16px; }
+    .stat { padding: 14px; background: rgba(255,255,255,.02); border: 1px solid rgba(255,255,255,.05); border-radius: 12px; }
+    .stat strong { display:block; font-size: 24px; }
+    section { padding: 26px 0; }
+    h2 { font-size: 32px; margin: 0 0 12px; letter-spacing: -.4px; }
+    .lead { color: var(--muted); max-width: 760px; }
+    .grid-3 { display: grid; grid-template-columns: repeat(3,1fr); gap: 18px; }
+    .card { padding: 22px; }
+    .card h3 { margin-top: 0; }
+    .code, .terminal { padding: 18px; overflow: auto; }
+    code, pre { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; }
+    pre { margin: 0; white-space: pre-wrap; color: #dbe7ff; }
+    .split { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+    ul { padding-left: 18px; }
+    .footer { color: var(--muted); font-size: 14px; padding: 50px 0 24px; }
+    @media (max-width: 900px) {
+      .hero, .split, .grid-3 { grid-template-columns: 1fr; }
+      h1 { font-size: 40px; }
+      .nav-links { display:none; }
+    }
+  </style>
+</head>
+<body>
+  <div class="nav">
+    <div class="wrap" style="display:flex;justify-content:space-between;align-items:center;">
+      <div class="brand">SCE Core</div>
+      <div class="nav-links">
+        <a href="#product">Product</a>
+        <a href="#api">API</a>
+        <a href="#use-cases">Use cases</a>
+        <a href="https://github.com/yanixkz/sce-core">GitHub</a>
+      </div>
+    </div>
+  </div>
+
+  <main class="wrap">
+    <section class="hero">
+      <div>
+        <div class="eyebrow">Decision engine for AI agents</div>
+        <h1>Build AI agents that can decide, explain, and improve</h1>
+        <p class="sub">SCE Core is a decision engine for AI agents with decision backbone extraction, reliability-aware planning, memory, and graph observability.</p>
+        <div class="cta">
+          <a class="btn primary" href="https://github.com/yanixkz/sce-core">View GitHub</a>
+          <a class="btn" href="#api">Explore API</a>
+          <a class="btn" href="#run">Run demo</a>
+        </div>
+      </div>
+      <div class="hero-card">
+        <div class="eyebrow">Product loop</div>
+        <pre>State
+↓
+Candidate plans
+↓
+Score with memory + reliability
+↓
+Select
+↓
+Explain
+↓
+Execute / observe
+↓
+Track prediction error
+↓
+Remember reliability
+↓
+Improve next choice</pre>
+        <div class="stats">
+          <div class="stat"><strong>/demo</strong><span>Run the system</span></div>
+          <div class="stat"><strong>/demo/explain</strong><span>Inspect reasoning</span></div>
+          <div class="stat"><strong>/graph</strong><span>Observe structure</span></div>
+          <div class="stat"><strong>v1</strong><span>Versioned API contract</span></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="product">
+      <h2>Why SCE exists</h2>
+      <p class="lead">Most AI agents can produce an answer. Few can clearly show why they chose it, what evidence mattered, whether the trajectory was reliable, and whether the next decision improved.</p>
+      <div class="grid-3" style="margin-top:18px;">
+        <div class="card"><h3>Decide</h3><p>Rank candidate plans and choose the best next action.</p></div>
+        <div class="card"><h3>Explain</h3><p>Use decision backbone extraction to separate decision-carrying facts from dangling context.</p></div>
+        <div class="card"><h3>Improve</h3><p>Track local prediction error, compute reliability, remember outcomes, and adapt future choices.</p></div>
+      </div>
+    </section>
+
+    <section>
+      <h2>Why it is different</h2>
+      <div class="split">
+        <div class="card">
+          <h3>Decision backbone extraction</h3>
+          <pre>forward  = nodes reachable from evidence
+backward = nodes that can reach the target decision
+backbone = forward ∩ backward
+dangling = forward - backbone</pre>
+        </div>
+        <div class="card">
+          <h3>Reliability-aware planning</h3>
+          <pre>base score
++ memory bias
++ remembered reliability
+→ selected plan</pre>
+        </div>
+      </div>
+    </section>
+
+    <section id="api">
+      <h2>API</h2>
+      <p class="lead">Run the product through a versioned API.</p>
+      <div class="split">
+        <div class="code"><pre>POST /ask
+POST /demo
+POST /demo/explain
+GET  /graph</pre></div>
+        <div class="code"><pre>{
+  "version": "v1",
+  "name": "supplier-risk",
+  "format": "pretty",
+  "result": { ... },
+  "explanation": "...",
+  "meta": { ... }
+}</pre></div>
+      </div>
+    </section>
+
+    <section id="run">
+      <h2>Run it now</h2>
+      <div class="terminal"><pre>$ sce demo
+$ sce demo hypothesis
+$ sce demo supplier-risk --json
+$ uvicorn sce.api:app --reload</pre></div>
+    </section>
+
+    <section id="use-cases">
+      <h2>Use cases</h2>
+      <div class="grid-3">
+        <div class="card"><h3>AI copilots</h3><p>Give operators decisions with visible reasoning and improving reliability.</p></div>
+        <div class="card"><h3>Operations agents</h3><p>Use auditable plan selection and reliability-aware execution loops.</p></div>
+        <div class="card"><h3>Research systems</h3><p>Rank hypotheses, inspect evidence paths, and turn winning hypotheses into next actions.</p></div>
+      </div>
+    </section>
+
+    <div class="footer">SCE Core — execution, explainability, observability, reliability.</div>
+  </main>
+</body>
+</html>
