@@ -3,6 +3,7 @@ from __future__ import annotations
 import argparse
 import json
 from dataclasses import dataclass
+from importlib import import_module
 from pathlib import Path
 from typing import Callable
 
@@ -15,31 +16,78 @@ class DemoSpec:
     formatter: Callable[[dict], str]
 
 
-def _supplier_risk_demo() -> DemoSpec:
-    from sce.scenarios.supplier_risk_demo import format_supplier_risk_demo, run_supplier_risk_demo
-
-    return DemoSpec(
-        name="supplier-risk",
-        title="Supplier Risk Agent",
-        runner=run_supplier_risk_demo,
-        formatter=format_supplier_risk_demo,
-    )
+def _pretty_json_formatter(result: dict) -> str:
+    return json.dumps(result, indent=2, ensure_ascii=False)
 
 
-def _hypothesis_demo() -> DemoSpec:
-    from sce.scenarios.hypothesis_research_demo import format_hypothesis_research_demo, run_hypothesis_research_demo
+def _demo_spec_from_module(
+    *, name: str, title: str, module: str, run_fn: str, format_fn: str | None = None
+) -> Callable[[], DemoSpec]:
+    def _factory() -> DemoSpec:
+        demo_module = import_module(module)
+        runner = getattr(demo_module, run_fn)
+        formatter = getattr(demo_module, format_fn) if format_fn else _pretty_json_formatter
+        return DemoSpec(name=name, title=title, runner=runner, formatter=formatter)
 
-    return DemoSpec(
-        name="hypothesis",
-        title="Hypothesis Research",
-        runner=run_hypothesis_research_demo,
-        formatter=format_hypothesis_research_demo,
-    )
+    return _factory
 
 
 DEMO_REGISTRY: dict[str, Callable[[], DemoSpec]] = {
-    "supplier-risk": _supplier_risk_demo,
-    "hypothesis": _hypothesis_demo,
+    "supplier-risk": _demo_spec_from_module(
+        name="supplier-risk",
+        title="Supplier Risk Agent",
+        module="sce.scenarios.supplier_risk_demo",
+        run_fn="run_supplier_risk_demo",
+        format_fn="format_supplier_risk_demo",
+    ),
+    "hypothesis": _demo_spec_from_module(
+        name="hypothesis",
+        title="Hypothesis Research",
+        module="sce.scenarios.hypothesis_research_demo",
+        run_fn="run_hypothesis_research_demo",
+        format_fn="format_hypothesis_research_demo",
+    ),
+    "adaptive-agent": _demo_spec_from_module(
+        name="adaptive-agent",
+        title="Adaptive Agent",
+        module="sce.scenarios.adaptive_agent_demo",
+        run_fn="run_adaptive_agent_demo",
+        format_fn="format_adaptive_agent_demo",
+    ),
+    "exploration": _demo_spec_from_module(
+        name="exploration",
+        title="Exploration Policy",
+        module="sce.scenarios.exploration_demo",
+        run_fn="run_exploration_demo",
+        format_fn="format_exploration_demo",
+    ),
+    "controlled-evolution": _demo_spec_from_module(
+        name="controlled-evolution",
+        title="Controlled Evolution",
+        module="sce.scenarios.controlled_evolution_demo",
+        run_fn="run_controlled_evolution_demo",
+        format_fn="format_controlled_evolution_demo",
+    ),
+    "reliability-planning": _demo_spec_from_module(
+        name="reliability-planning",
+        title="Reliability-Aware Planning",
+        module="sce.scenarios.reliability_aware_planning_demo",
+        run_fn="run_reliability_aware_planning_demo",
+        format_fn="format_reliability_aware_planning_demo",
+    ),
+    "decision-backbone": _demo_spec_from_module(
+        name="decision-backbone",
+        title="Decision Backbone",
+        module="sce.scenarios.decision_backbone_demo",
+        run_fn="run_decision_backbone_demo",
+        format_fn="format_decision_backbone_demo",
+    ),
+    "planning": _demo_spec_from_module(
+        name="planning",
+        title="Planning",
+        module="sce.scenarios.planning_demo",
+        run_fn="run_planning_demo",
+    ),
 }
 DEMO_CHOICES = tuple(DEMO_REGISTRY)
 DEFAULT_DEMO = "supplier-risk"
