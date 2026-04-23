@@ -19,8 +19,11 @@ def test_run_demo_json():
     assert resp.status_code == 200
     data = resp.json()
     assert data["name"] == "hypothesis"
-    assert isinstance(data["output"], dict)
-    assert "selected_hypothesis" in data["output"]
+    assert data["format"] == "json"
+    assert isinstance(data["result"], dict)
+    assert "selected_hypothesis" in data["result"]
+    assert data["explanation"] is None
+    assert data["meta"]["type"] == "raw"
 
 
 def test_run_demo_pretty():
@@ -29,5 +32,8 @@ def test_run_demo_pretty():
     assert resp.status_code == 200
     data = resp.json()
     assert data["name"] == "supplier-risk"
-    assert isinstance(data["output"], str)
-    assert "SCE Supplier Risk Demo" in data["output"]
+    assert data["format"] == "pretty"
+    assert isinstance(data["result"], dict)
+    assert isinstance(data["explanation"], str)
+    assert "SCE Supplier Risk Demo" in data["explanation"]
+    assert data["meta"]["type"] == "formatted"
