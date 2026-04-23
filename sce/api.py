@@ -74,6 +74,88 @@ def _export_supplier_graph() -> dict:
     return GraphQueryLayer(repo).export_graph_json()
 
 
+def _build_demo_ui_meta(name: str, raw_result: dict) -> Dict[str, Any]:
+    if name == "supplier-risk":
+        return {
+            "view": "supplier-risk",
+            "panel_order": [
+                "selected_plan",
+                "explanation_backbone",
+                "reliability",
+                "memory_influence",
+                "summary",
+            ],
+            "panels": {
+                "selected_plan": {
+                    "label": "Selected plan",
+                    "first_choice": raw_result.get("first_choice"),
+                    "final_choice": raw_result.get("final_choice"),
+                    "changed_choice": raw_result.get("changed_choice"),
+                },
+                "explanation_backbone": {
+                    "label": "Explanation backbone",
+                    "backbone_nodes": raw_result.get("backbone_nodes", []),
+                    "dangling_nodes": raw_result.get("dangling_nodes", []),
+                },
+                "reliability": {
+                    "label": "Reliability",
+                    "reliability": raw_result.get("reliability"),
+                    "cumulative_error": raw_result.get("cumulative_error"),
+                    "trend": raw_result.get("reliability_trend"),
+                },
+                "memory_influence": {
+                    "label": "Memory influence",
+                    "remembered_episodes": raw_result.get("remembered_episodes"),
+                },
+                "summary": {
+                    "label": "Summary",
+                    "text": raw_result.get("summary"),
+                },
+            },
+        }
+
+    if name == "hypothesis":
+        return {
+            "view": "hypothesis",
+            "panel_order": [
+                "research_question",
+                "ranked_hypotheses",
+                "winning_hypothesis",
+                "decision_evidence",
+                "dangling_context",
+                "next_actions",
+            ],
+            "panels": {
+                "research_question": {
+                    "label": "Research question",
+                    "text": raw_result.get("research_question"),
+                },
+                "ranked_hypotheses": {
+                    "label": "Ranked hypotheses",
+                    "scores": raw_result.get("scores", []),
+                },
+                "winning_hypothesis": {
+                    "label": "Winning hypothesis",
+                    "selected_hypothesis": raw_result.get("selected_hypothesis"),
+                },
+                "decision_evidence": {
+                    "label": "Decision-carrying evidence",
+                    "backbone_nodes": raw_result.get("backbone_nodes", []),
+                },
+                "dangling_context": {
+                    "label": "Dangling context",
+                    "dangling_nodes": raw_result.get("dangling_nodes", []),
+                },
+                "next_actions": {
+                    "label": "Next actions",
+                    "actions": raw_result.get("next_actions", []),
+                },
+            },
+        }
+
+    return {"view": "generic", "panel_order": ["summary"], "panels": {"summary": {"label": "Summary"}}}
+
+
 def build_app() -> FastAPI:
     app = FastAPI(title="SCE Core API", version="0.1.0-alpha")
 
@@ -88,10 +170,36 @@ def build_app() -> FastAPI:
     @app.get("/graph", response_model=GraphResponse)
     def graph() -> GraphResponse:
         exported = _export_supplier_graph()
+        nodes = exported.get("nodes", [])
+        edges = exported.get("edges", [])
         return GraphResponse(
             version=API_VERSION,
             graph=exported,
-            meta={"source": "supplier-reliability"},
+            meta={
+                "source": "supplier-reliability",
+                "node_count": len(nodes),
+                "edge_count": len(edges),
+                "schema": {
+                    "node_fields": [
+                        "state_id",
+                        "state_type",
+                        "stability",
+                        "is_attractor",
+                        "constraints",
+                        "constraints_satisfied",
+                        "data",
+                    ],
+                    "edge_fields": [
+                        "edge_id",
+                        "source_state_id",
+                        "target_state_id",
+                        "relation_type",
+                        "strength",
+                        "directed",
+                    ],
+                },
+                "ui": {"default_layout": "force-directed", "primary_node_label": "state_type"},
+            },
         )
 
     @app.post("/ask", response_model=AskResponse)
@@ -117,6 +225,7 @@ def build_app() -> FastAPI:
             raise HTTPException(status_code=400, detail=f"Unknown demo: {request.name}")
 
         raw_result = run_demo(request.name)
+        ui_meta = _build_demo_ui_meta(request.name, raw_result)
 
         if request.format == "json":
             return DemoResponse(
@@ -124,7 +233,7 @@ def build_app() -> FastAPI:
                 name=request.name,
                 format="json",
                 result=raw_result,
-                meta={"type": "raw"},
+                meta={"type": "raw", "ui": ui_meta},
             )
 
         pretty = format_demo(request.name, raw_result)
@@ -134,7 +243,7 @@ def build_app() -> FastAPI:
             format="pretty",
             result=raw_result,
             explanation=pretty,
-            meta={"type": "formatted"},
+            meta={"type": "formatted", "ui": ui_meta},
         )
 
     @app.post("/demo/explain", response_model=DemoExplanationResponse)
@@ -147,7 +256,11 @@ def build_app() -> FastAPI:
             version=API_VERSION,
             name=request.name,
             explanation=format_demo(request.name, raw_result),
-            meta={"type": "explanation"},
+            meta={
+                "type": "explanation",
+                "ui": _build_demo_ui_meta(request.name, raw_result),
+                "sections": ["question_or_goal", "analysis", "decision", "summary"],
+            },
         )
 
     return app

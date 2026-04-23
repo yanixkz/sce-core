@@ -25,6 +25,9 @@ def test_run_demo_json():
     assert "selected_hypothesis" in data["result"]
     assert data["explanation"] is None
     assert data["meta"]["type"] == "raw"
+    assert data["meta"]["ui"]["view"] == "hypothesis"
+    assert "winning_hypothesis" in data["meta"]["ui"]["panel_order"]
+    assert data["meta"]["ui"]["panels"]["research_question"]["label"] == "Research question"
 
 
 def test_run_demo_pretty():
@@ -39,6 +42,9 @@ def test_run_demo_pretty():
     assert isinstance(data["explanation"], str)
     assert "SCE Supplier Risk Demo" in data["explanation"]
     assert data["meta"]["type"] == "formatted"
+    assert data["meta"]["ui"]["view"] == "supplier-risk"
+    assert "reliability" in data["meta"]["ui"]["panel_order"]
+    assert data["meta"]["ui"]["panels"]["selected_plan"]["first_choice"] == data["result"]["first_choice"]
 
 
 def test_explain_endpoint():
@@ -50,3 +56,5 @@ def test_explain_endpoint():
     assert data["name"] == "hypothesis"
     assert isinstance(data["explanation"], str)
     assert data["meta"]["type"] == "explanation"
+    assert data["meta"]["ui"]["view"] == "hypothesis"
+    assert isinstance(data["meta"]["sections"], list)

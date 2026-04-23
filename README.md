@@ -224,6 +224,10 @@ POST /demo/explain
 GET  /graph
 ```
 
+Responses keep existing contracts and now include additive UI-readiness metadata
+for minimal web integration (for example `meta.ui` panel hints on demo endpoints
+and graph schema/count hints on `/graph`).
+
 ### Run API locally
 
 ```bash

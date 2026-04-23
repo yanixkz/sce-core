@@ -19,6 +19,9 @@ def test_demo_json_contract_includes_version_and_expected_shape():
     assert isinstance(data["result"], dict)
     assert {"selected_hypothesis", "scores", "backbone_nodes", "next_actions"}.issubset(data["result"])
     assert data["explanation"] is None
+    assert data["meta"]["type"] == "raw"
+    assert data["meta"]["ui"]["view"] == "hypothesis"
+    assert "ranked_hypotheses" in data["meta"]["ui"]["panel_order"]
 
 
 def test_demo_pretty_contract_includes_explanation_string():
@@ -32,6 +35,8 @@ def test_demo_pretty_contract_includes_explanation_string():
     assert isinstance(data["result"], dict)
     assert isinstance(data["explanation"], str)
     assert data["explanation"].strip()
+    assert data["meta"]["type"] == "formatted"
+    assert data["meta"]["ui"]["view"] == "supplier-risk"
 
 
 def test_demo_explain_contract_returns_name_explanation_and_version():
@@ -43,6 +48,8 @@ def test_demo_explain_contract_returns_name_explanation_and_version():
     assert data["name"] == "hypothesis"
     assert isinstance(data["explanation"], str)
     assert data["explanation"].strip()
+    assert data["meta"]["type"] == "explanation"
+    assert isinstance(data["meta"]["sections"], list)
 
 
 def test_graph_contract_returns_version_graph_and_basic_graph_fields():
@@ -58,3 +65,6 @@ def test_graph_contract_returns_version_graph_and_basic_graph_fields():
     assert data["graph"]["nodes"]
     assert {"state_id", "state_type", "stability", "constraints_satisfied", "data"}.issubset(data["graph"]["nodes"][0])
     assert data["meta"]["source"] == "supplier-reliability"
+    assert isinstance(data["meta"]["node_count"], int)
+    assert isinstance(data["meta"]["edge_count"], int)
+    assert {"node_fields", "edge_fields"}.issubset(data["meta"]["schema"])
