@@ -1,0 +1,33 @@
+- name: product
+  color: "1D76DB"
+  description: Product-facing demos and operator-facing behavior.
+- name: research
+  color: "5319E7"
+  description: Theory-grounded research work and open problems.
+- name: api
+  color: "0E8A16"
+  description: API/platform contracts and integration surface.
+- name: core
+  color: "B60205"
+  description: Decision mechanism internals (constraints/backbone/memory/reliability).
+- name: ui
+  color: "FBCA04"
+  description: UI-facing behavior and interaction layers.
+- name: docs
+  color: "0075CA"
+  description: Documentation and project-positioning quality.
+- name: tests
+  color: "C2E0C6"
+  description: Regression coverage and hardening.
+- name: roadmap
+  color: "0052CC"
+  description: Directly tied to staged priorities in ROADMAP.md.
+- name: governance
+  color: "D4C5F9"
+  description: Contribution flow, templates, and repo process.
+- name: good first issue
+  color: "7057FF"
+  description: Well-bounded starter task for new contributors.
+- name: breaking-change
+  color: "E99695"
+  description: Potential compatibility-impacting change requiring migration notes.

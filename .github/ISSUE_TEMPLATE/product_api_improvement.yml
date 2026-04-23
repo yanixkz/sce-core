@@ -1,0 +1,55 @@
+name: Product / API improvement
+description: Propose a product-facing or API/platform improvement.
+title: "[product/api] "
+labels: [product]
+body:
+  - type: dropdown
+    id: workstream
+    attributes:
+      label: Primary workstream
+      options:
+        - product
+        - api
+        - ui
+        - core
+    validations:
+      required: true
+  - type: textarea
+    id: goal
+    attributes:
+      label: Goal
+      description: What user/operator outcome should improve?
+      placeholder: Clear outcome statement.
+    validations:
+      required: true
+  - type: textarea
+    id: current
+    attributes:
+      label: Current state
+      placeholder: What happens today?
+    validations:
+      required: true
+  - type: textarea
+    id: desired
+    attributes:
+      label: Desired behavior
+      placeholder: What should happen instead?
+    validations:
+      required: true
+  - type: textarea
+    id: acceptance
+    attributes:
+      label: Acceptance criteria
+      placeholder: Observable checks (API response, demo behavior, docs note, etc.).
+    validations:
+      required: true
+  - type: dropdown
+    id: impact
+    attributes:
+      label: Product vs research impact
+      options:
+        - Product only
+        - Product + research
+        - Research only (consider research template)
+    validations:
+      required: true

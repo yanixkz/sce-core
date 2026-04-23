@@ -1,0 +1,31 @@
+name: Docs / positioning
+description: Improve docs clarity, project positioning, or roadmap-language consistency.
+title: "[docs] "
+labels: [docs]
+body:
+  - type: textarea
+    id: scope
+    attributes:
+      label: Scope
+      description: Which doc(s) or message surface is affected?
+    validations:
+      required: true
+  - type: textarea
+    id: current
+    attributes:
+      label: Current wording/problem
+    validations:
+      required: true
+  - type: textarea
+    id: target
+    attributes:
+      label: Target wording/outcome
+    validations:
+      required: true
+  - type: textarea
+    id: acceptance
+    attributes:
+      label: Acceptance criteria
+      description: How do we know wording is aligned with README/ROADMAP/research program?
+    validations:
+      required: true
