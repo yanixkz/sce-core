@@ -144,11 +144,43 @@ def _export_supplier_graph() -> dict:
 
 
 def main() -> None:
-    parser = argparse.ArgumentParser(prog="sce")
-    sub = parser.add_subparsers(dest="command", required=True)
-    demo_parser = sub.add_parser("demo")
-    demo_parser.add_argument("name", nargs="?", choices=("list", *DEMO_CHOICES), default=DEFAULT_DEMO)
-    demo_parser.add_argument("--json", action="store_true", help="Print raw demo result as JSON")
+    parser = argparse.ArgumentParser(
+        prog="sce",
+        description=(
+            "SCE Core CLI — decide, explain, and improve with a product-facing "
+            "supplier-risk demo and a research-facing hypothesis demo."
+        ),
+    )
+    sub = parser.add_subparsers(
+        dest="command",
+        required=True,
+        title="commands",
+        description=(
+            "Canonical entrypoints: `sce demo`, `sce demo supplier-risk`, "
+            "`sce demo hypothesis`, `sce demo list`."
+        ),
+    )
+    demo_parser = sub.add_parser(
+        "demo",
+        help="Run canonical demos (`supplier-risk`, `hypothesis`) or list available demos.",
+        description=(
+            "Run canonical SCE demos. Use `supplier-risk` for a practical product story "
+            "and `hypothesis` for research-oriented competing hypotheses."
+        ),
+    )
+    demo_parser.add_argument(
+        "name",
+        nargs="?",
+        choices=("list", *DEMO_CHOICES),
+        default=DEFAULT_DEMO,
+        help="Demo name (default: supplier-risk). Use `list` to print all demo ids.",
+    )
+    demo_parser.add_argument(
+        "--json",
+        action="store_true",
+        help="Print raw demo result as JSON instead of pretty narrative output.",
+    )
+    # Legacy run-* commands are intentionally kept for backward compatibility.
     sub.add_parser("run-demo")
     sub.add_parser("run-supplier-risk-demo")
     sub.add_parser("run-supplier-risk-demo-pretty")
@@ -180,9 +212,17 @@ def main() -> None:
     sub.add_parser("run-plan-scoring-demo")
     sub.add_parser("run-cognitive-agent-demo")
     sub.add_parser("run-llm-voice-demo")
-    export_graph_parser = sub.add_parser("export-graph")
+    export_graph_parser = sub.add_parser(
+        "export-graph",
+        help="Export the internal supplier-risk scenario graph as JSON.",
+        description="Export the internal supplier-risk state graph as JSON.",
+    )
     export_graph_parser.add_argument("--out", type=Path, default=None)
-    visualize_graph_parser = sub.add_parser("visualize-graph")
+    visualize_graph_parser = sub.add_parser(
+        "visualize-graph",
+        help="Render the internal supplier-risk scenario graph as ASCII.",
+        description="Render the internal supplier-risk state graph as ASCII for terminal inspection.",
+    )
     visualize_graph_parser.add_argument("--out", type=Path, default=None)
     sub.add_parser("explain-demo")
     sub.add_parser("print-migration")

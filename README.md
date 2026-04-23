@@ -169,13 +169,21 @@ SCE can export a real graph representation of system state for debugging, visual
 
 ## Run the product story
 
-### Main demo
+Dual packaging:
+
+- `supplier-risk` = practical product-facing demo
+- `hypothesis` = research-facing demo
+
+### Canonical entrypoints
 
 ```bash
 sce demo
+sce demo supplier-risk
+sce demo hypothesis
+sce demo list
 ```
 
-This shows the complete loop:
+`sce demo` defaults to `supplier-risk` and shows the complete loop:
 
 ```text
 supplier risk → plan choice → backbone → reliability → memory → improved next choice
@@ -186,6 +194,8 @@ supplier risk → plan choice → backbone → reliability → memory → improv
 ```bash
 sce demo hypothesis
 ```
+
+Research demo for competing hypotheses, decision-carrying evidence, and next research actions.
 
 ### JSON output
 

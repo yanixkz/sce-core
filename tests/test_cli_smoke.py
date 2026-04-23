@@ -51,3 +51,12 @@ def test_cli_visualize_graph_runs():
 
     assert result.returncode == 0, result.stderr
     assert "State Graph" in result.stdout
+
+
+def test_cli_demo_help_highlights_canonical_demos():
+    result = run_cli("demo --help")
+
+    assert result.returncode == 0, result.stderr
+    assert "supplier-risk" in result.stdout
+    assert "hypothesis" in result.stdout
+    assert "list" in result.stdout
