@@ -1,5 +1,8 @@
 # The Origin of SCE Core
 
+> This document captures the historical and philosophical origin of SCE Core.
+> For an operational mapping to current mechanisms, see [docs/theory.md](theory.md).
+
 ## Where this began
 
 This project did not start with a codebase or a product roadmap.

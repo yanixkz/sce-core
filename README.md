@@ -18,6 +18,12 @@ Decide. Explain. Improve.
 
 For Russian-speaking readers: see [docs/OVERVIEW_RU.md](docs/OVERVIEW_RU.md).
 
+### Theory bridge: Constraint-Driven Stability (CDS)
+
+SCE Core operationalizes CDS for decision systems: choices are made under explicit constraints, evaluated by outcome reliability, retained in episodic memory, and updated on the next decision cycle.
+The practical result is a coupled loop of **Decide → Explain → Improve**, not disconnected features.
+For the explicit mapping from CDS concepts to implemented mechanisms and open research gaps, see [docs/theory.md](docs/theory.md).
+
 ---
 
 ## Why SCE exists
