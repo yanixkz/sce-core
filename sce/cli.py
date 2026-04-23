@@ -91,6 +91,39 @@ DEMO_REGISTRY: dict[str, Callable[[], DemoSpec]] = {
 }
 DEMO_CHOICES = tuple(DEMO_REGISTRY)
 DEFAULT_DEMO = "supplier-risk"
+LEGACY_RUN_ALIASES = (
+    "run-demo",
+    "run-supplier-risk-demo",
+    "run-supplier-risk-demo-pretty",
+    "run-conflict-demo",
+    "run-llm-demo",
+    "run-llm-planning-demo",
+    "run-contract-demo",
+    "run-agent-demo",
+    "run-goal-agent-demo",
+    "run-action-demo",
+    "run-learning-demo",
+    "run-learning-planning-demo",
+    "run-memory-aware-planning-demo",
+    "run-adaptive-agent-demo",
+    "run-adaptive-agent-demo-pretty",
+    "run-exploration-demo",
+    "run-exploration-demo-pretty",
+    "run-decision-backbone-demo",
+    "run-decision-backbone-demo-pretty",
+    "run-controlled-evolution-demo",
+    "run-controlled-evolution-demo-pretty",
+    "run-reliability-aware-planning-demo",
+    "run-reliability-aware-planning-demo-pretty",
+    "run-hypothesis-research-demo",
+    "run-hypothesis-research-demo-pretty",
+    "run-multi-agent-demo",
+    "run-tools-demo",
+    "run-planning-demo",
+    "run-plan-scoring-demo",
+    "run-cognitive-agent-demo",
+    "run-llm-voice-demo",
+)
 
 
 def _print_json(payload: dict) -> None:
@@ -143,6 +176,27 @@ def _export_supplier_graph() -> dict:
     return GraphQueryLayer(repo).export_graph_json()
 
 
+def _register_legacy_aliases(sub: argparse._SubParsersAction[argparse.ArgumentParser]) -> None:
+    """Register deprecated run-* aliases retained for backward compatibility."""
+    for alias in LEGACY_RUN_ALIASES:
+        sub.add_parser(alias, help="Legacy alias (backward compatibility).")
+
+
+def _register_graph_commands(sub: argparse._SubParsersAction[argparse.ArgumentParser]) -> None:
+    export_graph_parser = sub.add_parser(
+        "export-graph",
+        help="Export supplier-risk graph as JSON for inspection.",
+        description="Export the internal supplier-risk state graph as JSON.",
+    )
+    export_graph_parser.add_argument("--out", type=Path, default=None)
+    visualize_graph_parser = sub.add_parser(
+        "visualize-graph",
+        help="Render supplier-risk graph as terminal ASCII.",
+        description="Render the internal supplier-risk state graph as ASCII for terminal inspection.",
+    )
+    visualize_graph_parser.add_argument("--out", type=Path, default=None)
+
+
 def main() -> None:
     parser = argparse.ArgumentParser(
         prog="sce",
@@ -150,6 +204,19 @@ def main() -> None:
             "SCE Core CLI — decide, explain, and improve with a product-facing "
             "supplier-risk demo and a research-facing hypothesis demo."
         ),
+        epilog=(
+            "Primary surface:\n"
+            "  sce demo\n"
+            "  sce demo supplier-risk\n"
+            "  sce demo hypothesis\n"
+            "  sce demo list\n"
+            "Graph inspection:\n"
+            "  sce export-graph\n"
+            "  sce visualize-graph\n"
+            "Compatibility:\n"
+            "  run-* commands are retained as legacy aliases."
+        ),
+        formatter_class=argparse.RawDescriptionHelpFormatter,
     )
     sub = parser.add_subparsers(
         dest="command",
@@ -180,50 +247,9 @@ def main() -> None:
         action="store_true",
         help="Print raw demo result as JSON instead of pretty narrative output.",
     )
+    _register_graph_commands(sub)
     # Legacy run-* commands are intentionally kept for backward compatibility.
-    sub.add_parser("run-demo")
-    sub.add_parser("run-supplier-risk-demo")
-    sub.add_parser("run-supplier-risk-demo-pretty")
-    sub.add_parser("run-conflict-demo")
-    sub.add_parser("run-llm-demo")
-    sub.add_parser("run-llm-planning-demo")
-    sub.add_parser("run-contract-demo")
-    sub.add_parser("run-agent-demo")
-    sub.add_parser("run-goal-agent-demo")
-    sub.add_parser("run-action-demo")
-    sub.add_parser("run-learning-demo")
-    sub.add_parser("run-learning-planning-demo")
-    sub.add_parser("run-memory-aware-planning-demo")
-    sub.add_parser("run-adaptive-agent-demo")
-    sub.add_parser("run-adaptive-agent-demo-pretty")
-    sub.add_parser("run-exploration-demo")
-    sub.add_parser("run-exploration-demo-pretty")
-    sub.add_parser("run-decision-backbone-demo")
-    sub.add_parser("run-decision-backbone-demo-pretty")
-    sub.add_parser("run-controlled-evolution-demo")
-    sub.add_parser("run-controlled-evolution-demo-pretty")
-    sub.add_parser("run-reliability-aware-planning-demo")
-    sub.add_parser("run-reliability-aware-planning-demo-pretty")
-    sub.add_parser("run-hypothesis-research-demo")
-    sub.add_parser("run-hypothesis-research-demo-pretty")
-    sub.add_parser("run-multi-agent-demo")
-    sub.add_parser("run-tools-demo")
-    sub.add_parser("run-planning-demo")
-    sub.add_parser("run-plan-scoring-demo")
-    sub.add_parser("run-cognitive-agent-demo")
-    sub.add_parser("run-llm-voice-demo")
-    export_graph_parser = sub.add_parser(
-        "export-graph",
-        help="Export the internal supplier-risk scenario graph as JSON.",
-        description="Export the internal supplier-risk state graph as JSON.",
-    )
-    export_graph_parser.add_argument("--out", type=Path, default=None)
-    visualize_graph_parser = sub.add_parser(
-        "visualize-graph",
-        help="Render the internal supplier-risk scenario graph as ASCII.",
-        description="Render the internal supplier-risk state graph as ASCII for terminal inspection.",
-    )
-    visualize_graph_parser.add_argument("--out", type=Path, default=None)
+    _register_legacy_aliases(sub)
     sub.add_parser("explain-demo")
     sub.add_parser("print-migration")
     args = parser.parse_args()
