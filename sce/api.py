@@ -5,6 +5,7 @@ from typing import Any, Dict, Optional
 from fastapi import FastAPI
 from pydantic import BaseModel, Field
 
+from sce.cli import DEMO_CHOICES, DEMO_REGISTRY, format_demo, run_demo
 from sce.core.cognitive_agent import CognitiveAgent
 from sce.core.llm_intent import LLMIntentParser
 from sce.core.planning import PlanExecutor
@@ -27,12 +28,31 @@ class AskResponse(BaseModel):
     meta: Dict[str, Any] = Field(default_factory=dict)
 
 
+class DemoRequest(BaseModel):
+    name: str = Field(..., description="Demo name, e.g. 'hypothesis'")
+    format: str = Field("pretty", description="'pretty' or 'json'")
+
+
+class DemoResponse(BaseModel):
+    name: str
+    output: Any
+
+
+class DemoListItem(BaseModel):
+    name: str
+    title: str
+
+
 def build_app() -> FastAPI:
     app = FastAPI(title="SCE Core API", version="0.1.0-alpha")
 
     @app.get("/health")
     def health() -> Dict[str, str]:
         return {"status": "ok"}
+
+    @app.get("/demo", response_model=list[DemoListItem])
+    def list_demos() -> list[DemoListItem]:
+        return [DemoListItem(name=name, title=DEMO_REGISTRY[name]().title) for name in DEMO_CHOICES]
 
     @app.post("/ask", response_model=AskResponse)
     def ask(request: AskRequest) -> AskResponse:
@@ -50,6 +70,13 @@ def build_app() -> FastAPI:
                 "validation_errors": result.agent_result.validation_errors,
             },
         )
+
+    @app.post("/demo", response_model=DemoResponse)
+    def demo(request: DemoRequest) -> DemoResponse:
+        result = run_demo(request.name)
+        if request.format == "json":
+            return DemoResponse(name=request.name, output=result)
+        return DemoResponse(name=request.name, output=format_demo(request.name, result))
 
     return app
 
