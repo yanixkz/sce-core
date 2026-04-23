@@ -223,10 +223,18 @@ POST /decide
 POST /demo
 POST /demo/explain
 GET  /graph
+GET  /memory
+GET  /reliability
 ```
 
 `/decide` is the generalized decision-facing API surface (goal + context -> ranked
 decision response). Demo endpoints remain intact as showcase/product-story routes.
+
+`/memory` and `/reliability` expose a small, honest inspection surface for adaptive
+loop internals from the current API process:
+- data is **in-memory and process-local**,
+- episodes are collected from `/decide` calls with `execute=true`,
+- there is **no persistent/global history** across restarts.
 
 Responses keep existing contracts and include additive UI-readiness metadata for
 minimal web integration (for example `meta.ui` panel hints on demo endpoints and
@@ -257,6 +265,18 @@ curl -X POST http://127.0.0.1:8000/decide \
     "context":{"supplier_id":"supplier A","claim":"supplier may be unreliable"},
     "execute":true
   }'
+```
+
+Inspect remembered episodes:
+
+```bash
+curl http://127.0.0.1:8000/memory
+```
+
+Inspect recent reliability summary:
+
+```bash
+curl http://127.0.0.1:8000/reliability
 ```
 
 ### Demo run (showcase endpoints)
