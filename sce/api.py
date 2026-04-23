@@ -12,6 +12,8 @@ from sce.core.planning import PlanExecutor
 from sce.core.tools import MockSupplierRiskAPI, ToolActionBridge, ToolRegistry
 from sce.core.voice_os import SimpleIntentParser, VoiceOSBridge
 
+API_VERSION = "v1"
+
 
 class AskRequest(BaseModel):
     text: str = Field(..., description="User text or speech transcript")
@@ -34,10 +36,18 @@ class DemoRequest(BaseModel):
 
 
 class DemoResponse(BaseModel):
+    version: str
     name: str
     format: str
     result: Any
     explanation: Optional[str] = None
+    meta: Dict[str, Any] = Field(default_factory=dict)
+
+
+class DemoExplanationResponse(BaseModel):
+    version: str
+    name: str
+    explanation: str
     meta: Dict[str, Any] = Field(default_factory=dict)
 
 
@@ -83,6 +93,7 @@ def build_app() -> FastAPI:
 
         if request.format == "json":
             return DemoResponse(
+                version=API_VERSION,
                 name=request.name,
                 format="json",
                 result=raw_result,
@@ -91,11 +102,25 @@ def build_app() -> FastAPI:
 
         pretty = format_demo(request.name, raw_result)
         return DemoResponse(
+            version=API_VERSION,
             name=request.name,
             format="pretty",
             result=raw_result,
             explanation=pretty,
             meta={"type": "formatted"},
+        )
+
+    @app.post("/demo/explain", response_model=DemoExplanationResponse)
+    def explain_demo(request: DemoRequest) -> DemoExplanationResponse:
+        if request.name not in DEMO_CHOICES:
+            raise HTTPException(status_code=400, detail=f"Unknown demo: {request.name}")
+
+        raw_result = run_demo(request.name)
+        return DemoExplanationResponse(
+            version=API_VERSION,
+            name=request.name,
+            explanation=format_demo(request.name, raw_result),
+            meta={"type": "explanation"},
         )
 
     return app
