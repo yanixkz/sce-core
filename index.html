@@ -87,9 +87,11 @@
       <div class="brand">SCE Core</div>
       <div class="nav-links">
         <a href="#product">Product</a>
-        <a href="#proof">Proof</a>
-        <a href="#demo-blocks">Demo</a>
+        <a href="#loop">Loop</a>
+        <a href="#demos">Flagship demos</a>
         <a href="#api">API</a>
+        <a href="#proof">Differentiators</a>
+        <a href="#bridge">Theory & research</a>
         <a href="#use-cases">Use cases</a>
         <a href="https://github.com/yanixkz/sce-core">GitHub</a>
       </div>
@@ -100,17 +102,19 @@
     <section class="hero">
       <div>
         <div class="eyebrow">Decision engine for AI agents</div>
-        <h1>Build AI agents that can decide, explain, and improve</h1>
-        <p class="sub">SCE Core gives AI systems a missing layer: visible decision logic, reliability-aware planning, memory, and graph-level observability — all in one product-ready core.</p>
+        <h1>Explainable adaptive decision engine for real AI agent workflows</h1>
+        <p class="sub">SCE Core is a reusable decision layer: choose under constraints, explain what carried the choice, track reliability from outcomes, remember episodes, and improve reselection over time.</p>
         <div class="cta">
-          <a class="btn primary" href="#demo-blocks">See live demo blocks</a>
+          <a class="btn primary" href="#demos">See flagship demos</a>
           <a class="btn" href="#api">Explore API</a>
+          <a class="btn" href="#bridge">Theory + research bridge</a>
           <a class="btn" href="/docs" target="_blank" rel="noreferrer">Open API docs</a>
           <a class="btn" href="https://github.com/yanixkz/sce-core">View GitHub</a>
         </div>
         <div class="pill-row">
           <div class="pill">Decide</div>
           <div class="pill">Explain</div>
+          <div class="pill">Remember / Reliability</div>
           <div class="pill">Improve</div>
           <div class="pill">Observe</div>
           <div class="pill">Versioned API</div>
@@ -136,34 +140,65 @@ Remember reliability
 ↓
 Improve next choice</pre>
         <div class="hero-proof">
-          <div class="proof"><strong>/demo</strong><span>Run the system</span></div>
-          <div class="proof"><strong>/demo/explain</strong><span>Inspect reasoning</span></div>
+          <div class="proof"><strong>/decide</strong><span>Reusable decision endpoint</span></div>
+          <div class="proof"><strong>/memory + /reliability</strong><span>Inspect adaptation state</span></div>
           <div class="proof"><strong>/graph</strong><span>Inspect state graph</span></div>
-          <div class="proof"><strong>v1</strong><span>Stable API contract</span></div>
+          <div class="proof"><strong>supplier-risk + hypothesis</strong><span>Two windows, one engine</span></div>
         </div>
       </div>
     </section>
 
     <section id="product">
-      <h2>Why SCE exists</h2>
-      <p class="lead">Most AI agents can produce an answer. Few can clearly show why they chose it, which facts mattered, whether the trajectory was reliable, and whether the next decision improved. SCE Core adds that missing layer.</p>
+      <h2>What SCE Core is now</h2>
+      <p class="lead">SCE Core is product-first and reusable: a decision engine with inspectable API/UI/graph surfaces, packaged through flagship demos, grounded in a CDS → SCE theory bridge, and extended by an explicit research program.</p>
       <div class="grid-3">
-        <div class="card"><h3>Decide</h3><p>Rank candidate plans and choose the best next action with explicit scoring logic.</p></div>
-        <div class="card"><h3>Explain</h3><p>Use decision backbone extraction to separate decision-carrying facts from dangling context.</p></div>
-        <div class="card"><h3>Improve</h3><p>Track local prediction error, compute reliability, remember outcomes, and adapt future choices.</p></div>
+        <div class="card"><h3>Product surface</h3><p>Use endpoints such as <code>/decide</code>, <code>/memory</code>, <code>/reliability</code>, <code>/graph</code>, and <code>/ui</code> as integration surfaces.</p></div>
+        <div class="card"><h3>Flagship windows</h3><p><strong>supplier-risk</strong> is practical and operator-facing; <strong>hypothesis</strong> is research-facing. Both run on the same runtime loop.</p></div>
+        <div class="card"><h3>Theory + research continuity</h3><p>CDS concepts map to implemented mechanisms, and open problems stay linked to the same shipping engine.</p></div>
+      </div>
+    </section>
+
+    <section id="loop">
+      <h2>Core loop</h2>
+      <p class="lead">The engine stays centered on one inspectable cycle.</p>
+      <div class="card">
+        <pre>Decide → Explain → Remember / Reliability → Improve</pre>
+      </div>
+      <div class="grid-3">
+        <div class="card"><h3>Decide</h3><p>Generate and rank candidate trajectories under constraints.</p></div>
+        <div class="card"><h3>Explain</h3><p>Expose decision backbone versus dangling context for structural clarity.</p></div>
+        <div class="card"><h3>Remember / Reliability → Improve</h3><p>Track prediction error, retain episodic traces, and alter the next selection pressure.</p></div>
+      </div>
+    </section>
+
+    <section id="demos">
+      <h2>Two flagship demos, one engine</h2>
+      <p class="lead">These are not isolated examples. They are two readable windows into the same decision backbone, memory, and reliability loop.</p>
+      <div class="compare">
+        <div class="card">
+          <div class="mini-title">Product-facing demo</div>
+          <h3 style="margin-top: 0;"><code>supplier-risk</code></h3>
+          <p>Practical flow for operator use: supplier context → plan choice → backbone explanation → reliability signal → memory-influenced reselection.</p>
+        </div>
+        <div class="card">
+          <div class="mini-title">Research-facing demo</div>
+          <h3 style="margin-top: 0;"><code>hypothesis</code></h3>
+          <p>Research flow on the same mechanics: competing hypothesis ranking, evidence-vs-context separation, and concrete next-step actions.</p>
+        </div>
       </div>
     </section>
 
     <section id="proof">
       <h2>What makes it different</h2>
-      <div class="compare">
+      <p class="lead">SCE differentiates by coupling a decision backbone with measurable adaptation signals and inspectable surfaces.</p>
+      <div class="grid-3">
         <div class="card">
           <div class="mini-title">Decision backbone</div>
           <pre>forward  = nodes reachable from evidence
 backward = nodes that can reach the target decision
 backbone = forward ∩ backward
 dangling = forward - backbone</pre>
-          <p>This is structural extraction of which nodes actually carried the decision.</p>
+          <p>Structural extraction shows which facts carried the decision, not just narrative justification.</p>
         </div>
         <div class="card">
           <div class="mini-title">Reliability-aware planning</div>
@@ -171,14 +206,18 @@ dangling = forward - backbone</pre>
 + memory bias
 + remembered reliability
 → selected plan</pre>
-          <p>SCE measures trajectory quality and feeds that back into future selection.</p>
+          <p>Reliability is tracked from outcome quality and fed back into reselection, not treated as generic confidence.</p>
+        </div>
+        <div class="card">
+          <div class="mini-title">Episodic memory + inspectability</div>
+          <p>Remembered episodes affect later choices, while API/graph/UI views keep state observable for debugging and audits.</p>
         </div>
       </div>
     </section>
 
     <section id="demo-blocks">
       <h2>Live demo blocks</h2>
-      <p class="lead">The landing shows the product story directly: initial plan choice, explanation surface, and improved next decision.</p>
+      <p class="lead">A compact product trace of the adaptive loop, using <code>supplier-risk</code> as the concrete walkthrough.</p>
       <div class="tabs">
         <div class="tab active">CLI output</div>
         <div class="tab">Decision before/after</div>
@@ -262,33 +301,69 @@ old_positive_history</pre>
     </section>
 
     <section id="api">
-      <h2>API</h2>
-      <p class="lead">Run the system, inspect reasoning, and export graph structure through a versioned interface.</p>
+      <h2>Reusable API surface</h2>
+      <p class="lead">SCE Core is not demo-only. The API exposes reusable decision and inspection endpoints, while demo routes remain showcase surfaces on top of the same engine.</p>
       <div class="cta" style="margin-top:0;margin-bottom:18px;">
         <a class="btn primary" href="/docs" target="_blank" rel="noreferrer">Open Swagger UI</a>
       </div>
       <div class="split">
-        <div class="code"><pre>POST /ask
+        <div class="code"><pre>Core endpoints
+--------------
+POST /decide
+GET  /memory
+GET  /reliability
+GET  /graph
+GET  /ui
+
+Showcase endpoints
+------------------
+POST /ask
+GET  /demo
 POST /demo
-POST /demo/explain
-GET  /graph</pre></div>
+POST /demo/explain</pre></div>
         <div class="code"><pre>{
   "version": "v1",
-  "name": "supplier-risk",
-  "format": "pretty",
-  "result": { ... },
-  "explanation": "...",
-  "meta": { ... }
+  "goal": "assess supplier risk",
+  "selected_plan": "escalation_plan",
+  "scores": [{ "plan": "...", "total_score": 0.79 }],
+  "meta": { "reliability_weight": 1.0 }
 }</pre></div>
+      </div>
+    </section>
+
+    <section id="bridge">
+      <h2>Theory bridge and research program (compact)</h2>
+      <p class="lead">Theory and research are present to strengthen product clarity, not replace it.</p>
+      <div class="compare">
+        <div class="card">
+          <div class="mini-title">CDS → SCE bridge</div>
+          <p>Constraint-Driven Stability concepts are mapped to implemented mechanisms (constraints, selection, backbone, reliability, memory, reselection).</p>
+          <a class="btn" href="docs/constraint_driven_stability.md">Open theory bridge</a>
+        </div>
+        <div class="card">
+          <div class="mini-title">Research program</div>
+          <p>Open problems are explicit: richer explanation attribution, temporal reliability policies, replay artifacts, and benchmark maturation.</p>
+          <a class="btn" href="docs/research_program.md">Open research program</a>
+        </div>
       </div>
     </section>
 
     <section id="run">
       <h2>Run it now</h2>
       <div class="terminal"><pre>$ sce demo
+$ sce demo list
 $ sce demo hypothesis
 $ sce demo supplier-risk --json
 $ uvicorn sce.api:app --reload</pre></div>
+    </section>
+
+    <section>
+      <h2>Where it is going</h2>
+      <div class="grid-3">
+        <div class="card"><h3>Near-term product</h3><p>Harden inspectability and replayability while keeping API contracts coherent.</p></div>
+        <div class="card"><h3>Practical evolution</h3><p>Evolve <code>supplier-risk</code> and <code>hypothesis</code> as a stronger shared benchmark pair.</p></div>
+        <div class="card"><h3>Research evolution</h3><p>Advance memory/reliability dynamics and structural attribution without diverging from shipped surfaces.</p></div>
+      </div>
     </section>
 
     <section id="use-cases">

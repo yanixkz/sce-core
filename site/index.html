@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>SCE Core</title>
+  <title>SCE Core — Landing mirror</title>
   <style>
     body { font-family: Arial, sans-serif; margin: 0; background: #0f172a; color: #e2e8f0; }
     .container { max-width: 900px; margin: auto; padding: 40px; }
@@ -17,51 +17,41 @@
 </head>
 <body>
   <div class="container">
-    <h1>Build AI agents that can decide, explain, and improve</h1>
-    <p>SCE Core is a decision engine for AI agents with explainability, reliability tracking, memory, and graph observability.</p>
+    <h1>SCE Core: explainable adaptive decision engine</h1>
+    <p>Product-facing mirror page. SCE Core is a reusable decision layer for AI agents with explainability, reliability tracking, episodic memory, and inspectable API/graph/UI surfaces.</p>
 
     <div class="cta">
-      <a class="btn" href="#">Run demo</a>
-      <a class="btn" href="#">View API</a>
-      <a class="btn" href="#">See graph</a>
+      <a class="btn" href="../index.html">Open main landing</a>
+      <a class="btn" href="/docs">Open API docs</a>
+      <a class="btn" href="https://github.com/yanixkz/sce-core">GitHub</a>
     </div>
 
-    <h2>The problem</h2>
-    <p>Most AI agents produce answers. Few can explain why, show reliability, or improve decisions over time.</p>
+    <h2>Core loop</h2>
+    <p><code>Decide → Explain → Remember/Reliability → Improve</code></p>
 
-    <h2>What SCE does</h2>
+    <h2>Flagship demos</h2>
     <div class="card">
-      <strong>Decide</strong><br/>Rank candidate plans and choose the best action
-    </div>
-    <div class="card">
-      <strong>Explain</strong><br/>Surface decision-carrying facts and reasoning
+      <strong>supplier-risk</strong><br/>Practical/product-facing window into the loop
     </div>
     <div class="card">
-      <strong>Improve</strong><br/>Track errors, compute reliability, and adapt
+      <strong>hypothesis</strong><br/>Research-facing window into the same engine
     </div>
 
-    <h2>API</h2>
+    <h2>Reusable API surface</h2>
     <div class="card">
-      <code>POST /demo</code><br/>
-      <code>POST /demo/explain</code><br/>
-      <code>GET /graph</code>
+      <code>POST /decide</code><br/>
+      <code>GET /memory</code><br/>
+      <code>GET /reliability</code><br/>
+      <code>GET /graph</code><br/>
+      <code>GET /ui</code>
     </div>
 
-    <h2>Run it</h2>
+    <h2>Theory + research links</h2>
     <div class="card">
-      <code>sce demo</code>
+      <a href="../docs/constraint_driven_stability.md">CDS → SCE bridge</a><br/>
+      <a href="../docs/research_program.md">Research program</a><br/>
+      <a href="../ROADMAP.md">Roadmap</a>
     </div>
-
-    <h2>Use cases</h2>
-    <ul>
-      <li>AI copilots</li>
-      <li>Operations agents</li>
-      <li>Research systems</li>
-      <li>Auditable AI</li>
-    </ul>
-
-    <h2>Summary</h2>
-    <p>Execution. Explainability. Observability. Reliability.</p>
   </div>
 </body>
 </html>
