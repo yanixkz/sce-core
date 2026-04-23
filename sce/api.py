@@ -1,8 +1,8 @@
 from __future__ import annotations
 
-from typing import Any, Dict, Optional
+from typing import Any, Dict, Literal, Optional
 
-from fastapi import FastAPI
+from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel, Field
 
 from sce.cli import DEMO_CHOICES, DEMO_REGISTRY, format_demo, run_demo
@@ -29,8 +29,8 @@ class AskResponse(BaseModel):
 
 
 class DemoRequest(BaseModel):
-    name: str = Field(..., description="Demo name, e.g. 'hypothesis'")
-    format: str = Field("pretty", description="'pretty' or 'json'")
+    name: str = Field(..., description="Demo name")
+    format: Literal["pretty", "json"] = Field("pretty", description="Output format")
 
 
 class DemoResponse(BaseModel):
@@ -73,9 +73,13 @@ def build_app() -> FastAPI:
 
     @app.post("/demo", response_model=DemoResponse)
     def demo(request: DemoRequest) -> DemoResponse:
+        if request.name not in DEMO_CHOICES:
+            raise HTTPException(status_code=400, detail=f"Unknown demo: {request.name}")
+
         result = run_demo(request.name)
         if request.format == "json":
             return DemoResponse(name=request.name, output=result)
+
         return DemoResponse(name=request.name, output=format_demo(request.name, result))
 
     return app
