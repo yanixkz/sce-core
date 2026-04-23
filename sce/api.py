@@ -3,7 +3,7 @@ from __future__ import annotations
 from pathlib import Path
 from typing import Any, Dict, Literal, Optional
 
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, Query
 from fastapi.responses import HTMLResponse
 from pydantic import BaseModel, Field
 
@@ -107,6 +107,30 @@ class DecideResponse(BaseModel):
     meta: Dict[str, Any] = Field(default_factory=dict)
 
 
+class MemoryEpisodeView(BaseModel):
+    episode_id: str
+    created_at: str
+    goal: str
+    selected_plan: str
+    action_names: list[str]
+    success: bool
+    reward: float
+    reliability: float | None = None
+    reason: str = ""
+
+
+class MemoryResponse(BaseModel):
+    version: str
+    episodes: list[MemoryEpisodeView]
+    meta: Dict[str, Any] = Field(default_factory=dict)
+
+
+class ReliabilityResponse(BaseModel):
+    version: str
+    reliability: Dict[str, Any]
+    meta: Dict[str, Any] = Field(default_factory=dict)
+
+
 def _export_supplier_graph() -> dict:
     repo, start_state = make_supplier_reliability_scenario()
     scorer = SCEScoringEngine(repo)
@@ -203,6 +227,7 @@ def _build_demo_ui_meta(name: str, raw_result: dict) -> Dict[str, Any]:
 
 def build_app() -> FastAPI:
     app = FastAPI(title="SCE Core API", version="0.1.0-alpha")
+    shared_episode_memory = EpisodeMemory()
 
     @app.get("/ui", response_class=HTMLResponse)
     def ui() -> HTMLResponse:
@@ -271,9 +296,8 @@ def build_app() -> FastAPI:
     @app.post("/decide", response_model=DecideResponse)
     def decide(request: DecideRequest) -> DecideResponse:
         state = State("decision_request", request.context)
-        memory = EpisodeMemory()
         base_planner = ToolPlanner()
-        memory_planner = MemoryAwarePlanner(base_planner=base_planner, memory=memory)
+        memory_planner = MemoryAwarePlanner(base_planner=base_planner, memory=shared_episode_memory)
         planner = ReliabilityAwarePlanner(memory_planner=memory_planner, reliability_weight=request.reliability_weight)
 
         candidates = base_planner.candidates(state, request.goal)
@@ -286,6 +310,15 @@ def build_app() -> FastAPI:
             executor = _build_plan_executor()
             execution = executor.execute(selected.plan, state)
             execution_success = execution.success
+            shared_episode_memory.remember(
+                state=state,
+                goal=request.goal,
+                plan=selected.plan,
+                success=execution.success,
+                reward=1.0 if execution.success else -1.0,
+                reason="decide_execute",
+                reliability=1.0 if execution.success else 0.0,
+            )
             execution_trace = [
                 DecisionExecutionStep(
                     action=result.resulting_state.data.get("action", "unknown"),
@@ -321,7 +354,70 @@ def build_app() -> FastAPI:
                 "constraints_supported": False,
                 "context_keys": sorted(request.context.keys()),
                 "candidate_count": len(ranked_scores),
-                "memory_matches": len(memory.similar(state, request.goal, limit=5)),
+                "memory_matches": len(shared_episode_memory.similar(state, request.goal, limit=5)),
+                "memory_scope": "process-local in-memory episodes collected by /decide with execute=true",
+            },
+        )
+
+    @app.get("/memory", response_model=MemoryResponse)
+    def memory(limit: int = Query(default=10, ge=1, le=100)) -> MemoryResponse:
+        recent = shared_episode_memory.episodes[-limit:]
+        episodes = [
+            MemoryEpisodeView(
+                episode_id=str(episode.episode_id),
+                created_at=episode.created_at.isoformat(),
+                goal=episode.goal,
+                selected_plan=episode.plan_name,
+                action_names=episode.action_names,
+                success=episode.success,
+                reward=episode.reward,
+                reliability=episode.reliability,
+                reason=episode.reason,
+            )
+            for episode in reversed(recent)
+        ]
+        return MemoryResponse(
+            version=API_VERSION,
+            episodes=episodes,
+            meta={
+                "scope": "process-local in-memory",
+                "source": "/decide with execute=true",
+                "persistence": "none",
+                "total_episodes": len(shared_episode_memory.episodes),
+                "returned_episodes": len(episodes),
+            },
+        )
+
+    @app.get("/reliability", response_model=ReliabilityResponse)
+    def reliability(limit: int = Query(default=25, ge=1, le=100)) -> ReliabilityResponse:
+        recent = shared_episode_memory.episodes[-limit:]
+        reliability_values = [episode.reliability for episode in recent if episode.reliability is not None]
+        successful = [episode for episode in recent if episode.success]
+        return ReliabilityResponse(
+            version=API_VERSION,
+            reliability={
+                "recent_window_size": len(recent),
+                "reliability_episode_count": len(reliability_values),
+                "average_reliability": (sum(reliability_values) / len(reliability_values)) if reliability_values else None,
+                "success_rate": (len(successful) / len(recent)) if recent else None,
+                "latest": [
+                    {
+                        "episode_id": str(episode.episode_id),
+                        "created_at": episode.created_at.isoformat(),
+                        "goal": episode.goal,
+                        "selected_plan": episode.plan_name,
+                        "success": episode.success,
+                        "reliability": episode.reliability,
+                        "reward": episode.reward,
+                    }
+                    for episode in reversed(recent[-5:])
+                ],
+            },
+            meta={
+                "scope": "process-local in-memory",
+                "source": "/decide with execute=true",
+                "persistence": "none",
+                "note": "Reliability values are derived from remembered execution outcomes in this process only.",
             },
         )
 

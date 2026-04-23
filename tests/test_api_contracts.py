@@ -101,3 +101,51 @@ def test_decide_contract_returns_structured_decision_response():
 def test_decide_validation_error_for_missing_goal():
     resp = client.post("/decide", json={"context": {"supplier_id": "supplier A"}})
     assert resp.status_code == 422
+
+
+def test_memory_contract_reports_process_local_episodes_after_decide_execute():
+    decide = client.post(
+        "/decide",
+        json={
+            "goal": "assess supplier risk",
+            "context": {"supplier_id": "supplier A"},
+            "execute": True,
+        },
+    )
+    assert decide.status_code == 200
+
+    resp = client.get("/memory")
+    assert resp.status_code == 200
+    data = resp.json()
+    assert data["version"] == API_VERSION
+    assert isinstance(data["episodes"], list)
+    assert data["episodes"]
+    assert {"episode_id", "created_at", "goal", "selected_plan", "success", "reward", "reliability"}.issubset(
+        data["episodes"][0]
+    )
+    assert data["meta"]["scope"] == "process-local in-memory"
+    assert data["meta"]["source"] == "/decide with execute=true"
+    assert data["meta"]["persistence"] == "none"
+
+
+def test_reliability_contract_reports_summary_over_recent_window():
+    decide = client.post(
+        "/decide",
+        json={
+            "goal": "assess supplier risk",
+            "context": {"supplier_id": "supplier B"},
+            "execute": True,
+        },
+    )
+    assert decide.status_code == 200
+
+    resp = client.get("/reliability")
+    assert resp.status_code == 200
+    data = resp.json()
+    assert data["version"] == API_VERSION
+    assert {"recent_window_size", "reliability_episode_count", "average_reliability", "success_rate", "latest"}.issubset(
+        data["reliability"]
+    )
+    assert isinstance(data["reliability"]["latest"], list)
+    assert data["meta"]["scope"] == "process-local in-memory"
+    assert data["meta"]["source"] == "/decide with execute=true"
