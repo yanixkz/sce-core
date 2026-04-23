@@ -9,7 +9,7 @@
     :root {
       --bg: #08101f;
       --bg-2: #0d1730;
-      --panel: rgba(17, 25, 46, 0.84);
+      --panel: rgba(17, 25, 46, 0.86);
       --muted: #9fb0d0;
       --text: #eef4ff;
       --accent: #4f8cff;
@@ -45,25 +45,35 @@
     .btn.primary { background: var(--accent); border-color: var(--accent); }
     .card, .code, .terminal, .hero-side { background: var(--panel); border: 1px solid var(--border); border-radius: var(--radius); box-shadow: var(--shadow); }
     .hero-side { padding: 22px; }
-    .hero-proof { display: grid; grid-template-columns: repeat(2,1fr); gap: 12px; margin-top: 16px; }
+    .hero-proof, .grid-3 { display: grid; grid-template-columns: repeat(2,1fr); gap: 12px; margin-top: 16px; }
     .proof { padding: 14px; border-radius: 14px; background: rgba(255,255,255,.02); border: 1px solid rgba(255,255,255,.06); }
     .proof strong { display:block; font-size: 23px; margin-bottom: 4px; }
     section { padding: 30px 0; }
     h2 { font-size: 36px; margin: 0 0 12px; letter-spacing: -.6px; }
     .lead { color: var(--muted); max-width: 780px; }
-    .grid-3 { display: grid; grid-template-columns: repeat(3,1fr); gap: 18px; }
+    .grid-3 { grid-template-columns: repeat(3,1fr); gap: 18px; margin-top: 18px; }
     .card { padding: 22px; }
     .card h3 { margin-top: 0; margin-bottom: 8px; }
-    .split { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+    .split, .compare { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
     .code, .terminal { padding: 18px; overflow: auto; }
     code, pre { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; }
     pre { margin: 0; white-space: pre-wrap; color: #dbe7ff; }
     .pill-row { display:flex; gap:10px; flex-wrap:wrap; margin-top:16px; }
     .pill { padding: 8px 12px; border:1px solid var(--border); border-radius:999px; color: var(--muted); font-size: 14px; }
-    .compare { display:grid; grid-template-columns: 1fr 1fr; gap:18px; }
     .footer { color: var(--muted); font-size: 14px; padding: 50px 0 24px; }
     .mini-title { font-size: 12px; color: var(--accent-2); text-transform: uppercase; letter-spacing: .14em; margin-bottom: 8px; }
-    @media (max-width: 960px) { .hero, .split, .grid-3, .compare { grid-template-columns: 1fr; } h1 { font-size: 44px; } .nav-links { display:none; } }
+    .tabs { display:flex; gap:10px; flex-wrap:wrap; margin-bottom:14px; }
+    .tab { padding:8px 12px; border:1px solid var(--border); border-radius:999px; color:var(--muted); font-size:13px; }
+    .demo-grid { display:grid; grid-template-columns: 1fr 1fr; gap:18px; }
+    .badge-good { color: var(--accent-2); }
+    .badge-warn { color: #ffce6b; }
+    .badge-bad { color: #ff8f8f; }
+    @media (max-width: 960px) {
+      .hero, .split, .grid-3, .compare, .demo-grid { grid-template-columns: 1fr; }
+      h1 { font-size: 44px; }
+      .nav-links { display:none; }
+      .hero-proof { grid-template-columns: 1fr 1fr; }
+    }
   </style>
 </head>
 <body>
@@ -73,6 +83,7 @@
       <div class="nav-links">
         <a href="#product">Product</a>
         <a href="#proof">Proof</a>
+        <a href="#demo-blocks">Demo</a>
         <a href="#api">API</a>
         <a href="#use-cases">Use cases</a>
         <a href="https://github.com/yanixkz/sce-core">GitHub</a>
@@ -87,7 +98,7 @@
         <h1>Build AI agents that can decide, explain, and improve</h1>
         <p class="sub">SCE Core gives AI systems a missing layer: visible decision logic, reliability-aware planning, memory, and graph-level observability — all in one product-ready core.</p>
         <div class="cta">
-          <a class="btn primary" href="#run">Run demo</a>
+          <a class="btn primary" href="#demo-blocks">See live demo blocks</a>
           <a class="btn" href="#api">Explore API</a>
           <a class="btn" href="https://github.com/yanixkz/sce-core">View GitHub</a>
         </div>
@@ -130,7 +141,7 @@ Improve next choice</pre>
     <section id="product">
       <h2>Why SCE exists</h2>
       <p class="lead">Most AI agents can produce an answer. Few can clearly show why they chose it, which facts mattered, whether the trajectory was reliable, and whether the next decision improved. SCE Core adds that missing layer.</p>
-      <div class="grid-3" style="margin-top:18px;">
+      <div class="grid-3">
         <div class="card"><h3>Decide</h3><p>Rank candidate plans and choose the best next action with explicit scoring logic.</p></div>
         <div class="card"><h3>Explain</h3><p>Use decision backbone extraction to separate decision-carrying facts from dangling context.</p></div>
         <div class="card"><h3>Improve</h3><p>Track local prediction error, compute reliability, remember outcomes, and adapt future choices.</p></div>
@@ -146,7 +157,7 @@ Improve next choice</pre>
 backward = nodes that can reach the target decision
 backbone = forward ∩ backward
 dangling = forward - backbone</pre>
-          <p>This is not generic chain-of-thought styling. It is structural extraction of which nodes actually carried the decision.</p>
+          <p>This is structural extraction of which nodes actually carried the decision.</p>
         </div>
         <div class="card">
           <div class="mini-title">Reliability-aware planning</div>
@@ -154,18 +165,140 @@ dangling = forward - backbone</pre>
 + memory bias
 + remembered reliability
 → selected plan</pre>
-          <p>SCE does not stop at choosing a plan. It measures trajectory quality and feeds that back into future selection.</p>
+          <p>SCE measures trajectory quality and feeds that back into future selection.</p>
         </div>
       </div>
     </section>
 
-    <section>
-      <h2>Visual proof</h2>
-      <div class="split">
+    <section id="demo-blocks">
+      <h2>Live demo blocks</h2>
+      <p class="lead">The landing now shows the product story directly: initial plan choice, explanation surface, and improved next decision.</p>
+      <div class="tabs">
+        <div class="tab">CLI output</div>
+        <div class="tab">Decision before/after</div>
+        <div class="tab">Backbone vs context</div>
+        <div class="tab">Graph payload</div>
+      </div>
+      <div class="demo-grid">
         <div class="terminal">
-          <div class="mini-title">CLI demo</div>
+          <div class="mini-title">Supplier risk run</div>
           <pre>$ sce demo
 
 SCE Supplier Risk Demo
+======================
+
+1) Decide
+supplier_risk_plan   0.60
+escalation_plan      0.40
+monitor_plan         0.10
+
+Initial selected plan: supplier_risk_plan
+
+2) Explain
+late_delivery
+invoice_risk
+missing_certificate
+
+3) Improve
+reliability: 0.79
+final choice: escalation_plan</pre>
+        </div>
+        <div class="card">
+          <div class="mini-title">Decision changed after learning</div>
+          <pre>Before
+------
+selected_plan = supplier_risk_plan
+reason = base score leader
+
+After
+-----
+selected_plan = escalation_plan
+reason = reliability-adjusted choice</pre>
+          <p><span class="badge-good">Changed choice: YES</span></p>
+        </div>
+      </div>
+      <div class="demo-grid" style="margin-top:18px;">
+        <div class="card">
+          <div class="mini-title">Backbone vs dangling context</div>
+          <pre>Decision-carrying facts
+----------------------
+late_delivery
+invoice_risk
+missing_certificate
+supplier_risk
+escalation_plan
+
+Dangling context
+---------------
+marketing_tag
+old_positive_history</pre>
+        </div>
+        <div class="code">
+          <div class="mini-title">Graph API example</div>
+          <pre>{
+  "version": "v1",
+  "graph": {
+    "nodes": [
+      {"id": "supplier_risk", "stability": 0.90},
+      {"id": "escalation_plan", "stability": 0.41}
+    ],
+    "edges": [
+      {"from": "late_delivery", "to": "supplier_risk", "type": "supports"},
+      {"from": "supplier_risk", "to": "escalation_plan", "type": "supports"}
+    ]
+  },
+  "meta": {"source": "supplier-reliability"}
+}</pre>
+        </div>
+      </div>
+    </section>
+
+    <section id="api">
+      <h2>API</h2>
+      <p class="lead">Run the system, inspect reasoning, and export graph structure through a versioned interface.</p>
+      <div class="split">
+        <div class="code"><pre>POST /ask
+POST /demo
+POST /demo/explain
+GET  /graph</pre></div>
+        <div class="code"><pre>{
+  "version": "v1",
+  "name": "supplier-risk",
+  "format": "pretty",
+  "result": { ... },
+  "explanation": "...",
+  "meta": { ... }
+}</pre></div>
+      </div>
+    </section>
+
+    <section id="run">
+      <h2>Run it now</h2>
+      <div class="terminal"><pre>$ sce demo
+$ sce demo hypothesis
+$ sce demo supplier-risk --json
+$ uvicorn sce.api:app --reload</pre></div>
+    </section>
+
+    <section id="use-cases">
+      <h2>Use cases</h2>
+      <div class="grid-3">
+        <div class="card"><h3>AI copilots</h3><p>Give operators decisions with visible reasoning and improving reliability.</p></div>
+        <div class="card"><h3>Operations agents</h3><p>Use auditable plan selection and reliability-aware execution loops.</p></div>
+        <div class="card"><h3>Research systems</h3><p>Rank hypotheses, inspect evidence paths, and turn winning hypotheses into next actions.</p></div>
+      </div>
+    </section>
+
+    <section>
+      <h2>Ready to inspect your agent system?</h2>
+      <p class="lead">SCE Core turns agent behavior into something you can run, explain, debug, and improve.</p>
+      <div class="cta">
+        <a class="btn primary" href="https://github.com/yanixkz/sce-core">Open the repo</a>
+        <a class="btn" href="#run">Run the demo</a>
+      </div>
+    </section>
+
+    <div class="footer">SCE Core — execution, explainability, observability, reliability.</div>
+  </main>
 </body>
 </html>
