@@ -25,7 +25,8 @@ def test_hypothesis_backbone_and_actions_are_semantically_non_empty():
 def test_hypothesis_pretty_output_keeps_core_sections_without_snapshot_lock_in():
     rendered = format_hypothesis_research_demo(run_hypothesis_research_demo())
 
-    assert "1) Rank hypotheses" in rendered
-    assert "2) Explain evidence path" in rendered
+    assert "1) Competing hypotheses" in rendered
+    assert "2) Decision-carrying evidence" in rendered
     assert "3) Next research actions" in rendered
-    assert "Selected hypothesis:" in rendered
+    assert "Selected hypothesis" in rendered
+    assert "Why it won:" in rendered

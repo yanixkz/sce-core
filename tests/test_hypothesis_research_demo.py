@@ -30,8 +30,11 @@ def test_hypothesis_research_demo_pretty_output_is_simple():
     rendered = format_hypothesis_research_demo(run_hypothesis_research_demo())
 
     assert "SCE Hypothesis Research Demo" in rendered
-    assert "Question. Rank. Investigate." in rendered
-    assert "1) Rank hypotheses" in rendered
-    assert "2) Explain evidence path" in rendered
+    assert "Research showcase: decide, explain, improve." in rendered
+    assert "1) Competing hypotheses" in rendered
+    assert "Selected hypothesis" in rendered
+    assert "Why it won:" in rendered
+    assert "2) Decision-carrying evidence" in rendered
+    assert "Dangling context (non-carrying):" in rendered
     assert "3) Next research actions" in rendered
-    assert "Selected hypothesis: supplier_quality_degradation" in rendered
+    assert "supplier_quality_degradation" in rendered

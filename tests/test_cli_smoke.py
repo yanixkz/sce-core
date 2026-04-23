@@ -60,3 +60,11 @@ def test_cli_demo_help_highlights_canonical_demos():
     assert "supplier-risk" in result.stdout
     assert "hypothesis" in result.stdout
     assert "list" in result.stdout
+
+
+def test_cli_demo_list_promotes_hypothesis_entrypoint():
+    result = run_cli("demo list")
+
+    assert result.returncode == 0, result.stderr
+    assert "supplier-risk\tSupplier Risk Agent" in result.stdout
+    assert "hypothesis\tHypothesis Research (Flagship)" in result.stdout

@@ -133,27 +133,42 @@ def _bullet(items: list[str]) -> list[str]:
 
 
 def format_hypothesis_research_demo(result: dict) -> str:
+    winner = result["scores"][0]
+    runner_up = result["scores"][1] if len(result["scores"]) > 1 else None
+    margin = winner["confidence"] - runner_up["confidence"] if runner_up else 0.0
+
     return "\n".join(
         [
             "SCE Hypothesis Research Demo",
             "============================",
             "",
-            "Question. Rank. Investigate.",
+            "Research showcase: decide, explain, improve.",
             "",
-            f"Research question: {result['research_question']}",
+            "Research question",
+            "-----------------",
+            result["research_question"],
             "",
-            "1) Rank hypotheses",
-            "------------------",
+            "1) Competing hypotheses",
+            "-----------------------",
             _format_scores(result["scores"]),
             "",
-            f"Selected hypothesis: {result['selected_hypothesis']}",
+            "Selected hypothesis",
+            "-------------------",
+            (
+                f"{result['selected_hypothesis']} "
+                f"(confidence {winner['confidence']:.2f}, +{margin:.2f} vs runner-up)"
+            ),
+            (
+                f"Why it won: support {winner['support']:.2f} outweighed "
+                f"contradiction {winner['contradiction']:.2f} on prior {winner['prior']:.2f}."
+            ),
             "",
-            "2) Explain evidence path",
-            "------------------------",
+            "2) Decision-carrying evidence",
+            "------------------------------",
             "Decision-carrying evidence:",
             *_bullet(result["backbone_nodes"]),
             "",
-            "Dangling context:",
+            "Dangling context (non-carrying):",
             *_bullet(result["dangling_nodes"]),
             "",
             "3) Next research actions",

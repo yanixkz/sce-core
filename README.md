@@ -172,7 +172,7 @@ SCE can export a real graph representation of system state for debugging, visual
 Dual packaging:
 
 - `supplier-risk` = practical product-facing demo
-- `hypothesis` = research-facing demo
+- `hypothesis` = research-facing flagship demo
 
 ### Canonical entrypoints
 
@@ -195,7 +195,10 @@ supplier risk → plan choice → backbone → reliability → memory → improv
 sce demo hypothesis
 ```
 
-Research demo for competing hypotheses, decision-carrying evidence, and next research actions.
+Research showcase for:
+- competing hypotheses and ranking,
+- decision-carrying evidence vs dangling context,
+- concrete next research actions.
 
 ### JSON output
 

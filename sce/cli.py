@@ -42,7 +42,7 @@ DEMO_REGISTRY: dict[str, Callable[[], DemoSpec]] = {
     ),
     "hypothesis": _demo_spec_from_module(
         name="hypothesis",
-        title="Hypothesis Research",
+        title="Hypothesis Research (Flagship)",
         module="sce.scenarios.hypothesis_research_demo",
         run_fn="run_hypothesis_research_demo",
         format_fn="format_hypothesis_research_demo",
@@ -162,10 +162,10 @@ def main() -> None:
     )
     demo_parser = sub.add_parser(
         "demo",
-        help="Run canonical demos (`supplier-risk`, `hypothesis`) or list available demos.",
+        help="Run flagship demos (`supplier-risk`, `hypothesis`) or list available demos.",
         description=(
             "Run canonical SCE demos. Use `supplier-risk` for a practical product story "
-            "and `hypothesis` for research-oriented competing hypotheses."
+            "and `hypothesis` for a research-facing loop over competing hypotheses."
         ),
     )
     demo_parser.add_argument(
