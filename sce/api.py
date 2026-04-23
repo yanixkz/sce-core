@@ -7,10 +7,14 @@ from pydantic import BaseModel, Field
 
 from sce.cli import DEMO_CHOICES, DEMO_REGISTRY, format_demo, run_demo
 from sce.core.cognitive_agent import CognitiveAgent
+from sce.core.evolution import SCEEvolver
 from sce.core.llm_intent import LLMIntentParser
 from sce.core.planning import PlanExecutor
+from sce.core.queries import GraphQueryLayer
+from sce.core.scoring import SCEScoringEngine
 from sce.core.tools import MockSupplierRiskAPI, ToolActionBridge, ToolRegistry
 from sce.core.voice_os import SimpleIntentParser, VoiceOSBridge
+from sce.scenarios.supplier_reliability import make_supplier_reliability_scenario
 
 API_VERSION = "v1"
 
@@ -56,6 +60,20 @@ class DemoListItem(BaseModel):
     title: str
 
 
+class GraphResponse(BaseModel):
+    version: str
+    graph: Dict[str, Any]
+    meta: Dict[str, Any] = Field(default_factory=dict)
+
+
+def _export_supplier_graph() -> dict:
+    repo, start_state = make_supplier_reliability_scenario()
+    scorer = SCEScoringEngine(repo)
+    evolver = SCEEvolver(repo, scorer)
+    evolver.evolve(start_state, max_steps=5, epsilon=0.001)
+    return GraphQueryLayer(repo).export_graph_json()
+
+
 def build_app() -> FastAPI:
     app = FastAPI(title="SCE Core API", version="0.1.0-alpha")
 
@@ -66,6 +84,15 @@ def build_app() -> FastAPI:
     @app.get("/demo", response_model=list[DemoListItem])
     def list_demos() -> list[DemoListItem]:
         return [DemoListItem(name=name, title=DEMO_REGISTRY[name]().title) for name in DEMO_CHOICES]
+
+    @app.get("/graph", response_model=GraphResponse)
+    def graph() -> GraphResponse:
+        exported = _export_supplier_graph()
+        return GraphResponse(
+            version=API_VERSION,
+            graph=exported,
+            meta={"source": "supplier-reliability"},
+        )
 
     @app.post("/ask", response_model=AskResponse)
     def ask(request: AskRequest) -> AskResponse:
