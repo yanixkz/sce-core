@@ -18,6 +18,12 @@ It currently supports persistence for:
 
 Callable constraints and executable rules are still primarily handled by the in-memory runtime. This is intentional: Python callables cannot be safely or meaningfully serialized into SQL without a separate constraint/rule expression layer.
 
+## CI integration
+
+PostgreSQL is already integrated into GitHub Actions CI.
+
+The test workflow spins up a PostgreSQL service and runs integration tests automatically when `SCE_DATABASE_URL` is set.
+
 ## Dependency
 
 Install dependencies:
@@ -115,27 +121,7 @@ transform: Callable[[State], list[State]]
 
 These functions cannot be safely stored in PostgreSQL as executable logic.
 
-A future version should introduce a constraint/rule expression layer, for example:
-
-```text
-predicate_expr
-transform_expr
-runtime_fn
-```
-
-This would allow SCE Core to persist machine-readable expressions while still binding them to executable Python functions at runtime.
-
-## Phase 2 roadmap
-
-Planned improvements:
-
-- complete state reconstruction
-- persist constraints as expressions
-- persist rules as expressions or templates
-- add PostgreSQL service to GitHub Actions
-- run real PostgreSQL integration tests in CI
-- add migrations tooling
-- add query helpers for stable states and selected transitions
+A future version should introduce a constraint/rule expression layer.
 
 ## Warning
 

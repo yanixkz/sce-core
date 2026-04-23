@@ -7,7 +7,7 @@ import sys
 
 def run_cli(command: str) -> subprocess.CompletedProcess[str]:
     return subprocess.run(
-        [sys.executable, "-m", "sce.cli", command],
+        [sys.executable, "-m", "sce.cli", *command.split()],
         check=False,
         capture_output=True,
         text=True,
@@ -29,6 +29,14 @@ def test_cli_supplier_risk_json_runs():
     payload = json.loads(result.stdout)
     assert payload["changed_choice"] is True
     assert payload["final_choice"] == "escalation_plan"
+
+
+def test_cli_demo_json_mode():
+    result = run_cli("demo supplier-risk --json")
+
+    assert result.returncode == 0, result.stderr
+    payload = json.loads(result.stdout)
+    assert isinstance(payload, dict)
 
 
 def test_cli_hypothesis_research_demo_runs():
