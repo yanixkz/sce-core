@@ -18,6 +18,7 @@ def test_run_demo_json():
     resp = client.post("/demo", json={"name": "hypothesis", "format": "json"})
     assert resp.status_code == 200
     data = resp.json()
+    assert data["version"] == "v1"
     assert data["name"] == "hypothesis"
     assert data["format"] == "json"
     assert isinstance(data["result"], dict)
@@ -31,9 +32,21 @@ def test_run_demo_pretty():
     resp = client.post("/demo", json={"name": "supplier-risk", "format": "pretty"})
     assert resp.status_code == 200
     data = resp.json()
+    assert data["version"] == "v1"
     assert data["name"] == "supplier-risk"
     assert data["format"] == "pretty"
     assert isinstance(data["result"], dict)
     assert isinstance(data["explanation"], str)
     assert "SCE Supplier Risk Demo" in data["explanation"]
     assert data["meta"]["type"] == "formatted"
+
+
+def test_explain_endpoint():
+    client = TestClient(build_app())
+    resp = client.post("/demo/explain", json={"name": "hypothesis"})
+    assert resp.status_code == 200
+    data = resp.json()
+    assert data["version"] == "v1"
+    assert data["name"] == "hypothesis"
+    assert isinstance(data["explanation"], str)
+    assert data["meta"]["type"] == "explanation"
