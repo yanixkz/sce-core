@@ -6,41 +6,47 @@
   <title>SCE Core — Landing mirror</title>
   <style>
     body { font-family: Arial, sans-serif; margin: 0; background: #0f172a; color: #e2e8f0; }
-    .container { max-width: 900px; margin: auto; padding: 40px; }
-    h1 { font-size: 42px; }
+    .container { max-width: 920px; margin: auto; padding: 40px; }
+    h1 { font-size: 40px; }
     h2 { margin-top: 40px; }
     .card { background: #1e293b; padding: 20px; border-radius: 12px; margin-top: 20px; }
     code { background: #020617; padding: 4px 6px; border-radius: 6px; }
     .cta { margin-top: 30px; }
-    .btn { background: #3b82f6; padding: 10px 16px; border-radius: 8px; color: white; text-decoration: none; margin-right: 10px; }
+    .btn { background: #3b82f6; padding: 10px 16px; border-radius: 8px; color: white; text-decoration: none; margin-right: 10px; display: inline-block; margin-top: 8px; }
   </style>
 </head>
 <body>
   <div class="container">
-    <h1>SCE Core v0.1-alpha: explainable adaptive decision engine</h1>
-    <p>Product-facing mirror page. SCE Core is an early alpha reusable decision layer for AI agents with explainability, reliability tracking, episodic memory, and inspectable API/graph/UI surfaces.</p>
+    <h1>SCE Core v0.1-alpha: computational framework for Constraint-Driven Stability</h1>
+    <p>Mirror page: SCE Core is an early alpha CDS-oriented framework with reproducible deterministic toy examples and an applied AI-agent decision API surface.</p>
 
     <div class="cta">
       <a class="btn" href="../index.html">Open main landing</a>
-      <a class="btn" href="https://github.com/yanixkz/sce-core#run-api-locally">Local Swagger UI guide</a>
+      <a class="btn" href="https://github.com/yanixkz/sce-core#run-api-locally">Run API locally</a>
       <a class="btn" href="https://github.com/yanixkz/sce-core">GitHub</a>
     </div>
 
-    <h2>Core loop</h2>
-    <p><code>Decide → Explain → Remember/Reliability → Improve</code></p>
-
-    <h2>Flagship demos</h2>
+    <h2>Scientific examples</h2>
     <div class="card">
-      <strong>supplier-risk</strong><br/>Practical/product-facing window into the loop
-    </div>
-    <div class="card">
-      <strong>hypothesis</strong><br/>Research-facing window into the same engine
+      <strong>resource-stability</strong> + walkthrough + sensitivity grid<br/>
+      <strong>epidemic-regime</strong> toy regime selection under explicit constraints<br/>
+      <strong>hypothesis</strong> research-facing decision/evidence demo
     </div>
 
-    <h2>Reusable API surface</h2>
-    <p>GitHub Pages serves this static page. Swagger UI is provided by the FastAPI runtime when you run the API (see the local run guide).</p>
+    <h2>What you can run today</h2>
+    <div class="card">
+      <code>sce demo resource-stability</code><br/>
+      <code>python examples/resource_stability_walkthrough.py</code><br/>
+      <code>python examples/resource_stability_sensitivity.py</code><br/>
+      <code>sce demo epidemic-regime</code><br/>
+      <code>sce demo hypothesis</code><br/>
+      <code>uvicorn sce.api:app --reload</code> then open <code>http://127.0.0.1:8000/docs</code>
+    </div>
+
+    <h2>Applied API surface</h2>
     <div class="card">
       <code>POST /decide</code><br/>
+      <code>POST /compare</code><br/>
       <code>GET /memory</code><br/>
       <code>GET /reliability</code><br/>
       <code>GET /graph</code><br/>
@@ -49,9 +55,11 @@
 
     <h2>Theory + research links</h2>
     <div class="card">
-      <a href="../docs/constraint_driven_stability.md">CDS → SCE bridge</a><br/>
-      <a href="../docs/research_program.md">Research program</a><br/>
-      <a href="../ROADMAP.md">Roadmap</a>
+      <a href="https://github.com/yanixkz/sce-core/blob/main/docs/scientific_positioning.md">Scientific positioning</a><br/>
+      <a href="https://github.com/yanixkz/sce-core/blob/main/docs/scientific_examples.md">Scientific examples index</a><br/>
+      <a href="https://github.com/yanixkz/sce-core/blob/main/docs/constraint_driven_stability.md">CDS → SCE bridge</a><br/>
+      <a href="https://github.com/yanixkz/sce-core/blob/main/docs/research_program.md">Research program</a><br/>
+      <a href="https://github.com/yanixkz/sce-core/blob/main/ROADMAP.md">Roadmap</a>
     </div>
   </div>
 </body>
