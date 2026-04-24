@@ -28,16 +28,19 @@ This folder contains layered documentation for SCE Core.
    - unified entrypoint for scientific demos, walkthroughs, and run order,
    - cross-example CDS mapping and explicit limitations.
 
-7. **Roadmap** — [`../ROADMAP.md`](../ROADMAP.md)
+7. **Scientist pitch (outreach/readiness)** — [`scientist_pitch.md`](scientist_pitch.md)
+   - concise scientist-facing explanation of what SCE is, what can run today, explicit non-claims, and collaboration asks.
+
+8. **Roadmap** — [`../ROADMAP.md`](../ROADMAP.md)
    - implementation sequencing and near-term priorities.
 
-8. **Governance/workflow** — [`governance.md`](governance.md)
+9. **Governance/workflow** — [`governance.md`](governance.md)
    - compact workstream model for issues/PRs and contribution flow.
 
-9. **Release readiness** — [`release_readiness.md`](release_readiness.md)
+10. **Release readiness** — [`release_readiness.md`](release_readiness.md)
    - compact alpha release checklist and naming guidance.
 
-10. **Russian overview** — [`OVERVIEW_RU.md`](OVERVIEW_RU.md)
+11. **Russian overview** — [`OVERVIEW_RU.md`](OVERVIEW_RU.md)
    - concise, up-to-date Russian summary aligned with current layers.
 
 ## Additional technical notes

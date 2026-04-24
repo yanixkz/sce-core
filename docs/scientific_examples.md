@@ -16,10 +16,11 @@ They are transparent and reproducible, but they are **not** validated domain sim
 ## Recommended path for a new scientific reader
 
 1. Read scientific framing and non-claims in [`scientific_positioning.md`](scientific_positioning.md).
-2. Run `sce demo resource-stability`.
-3. Run the resource sensitivity grid (`python examples/resource_stability_sensitivity.py`).
-4. Run `sce demo epidemic-regime`.
-5. Read the broader open-problems roadmap in [`research_program.md`](research_program.md).
+2. Read the scientist-facing outreach/readiness note in [`scientist_pitch.md`](scientist_pitch.md).
+3. Run `sce demo resource-stability`.
+4. Run the resource sensitivity grid (`python examples/resource_stability_sensitivity.py`).
+5. Run `sce demo epidemic-regime`.
+6. Read the broader open-problems roadmap in [`research_program.md`](research_program.md).
 
 ## CDS mapping summary across examples
 

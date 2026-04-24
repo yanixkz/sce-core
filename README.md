@@ -202,6 +202,7 @@ This coupling is what makes the system both practical and research-relevant.
 - **Origin (history and motivation):** [`docs/origin.md`](docs/origin.md)
 - **Theory bridge (CDS → SCE):** [`docs/constraint_driven_stability.md`](docs/constraint_driven_stability.md)
 - **Scientific examples index (entrypoint):** [`docs/scientific_examples.md`](docs/scientific_examples.md)
+- **Scientist outreach/readiness pitch:** [`docs/scientist_pitch.md`](docs/scientist_pitch.md)
 - **Scientific positioning:** [`docs/scientific_positioning.md`](docs/scientific_positioning.md)
 - **Research program (open problems):** [`docs/research_program.md`](docs/research_program.md)
 - **Russian overview:** [`docs/OVERVIEW_RU.md`](docs/OVERVIEW_RU.md)
