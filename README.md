@@ -167,6 +167,10 @@ First compact CDS research-facing scenario:
 - selected carrying regime plus non-carrying regimes,
 - concrete follow-up research actions.
 
+Walkthrough artifacts:
+- runnable notebook-style script: [`examples/resource_stability_walkthrough.py`](examples/resource_stability_walkthrough.py)
+- scientific walkthrough notes: [`docs/resource_stability_walkthrough.md`](docs/resource_stability_walkthrough.md)
+
 ## Why this architecture matters
 
 SCE Core keeps four mechanisms coupled in one inspectable loop:
