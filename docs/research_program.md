@@ -8,6 +8,7 @@ It is not a product guide and not a manifesto.
 Related layers:
 - Product entrypoint: [`../README.md`](../README.md)
 - Theory bridge (CDS → SCE): [`constraint_driven_stability.md`](constraint_driven_stability.md)
+- Scientific examples entrypoint: [`scientific_examples.md`](scientific_examples.md)
 - Historical origin: [`origin.md`](origin.md)
 - Delivery sequencing: [`../ROADMAP.md`](../ROADMAP.md)
 
