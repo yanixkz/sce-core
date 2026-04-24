@@ -38,6 +38,7 @@ SCE Core — не просто набор демо и не «чат-обёртк
 ## Флагманские демо
 
 Короткий научный entrypoint с тем, что запускать в первую очередь: [`scientific_examples.md`](scientific_examples.md).
+Короткий scientist-facing outreach/readiness документ: [`scientist_pitch.md`](scientist_pitch.md).
 
 ### `supplier-risk` (product-facing)
 

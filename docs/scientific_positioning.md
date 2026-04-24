@@ -84,3 +84,4 @@ Its next lightweight step is a reproducible sensitivity grid (`resource_stabilit
 A second cross-domain step is `epidemic-regime`: a deterministic toy epidemic regime-selection demo under spread, capacity, and intervention constraints (`epidemic_regime_demo.md`).
 
 Unified scientific entrypoint (what to run first, artifact map, CDS side-by-side): [`scientific_examples.md`](scientific_examples.md).
+Scientist-facing outreach/readiness summary (non-claims, run-now commands, collaboration asks): [`scientist_pitch.md`](scientist_pitch.md).
