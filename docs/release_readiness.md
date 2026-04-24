@@ -12,8 +12,8 @@ Compact checklist for external-facing alpha releases.
 
 Each alpha release note should include:
 
-1. Fastest quickstart path (`install -> sce demo -> sce demo hypothesis -> API -> /ui`).
-2. Implemented reusable API surface (`/decide`, `/memory`, `/reliability`, `/graph`, `/ui`).
+1. Fastest quickstart path (`install -> sce demo -> scientific demos -> API -> /ui`).
+2. Implemented reusable API surface (`/decide`, `/compare`, `/memory`, `/reliability`, `/graph`, `/ui`).
 3. Flagship demos and what each demonstrates.
 4. Explicit alpha caveat (no stable production contract yet).
 
@@ -23,6 +23,8 @@ Each alpha release note should include:
 - Confirm CLI entrypoints:
   - `sce demo`
   - `sce demo hypothesis`
+  - `sce demo resource-stability`
+  - `sce demo epidemic-regime`
 - Confirm API docs/UI routes are reachable in local run:
   - `/docs`
   - `/ui`
