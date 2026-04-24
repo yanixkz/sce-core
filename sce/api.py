@@ -263,6 +263,45 @@ def _build_demo_ui_meta(name: str, raw_result: dict) -> Dict[str, Any]:
             },
         }
 
+    if name == "resource-stability":
+        return {
+            "view": "resource-stability",
+            "panel_order": [
+                "research_question",
+                "initial_state",
+                "candidate_ranking",
+                "selected_state",
+                "constraints",
+                "next_research_actions",
+            ],
+            "panels": {
+                "research_question": {
+                    "label": "Research question",
+                    "text": raw_result.get("research_question"),
+                },
+                "initial_state": {
+                    "label": "Initial state",
+                    "state": raw_result.get("initial_state"),
+                },
+                "candidate_ranking": {
+                    "label": "Candidate ranking",
+                    "scores": raw_result.get("scores", []),
+                },
+                "selected_state": {
+                    "label": "Selected state",
+                    "state": raw_result.get("selected_state"),
+                },
+                "constraints": {
+                    "label": "Constraints",
+                    "items": raw_result.get("constraints", []),
+                },
+                "next_research_actions": {
+                    "label": "Next research actions",
+                    "actions": raw_result.get("next_research_actions", []),
+                },
+            },
+        }
+
     return {"view": "generic", "panel_order": ["summary"], "panels": {"summary": {"label": "Summary"}}}
 
 

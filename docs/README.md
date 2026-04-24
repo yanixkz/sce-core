@@ -19,16 +19,21 @@ This folder contains layered documentation for SCE Core.
 4. **Research program** — [`research_program.md`](research_program.md)
    - open problems that follow from current implementation.
 
-5. **Roadmap** — [`../ROADMAP.md`](../ROADMAP.md)
+5. **Scientific positioning** — [`scientific_positioning.md`](scientific_positioning.md)
+   - primary scientific framing: SCE as a CDS computational framework,
+   - applied AI decision engine as one domain,
+   - explicit non-claims and near-term scientific method.
+
+6. **Roadmap** — [`../ROADMAP.md`](../ROADMAP.md)
    - implementation sequencing and near-term priorities.
 
-6. **Governance/workflow** — [`governance.md`](governance.md)
+7. **Governance/workflow** — [`governance.md`](governance.md)
    - compact workstream model for issues/PRs and contribution flow.
 
-7. **Release readiness** — [`release_readiness.md`](release_readiness.md)
+8. **Release readiness** — [`release_readiness.md`](release_readiness.md)
    - compact alpha release checklist and naming guidance.
 
-8. **Russian overview** — [`OVERVIEW_RU.md`](OVERVIEW_RU.md)
+9. **Russian overview** — [`OVERVIEW_RU.md`](OVERVIEW_RU.md)
    - concise, up-to-date Russian summary aligned with current layers.
 
 ## Additional technical notes

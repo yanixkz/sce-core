@@ -59,6 +59,7 @@ def test_cli_demo_help_highlights_canonical_demos():
     assert result.returncode == 0, result.stderr
     assert "supplier-risk" in result.stdout
     assert "hypothesis" in result.stdout
+    assert "resource-stability" in result.stdout
     assert "list" in result.stdout
 
 
@@ -87,3 +88,4 @@ def test_cli_demo_list_promotes_hypothesis_entrypoint():
     assert result.returncode == 0, result.stderr
     assert "supplier-risk\tSupplier Risk Agent" in result.stdout
     assert "hypothesis\tHypothesis Research (Flagship)" in result.stdout
+    assert "resource-stability\tResource Stability (Scientific)" in result.stdout

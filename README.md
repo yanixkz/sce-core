@@ -2,7 +2,9 @@
 
 [![Tests](https://img.shields.io/github/actions/workflow/status/yanixkz/sce-core/tests.yml?branch=main&label=tests)](https://github.com/yanixkz/sce-core/actions/workflows/tests.yml)
 
-SCE Core is an **early alpha** decision engine for AI agents.
+SCE Core is an **early alpha** computational framework for studying
+**Constraint-Driven Stability (CDS)** in adaptive systems,
+with an applied decision-engine surface for AI agents.
 
 It combines:
 - constrained decision selection,
@@ -29,11 +31,12 @@ source .venv/bin/activate
 pip install -e .[api]
 ```
 
-Run the core demo and the research demo:
+Run core demos:
 
 ```bash
 sce demo
 sce demo hypothesis
+sce demo resource-stability
 ```
 
 Run the API and open UI:
@@ -46,11 +49,12 @@ uvicorn sce.api:app --reload
 ## What SCE Core is (and is not)
 
 SCE Core is not a chat wrapper and not only a demo collection.
-It is a reusable decision layer that currently ships with demos, API endpoints, and a theory/research documentation stack.
+It is a reusable computational research and decision layer with demos, API endpoints, and theory/research documentation.
 
-- **Product layer:** runnable demos and API/UI surfaces.
+- **Scientific framework layer:** CDS-oriented toy models and inspectable stability workflows.
+- **Applied decision layer:** runnable demos and API/UI surfaces for agent decision tasks.
 - **Theory bridge:** CDS → SCE operational mapping.
-- **Research layer:** open problems grounded in the implemented loop.
+- **Research layer:** open problems grounded in implemented mechanisms.
 - **Origin layer:** historical and philosophical motivation.
 
 ## Canonical CLI and graph commands
@@ -59,6 +63,7 @@ It is a reusable decision layer that currently ships with demos, API endpoints, 
 sce demo
 sce demo supplier-risk
 sce demo hypothesis
+sce demo resource-stability
 sce demo list
 sce export-graph
 sce visualize-graph
@@ -153,6 +158,15 @@ Research window into the same engine:
 - decision-carrying evidence vs dangling context,
 - concrete next research actions.
 
+### `resource-stability` (scientific toy model)
+
+First compact CDS research-facing scenario:
+- initial unstable population/resource regime,
+- deterministic candidate regime evolution,
+- stability scoring and ranking under explicit constraints,
+- selected carrying regime plus non-carrying regimes,
+- concrete follow-up research actions.
+
 ## Why this architecture matters
 
 SCE Core keeps four mechanisms coupled in one inspectable loop:
@@ -171,6 +185,7 @@ This coupling is what makes the system both practical and research-relevant.
 - **Roadmap / delivery priorities:** [`ROADMAP.md`](ROADMAP.md)
 - **Origin (history and motivation):** [`docs/origin.md`](docs/origin.md)
 - **Theory bridge (CDS → SCE):** [`docs/constraint_driven_stability.md`](docs/constraint_driven_stability.md)
+- **Scientific positioning:** [`docs/scientific_positioning.md`](docs/scientific_positioning.md)
 - **Research program (open problems):** [`docs/research_program.md`](docs/research_program.md)
 - **Russian overview:** [`docs/OVERVIEW_RU.md`](docs/OVERVIEW_RU.md)
 - **Extended docs index:** [`docs/README.md`](docs/README.md)
@@ -183,7 +198,7 @@ Near-term work stays split across product and research, on one engine:
 
 - improve decision inspectability and replayability,
 - make reliability/memory policies more robust over time,
-- evolve `supplier-risk` and `hypothesis` into a stronger benchmark pair,
+- evolve `supplier-risk`, `hypothesis`, and `resource-stability` into a compact benchmark trio,
 - continue hardening API/UI surfaces without breaking compatibility.
 
 Details: [`ROADMAP.md`](ROADMAP.md) and [`docs/research_program.md`](docs/research_program.md).

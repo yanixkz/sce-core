@@ -47,6 +47,13 @@ DEMO_REGISTRY: dict[str, Callable[[], DemoSpec]] = {
         run_fn="run_hypothesis_research_demo",
         format_fn="format_hypothesis_research_demo",
     ),
+    "resource-stability": _demo_spec_from_module(
+        name="resource-stability",
+        title="Resource Stability (Scientific)",
+        module="sce.scenarios.resource_stability_demo",
+        run_fn="run_resource_stability_demo",
+        format_fn="format_resource_stability_demo",
+    ),
     "adaptive-agent": _demo_spec_from_module(
         name="adaptive-agent",
         title="Adaptive Agent",
@@ -201,14 +208,14 @@ def main() -> None:
     parser = argparse.ArgumentParser(
         prog="sce",
         description=(
-            "SCE Core CLI — decide, explain, and improve with a product-facing "
-            "supplier-risk demo and a research-facing hypothesis demo."
+            "SCE Core CLI — CDS demos for practical decision systems and scientific toy models."
         ),
         epilog=(
             "Primary surface:\n"
             "  sce demo\n"
             "  sce demo supplier-risk\n"
             "  sce demo hypothesis\n"
+            "  sce demo resource-stability\n"
             "  sce demo list\n"
             "Graph inspection:\n"
             "  sce export-graph\n"
@@ -224,15 +231,15 @@ def main() -> None:
         title="commands",
         description=(
             "Canonical entrypoints: `sce demo`, `sce demo supplier-risk`, "
-            "`sce demo hypothesis`, `sce demo list`."
+            "`sce demo hypothesis`, `sce demo resource-stability`, `sce demo list`."
         ),
     )
     demo_parser = sub.add_parser(
         "demo",
-        help="Run flagship demos (`supplier-risk`, `hypothesis`) or list available demos.",
+        help="Run flagship demos (`supplier-risk`, `hypothesis`, `resource-stability`) or list demos.",
         description=(
             "Run canonical SCE demos. Use `supplier-risk` for a practical product story "
-            "and `hypothesis` for a research-facing loop over competing hypotheses."
+            "`hypothesis` for competing hypotheses, and `resource-stability` for CDS toy modeling."
         ),
     )
     demo_parser.add_argument(

@@ -23,9 +23,12 @@ SCE Core already provides:
 - episodic memory over executed episodes,
 - adaptive reselection influenced by memory/reliability,
 - inspectable API/graph/UI surfaces,
-- two flagship demos (`supplier-risk`, `hypothesis`) on one engine.
+- three flagship demos (`supplier-risk`, `hypothesis`, `resource-stability`) on one engine.
 
 The research agenda below extends this baseline.
+
+First concrete scientific scenario in-repo:
+- `resource-stability` — deterministic toy population/resource regime selection under explicit constraints.
 
 ---
 
@@ -121,8 +124,9 @@ The research agenda below extends this baseline.
 
 1. **Constraint- and memory-aware explanation outputs**
 2. **Temporal reliability policy evaluation**
-3. **Replay/audit artifact standardization**
-4. **Shared-metric benchmark pair (`supplier-risk`, `hypothesis`)**
+3. **Replay/audit artifact standardization + transparent notebook path**
+4. **Shared-metric benchmark set (`supplier-risk`, `hypothesis`, `resource-stability`)**
+5. **Reproducible toy-model comparisons against known dynamics where feasible**
 
 These steps stay close to current interfaces and avoid speculative architecture jumps.
 
@@ -134,5 +138,6 @@ The research program is intentionally coupled to product surfaces:
 
 - `supplier-risk` is the product-facing window into the adaptive decision loop.
 - `hypothesis` is the research-facing window into the same loop.
+- `resource-stability` is the first scientific toy-model window for CDS-oriented regime viability analysis.
 
 Roadmap sequencing of these priorities is tracked in [`../ROADMAP.md`](../ROADMAP.md).

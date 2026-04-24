@@ -7,6 +7,7 @@ It does **not** define implementation status or product scope.
 
 Use layers in this order:
 - Product entrypoint: [`README.md`](../README.md)
+- Scientific positioning: [`scientific_positioning.md`](scientific_positioning.md)
 - Theory bridge (CDS → SCE mechanisms): [`constraint_driven_stability.md`](constraint_driven_stability.md)
 - Open research agenda: [`research_program.md`](research_program.md)
 - Delivery priorities: [`../ROADMAP.md`](../ROADMAP.md)
