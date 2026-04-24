@@ -60,9 +60,38 @@ def _regime_row(state: State, stability: float) -> dict:
     }
 
 
-def run_resource_stability_demo() -> dict:
+def _apply_candidate_multipliers(
+    candidate: ResourceCandidate,
+    *,
+    population_multiplier: float,
+    consumption_rate_multiplier: float,
+    regeneration_rate_multiplier: float,
+) -> ResourceCandidate:
+    return ResourceCandidate(
+        name=candidate.name,
+        population=round(candidate.population * population_multiplier, 4),
+        available_resources=candidate.available_resources,
+        consumption_rate=round(candidate.consumption_rate * consumption_rate_multiplier, 4),
+        regeneration_rate=round(candidate.regeneration_rate * regeneration_rate_multiplier, 4),
+        support=candidate.support,
+        conflict=candidate.conflict,
+        entropy=candidate.entropy,
+        coherence_hint=candidate.coherence_hint,
+        monitoring_signal=candidate.monitoring_signal,
+    )
+
+
+def run_resource_stability_demo(
+    *,
+    population_multiplier: float = 1.0,
+    consumption_rate_multiplier: float = 1.0,
+    regeneration_rate_multiplier: float = 1.0,
+) -> dict:
     """
     Research-facing toy model for constraint-driven stability in population/resource dynamics.
+
+    Optional multipliers allow lightweight parameter sensitivity experiments without changing
+    the default CLI/API behavior.
     """
     repo = MemoryRepository()
     scorer = SCEScoringEngine(
@@ -140,6 +169,22 @@ def run_resource_stability_demo() -> dict:
         ),
     ]
 
+    initial_candidate = _apply_candidate_multipliers(
+        initial_candidate,
+        population_multiplier=population_multiplier,
+        consumption_rate_multiplier=consumption_rate_multiplier,
+        regeneration_rate_multiplier=regeneration_rate_multiplier,
+    )
+    candidate_inputs = [
+        _apply_candidate_multipliers(
+            candidate,
+            population_multiplier=population_multiplier,
+            consumption_rate_multiplier=consumption_rate_multiplier,
+            regeneration_rate_multiplier=regeneration_rate_multiplier,
+        )
+        for candidate in candidate_inputs
+    ]
+
     initial_state = _build_candidate_state(initial_candidate)
     repo.add_state(initial_state)
 
@@ -210,6 +255,11 @@ def run_resource_stability_demo() -> dict:
         ],
         "non_carrying_regimes": failing_candidates,
         "formula_reference": "S = Stab(D(I, E, C, t))",
+        "parameters": {
+            "population_multiplier": population_multiplier,
+            "consumption_rate_multiplier": consumption_rate_multiplier,
+            "regeneration_rate_multiplier": regeneration_rate_multiplier,
+        },
     }
 
 
