@@ -80,3 +80,5 @@ The disciplined next phase is:
 
 The first concrete step is the `resource-stability` scenario: a compact population/resource regime selection example under explicit constraints.
 Its next lightweight step is a reproducible sensitivity grid (`resource_stability_sensitivity.md`) to inspect regime-selection shifts under small parameter sweeps.
+
+A second cross-domain step is `epidemic-regime`: a deterministic toy epidemic regime-selection demo under spread, capacity, and intervention constraints (`epidemic_regime_demo.md`).

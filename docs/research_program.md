@@ -23,12 +23,13 @@ SCE Core already provides:
 - episodic memory over executed episodes,
 - adaptive reselection influenced by memory/reliability,
 - inspectable API/graph/UI surfaces,
-- three flagship demos (`supplier-risk`, `hypothesis`, `resource-stability`) on one engine.
+- four flagship demos (`supplier-risk`, `hypothesis`, `resource-stability`, `epidemic-regime`) on one engine.
 
 The research agenda below extends this baseline.
 
-First concrete scientific scenario in-repo:
+Concrete scientific scenarios in-repo:
 - `resource-stability` — deterministic toy population/resource regime selection under explicit constraints.
+- `epidemic-regime` — deterministic toy epidemic regime selection under spread/capacity/intervention constraints (not a validated epidemiology simulator).
 
 ---
 
@@ -125,7 +126,7 @@ First concrete scientific scenario in-repo:
 1. **Constraint- and memory-aware explanation outputs**
 2. **Temporal reliability policy evaluation**
 3. **Replay/audit artifact standardization + transparent notebook path**
-4. **Shared-metric benchmark set (`supplier-risk`, `hypothesis`, `resource-stability`)**
+4. **Shared-metric benchmark set (`supplier-risk`, `hypothesis`, `resource-stability`, `epidemic-regime`)**
 5. **Reproducible toy-model comparisons against known dynamics where feasible**
 
 These steps stay close to current interfaces and avoid speculative architecture jumps.
@@ -140,5 +141,7 @@ The research program is intentionally coupled to product surfaces:
 - `hypothesis` is the research-facing window into the same loop.
 - `resource-stability` is the first scientific toy-model window for CDS-oriented regime viability analysis.
   - sensitivity extension: [`resource_stability_sensitivity.md`](resource_stability_sensitivity.md) for reproducible parameter-grid inspection.
+- `epidemic-regime` is a second scientific toy-model window to test CDS stability selection in a different constrained domain.
+  - walkthrough: [`epidemic_regime_demo.md`](epidemic_regime_demo.md).
 
 Roadmap sequencing of these priorities is tracked in [`../ROADMAP.md`](../ROADMAP.md).

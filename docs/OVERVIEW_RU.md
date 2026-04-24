@@ -31,7 +31,7 @@ SCE Core — не просто набор демо и не «чат-обёртк
 - episodic memory (с опциональной PostgreSQL-персистентностью),
 - adaptive reselection под влиянием памяти и надёжности,
 - inspectable API: `/decide`, `/memory`, `/reliability`, `/graph`, `/ui`,
-- три флагманских демо на одном движке: `supplier-risk`, `hypothesis`, `resource-stability`.
+- четыре флагманских демо на одном движке: `supplier-risk`, `hypothesis`, `resource-stability`, `epidemic-regime`.
 
 ---
 
@@ -60,6 +60,14 @@ SCE Core — не просто набор демо и не «чат-обёртк
 - ранжирование по stability under constraints,
 - выбор устойчивого режима + список non-carrying режимов,
 - следующие исследовательские шаги.
+
+### `epidemic-regime` (scientific toy model)
+
+Второй компактный научный сценарий в другой предметной области:
+- детерминированные candidate regimes эпидемического процесса,
+- явные ограничения по transmission/capacity/intervention cost,
+- ранжирование по stability under constraints,
+- явный дисклеймер: это toy-модель, а не валидированный эпидемиологический симулятор.
 
 ---
 
@@ -106,7 +114,7 @@ SCE Core — не просто набор демо и не «чат-обёртк
 
 - усиление inspectability и replayability,
 - улучшение temporal dynamics для reliability/memory,
-- развитие набора `supplier-risk` + `hypothesis` + `resource-stability` как benchmark-минимума,
+- развитие набора `supplier-risk` + `hypothesis` + `resource-stability` + `epidemic-regime` как benchmark-минимума,
 - дальнейшее укрепление API/UI без ломки контрактов.
 
 Исследовательские открытые задачи: [`research_program.md`](research_program.md).

@@ -37,6 +37,7 @@ Run core demos:
 sce demo
 sce demo hypothesis
 sce demo resource-stability
+sce demo epidemic-regime
 ```
 
 Run the API and open UI:
@@ -173,6 +174,18 @@ Walkthrough artifacts:
 - sensitivity grid experiment script: [`examples/resource_stability_sensitivity.py`](examples/resource_stability_sensitivity.py)
 - sensitivity experiment notes: [`docs/resource_stability_sensitivity.md`](docs/resource_stability_sensitivity.md)
 
+### `epidemic-regime` (scientific toy model)
+
+Second compact CDS research-facing scenario in a different domain:
+- deterministic epidemic regime candidates,
+- explicit spread/capacity/intervention constraints,
+- stability ranking with selected regime,
+- toy-model disclaimer to avoid epidemiological overclaiming.
+
+Walkthrough artifacts:
+- runnable walkthrough script: [`examples/epidemic_regime_walkthrough.py`](examples/epidemic_regime_walkthrough.py)
+- scientific walkthrough notes: [`docs/epidemic_regime_demo.md`](docs/epidemic_regime_demo.md)
+
 ## Why this architecture matters
 
 SCE Core keeps four mechanisms coupled in one inspectable loop:
@@ -204,7 +217,7 @@ Near-term work stays split across product and research, on one engine:
 
 - improve decision inspectability and replayability,
 - make reliability/memory policies more robust over time,
-- evolve `supplier-risk`, `hypothesis`, and `resource-stability` into a compact benchmark trio,
+- evolve `supplier-risk`, `hypothesis`, `resource-stability`, and `epidemic-regime` into a compact benchmark set,
 - continue hardening API/UI surfaces without breaking compatibility.
 
 Details: [`ROADMAP.md`](ROADMAP.md) and [`docs/research_program.md`](docs/research_program.md).

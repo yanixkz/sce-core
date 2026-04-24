@@ -12,6 +12,7 @@ def test_list_demos_endpoint():
     assert "supplier-risk" in names
     assert "hypothesis" in names
     assert "resource-stability" in names
+    assert "epidemic-regime" in names
 
 
 def test_run_demo_json():
@@ -59,3 +60,16 @@ def test_explain_endpoint():
     assert data["meta"]["type"] == "explanation"
     assert data["meta"]["ui"]["view"] == "hypothesis"
     assert isinstance(data["meta"]["sections"], list)
+
+
+def test_run_epidemic_regime_demo_json_with_ui_meta():
+    client = TestClient(build_app())
+    resp = client.post("/demo", json={"name": "epidemic-regime", "format": "json"})
+    assert resp.status_code == 200
+    data = resp.json()
+    assert data["name"] == "epidemic-regime"
+    assert data["format"] == "json"
+    assert isinstance(data["result"], dict)
+    assert "selected_regime" in data["result"]
+    assert data["meta"]["ui"]["view"] == "epidemic-regime"
+    assert "selected_regime" in data["meta"]["ui"]["panel_order"]

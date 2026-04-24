@@ -54,6 +54,13 @@ DEMO_REGISTRY: dict[str, Callable[[], DemoSpec]] = {
         run_fn="run_resource_stability_demo",
         format_fn="format_resource_stability_demo",
     ),
+    "epidemic-regime": _demo_spec_from_module(
+        name="epidemic-regime",
+        title="Epidemic Regime Stability (Scientific)",
+        module="sce.scenarios.epidemic_regime_demo",
+        run_fn="run_epidemic_regime_demo",
+        format_fn="format_epidemic_regime_demo",
+    ),
     "adaptive-agent": _demo_spec_from_module(
         name="adaptive-agent",
         title="Adaptive Agent",
@@ -231,15 +238,16 @@ def main() -> None:
         title="commands",
         description=(
             "Canonical entrypoints: `sce demo`, `sce demo supplier-risk`, "
-            "`sce demo hypothesis`, `sce demo resource-stability`, `sce demo list`."
+            "`sce demo hypothesis`, `sce demo resource-stability`, `sce demo epidemic-regime`, `sce demo list`."
         ),
     )
     demo_parser = sub.add_parser(
         "demo",
-        help="Run flagship demos (`supplier-risk`, `hypothesis`, `resource-stability`) or list demos.",
+        help="Run flagship demos (`supplier-risk`, `hypothesis`, `resource-stability`, `epidemic-regime`) or list demos.",
         description=(
             "Run canonical SCE demos. Use `supplier-risk` for a practical product story "
-            "`hypothesis` for competing hypotheses, and `resource-stability` for CDS toy modeling."
+            "`hypothesis` for competing hypotheses, `resource-stability` for CDS toy modeling, "
+            "and `epidemic-regime` for a second scientific toy domain."
         ),
     )
     demo_parser.add_argument(

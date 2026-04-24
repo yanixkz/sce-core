@@ -40,6 +40,7 @@ This folder contains layered documentation for SCE Core.
 
 - Resource-stability scientific walkthrough: [`resource_stability_walkthrough.md`](resource_stability_walkthrough.md)
 - Resource-stability sensitivity grid: [`resource_stability_sensitivity.md`](resource_stability_sensitivity.md)
+- Epidemic-regime scientific walkthrough: [`epidemic_regime_demo.md`](epidemic_regime_demo.md)
 - Decision backbone details: [`DECISION_BACKBONE.md`](DECISION_BACKBONE.md)
 - Reliability-aware planning note: [`RELIABILITY_AWARE_PLANNING.md`](RELIABILITY_AWARE_PLANNING.md)
 - Controlled evolution note: [`CONTROLLED_EVOLUTION.md`](CONTROLLED_EVOLUTION.md)
