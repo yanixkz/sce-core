@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>SCE Core — Decide. Explain. Improve.</title>
-  <meta name="description" content="SCE Core is an early alpha decision engine for AI agents with explainability, reliability tracking, episodic memory, and graph observability.">
+  <title>SCE Core — Constraint-Driven Stability Framework</title>
+  <meta name="description" content="SCE Core is an early alpha computational framework for studying Constraint-Driven Stability in adaptive systems, with reproducible toy examples and an applied AI-agent decision API.">
   <style>
     :root {
       --bg: #08101f;
@@ -38,7 +38,7 @@
     .nav a { color: var(--muted); text-decoration: none; margin-left: 18px; font-size: 14px; }
     .hero { padding: 70px 0 26px; display: grid; grid-template-columns: 1.1fr .9fr; gap: 26px; align-items: center; }
     .eyebrow { color: var(--accent-2); font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: .12em; }
-    h1 { font-size: 62px; line-height: 1.02; margin: 10px 0 16px; letter-spacing: -1.6px; max-width: 760px; }
+    h1 { font-size: 58px; line-height: 1.05; margin: 10px 0 16px; letter-spacing: -1.6px; max-width: 760px; }
     .sub { font-size: 21px; color: var(--muted); max-width: 760px; }
     .cta { margin-top: 28px; display: flex; gap: 14px; flex-wrap: wrap; }
     .btn { display: inline-block; padding: 12px 18px; border-radius: 10px; text-decoration: none; font-weight: 600; border: 1px solid var(--border); color: var(--text); background: transparent; }
@@ -47,10 +47,10 @@
     .hero-side { padding: 22px; }
     .hero-proof { display: grid; grid-template-columns: repeat(2,1fr); gap: 12px; margin-top: 16px; }
     .proof { padding: 14px; border-radius: 14px; background: rgba(255,255,255,.02); border: 1px solid rgba(255,255,255,.06); }
-    .proof strong { display:block; font-size: 23px; margin-bottom: 4px; }
+    .proof strong { display:block; font-size: 20px; margin-bottom: 4px; }
     section { padding: 30px 0; }
     h2 { font-size: 36px; margin: 0 0 12px; letter-spacing: -.6px; }
-    .lead { color: var(--muted); max-width: 780px; }
+    .lead { color: var(--muted); max-width: 860px; }
     .grid-3 { display: grid; grid-template-columns: repeat(3,1fr); gap: 18px; margin-top: 18px; }
     .card { padding: 22px; }
     .card h3 { margin-top: 0; margin-bottom: 8px; }
@@ -62,20 +62,9 @@
     .pill { padding: 8px 12px; border:1px solid var(--border); border-radius:999px; color: var(--muted); font-size: 14px; }
     .footer { color: var(--muted); font-size: 14px; padding: 50px 0 24px; }
     .mini-title { font-size: 12px; color: var(--accent-2); text-transform: uppercase; letter-spacing: .14em; margin-bottom: 8px; }
-    .tabs { display:flex; gap:10px; flex-wrap:wrap; margin-bottom:14px; }
-    .tab { padding:8px 12px; border:1px solid var(--border); border-radius:999px; color:var(--muted); font-size:13px; background: rgba(255,255,255,.02); }
-    .tab.active { color: var(--text); background: rgba(79,140,255,.16); border-color: rgba(79,140,255,.55); }
-    .before-after .state { padding: 14px 16px; border-radius: 14px; border: 1px solid rgba(255,255,255,.06); background: rgba(255,255,255,.02); }
-    .before-after .state.after { margin-top: 14px; border-color: rgba(124,240,203,.28); animation: riseIn 1.5s ease-out infinite alternate; }
-    .before-after .arrow { margin: 10px 0; color: var(--accent-2); font-weight: 700; }
-    .good { color: var(--accent-2); }
-    @keyframes riseIn {
-      0% { transform: translateY(0); box-shadow: none; }
-      100% { transform: translateY(-4px); box-shadow: 0 0 24px rgba(124,240,203,.12); }
-    }
     @media (max-width: 960px) {
       .hero, .split, .grid-3, .compare, .demo-grid { grid-template-columns: 1fr; }
-      h1 { font-size: 44px; }
+      h1 { font-size: 42px; }
       .nav-links { display:none; }
       .hero-proof { grid-template-columns: 1fr 1fr; }
     }
@@ -86,305 +75,143 @@
     <div class="wrap nav-inner">
       <div class="brand">SCE Core</div>
       <div class="nav-links">
-        <a href="#product">Product</a>
-        <a href="#loop">Loop</a>
-        <a href="#demos">Flagship demos</a>
-        <a href="#api">API</a>
-        <a href="#proof">Differentiators</a>
+        <a href="#positioning">Positioning</a>
+        <a href="#science">Scientific examples</a>
+        <a href="#run">Run today</a>
+        <a href="#applied">Applied API</a>
         <a href="#bridge">Theory & research</a>
-        <a href="#use-cases">Use cases</a>
         <a href="https://github.com/yanixkz/sce-core">GitHub</a>
       </div>
     </div>
   </div>
 
   <main class="wrap">
-    <section class="hero">
+    <section class="hero" id="positioning">
       <div>
-        <div class="eyebrow">Decision engine for AI agents · v0.1-alpha</div>
-        <h1>Explainable adaptive decision engine for real AI agent workflows</h1>
-        <p class="sub">SCE Core is an early alpha reusable decision layer: choose under constraints, explain what carried the choice, track reliability from outcomes, remember episodes, and improve reselection over time.</p>
+        <div class="eyebrow">Constraint-Driven Stability framework · v0.1-alpha</div>
+        <h1>Model how adaptive systems select stable regimes under constraints.</h1>
+        <p class="sub">SCE Core is an early alpha computational framework for studying Constraint-Driven Stability (CDS): reproducible, deterministic toy models for explainable adaptive systems, plus an applied decision-engine surface for AI agents.</p>
         <div class="cta">
-          <a class="btn primary" href="#demos">See flagship demos</a>
-          <a class="btn" href="#api">Explore API</a>
-          <a class="btn" href="#bridge">Theory + research bridge</a>
-          <a class="btn" href="https://github.com/yanixkz/sce-core#run-api-locally" target="_blank" rel="noreferrer">Run locally: Swagger UI</a>
+          <a class="btn primary" href="#science">See scientific examples</a>
+          <a class="btn" href="#run">What you can run today</a>
+          <a class="btn" href="#applied">Applied API surface</a>
+          <a class="btn" href="https://github.com/yanixkz/sce-core#run-api-locally" target="_blank" rel="noreferrer">Run locally (FastAPI + Swagger)</a>
           <a class="btn" href="https://github.com/yanixkz/sce-core">View GitHub</a>
         </div>
         <div class="pill-row">
-          <div class="pill">Decide</div>
-          <div class="pill">Explain</div>
-          <div class="pill">Remember / Reliability</div>
-          <div class="pill">Improve</div>
-          <div class="pill">Observe</div>
-          <div class="pill">Versioned API</div>
+          <div class="pill">CDS-oriented</div>
+          <div class="pill">Deterministic toy models</div>
+          <div class="pill">Reproducible examples</div>
+          <div class="pill">Explainable adaptation</div>
+          <div class="pill">API + Graph + UI</div>
         </div>
       </div>
       <div class="hero-side">
-        <div class="mini-title">Product loop</div>
-        <pre>State
+        <div class="mini-title">Core cycle</div>
+        <pre>Constrained state
 ↓
-Candidate plans
+Candidate regimes / plans
 ↓
-Score with memory + reliability
+Selection + ranking
 ↓
-Select
+Explain decision-carrying structure
 ↓
-Explain
+Observe outcomes
 ↓
-Execute / observe
+Reliability + episodic memory update
 ↓
-Track prediction error
-↓
-Remember reliability
-↓
-Improve next choice</pre>
+Reselect under updated pressure</pre>
         <div class="hero-proof">
-          <div class="proof"><strong>/decide</strong><span>Reusable decision endpoint</span></div>
-          <div class="proof"><strong>/memory + /reliability</strong><span>Inspect adaptation state</span></div>
-          <div class="proof"><strong>/graph</strong><span>Inspect state graph</span></div>
-          <div class="proof"><strong>supplier-risk + hypothesis</strong><span>Two windows, one engine</span></div>
+          <div class="proof"><strong>resource-stability</strong><span>Population/resource regime toy line</span></div>
+          <div class="proof"><strong>epidemic-regime</strong><span>Transmission/capacity constraint toy line</span></div>
+          <div class="proof"><strong>hypothesis</strong><span>Research-facing decision/evidence demo</span></div>
+          <div class="proof"><strong>/decide · /compare · /ui</strong><span>Applied integration surfaces</span></div>
         </div>
       </div>
     </section>
 
-    <section id="product">
-      <h2>What SCE Core is now</h2>
-      <p class="lead">SCE Core is product-first and reusable: a decision engine with inspectable API/UI/graph surfaces, packaged through flagship demos, grounded in a CDS → SCE theory bridge, and extended by an explicit research program.</p>
-      <div class="grid-3">
-        <div class="card"><h3>Product surface</h3><p>Use endpoints such as <code>/decide</code>, <code>/memory</code>, <code>/reliability</code>, <code>/graph</code>, and <code>/ui</code> as integration surfaces.</p></div>
-        <div class="card"><h3>Flagship windows</h3><p><strong>supplier-risk</strong> is practical and operator-facing; <strong>hypothesis</strong> is research-facing. Both run on the same runtime loop.</p></div>
-        <div class="card"><h3>Theory + research continuity</h3><p>CDS concepts map to implemented mechanisms, and open problems stay linked to the same shipping engine.</p></div>
-      </div>
-    </section>
-
-    <section id="loop">
-      <h2>Core loop</h2>
-      <p class="lead">The engine stays centered on one inspectable cycle.</p>
-      <div class="card">
-        <pre>Decide → Explain → Remember / Reliability → Improve</pre>
-      </div>
-      <div class="grid-3">
-        <div class="card"><h3>Decide</h3><p>Generate and rank candidate trajectories under constraints.</p></div>
-        <div class="card"><h3>Explain</h3><p>Expose decision backbone versus dangling context for structural clarity.</p></div>
-        <div class="card"><h3>Remember / Reliability → Improve</h3><p>Track prediction error, retain episodic traces, and alter the next selection pressure.</p></div>
-      </div>
-    </section>
-
-    <section id="demos">
-      <h2>Two flagship demos, one engine</h2>
-      <p class="lead">These are not isolated examples. They are two readable windows into the same decision backbone, memory, and reliability loop.</p>
-      <div class="compare">
-        <div class="card">
-          <div class="mini-title">Product-facing demo</div>
-          <h3 style="margin-top: 0;"><code>supplier-risk</code></h3>
-          <p>Practical flow for operator use: supplier context → plan choice → backbone explanation → reliability signal → memory-influenced reselection.</p>
-        </div>
-        <div class="card">
-          <div class="mini-title">Research-facing demo</div>
-          <h3 style="margin-top: 0;"><code>hypothesis</code></h3>
-          <p>Research flow on the same mechanics: competing hypothesis ranking, evidence-vs-context separation, and concrete next-step actions.</p>
-        </div>
-      </div>
-    </section>
-
-    <section id="proof">
-      <h2>What makes it different</h2>
-      <p class="lead">SCE differentiates by coupling a decision backbone with measurable adaptation signals and inspectable surfaces.</p>
+    <section id="science">
+      <h2>Scientific examples (reproducible toy models)</h2>
+      <p class="lead">SCE Core now highlights deterministic toy examples for CDS-oriented study. These are reproducible and inspectable, but they are <strong>not</strong> validated domain simulators or production science models.</p>
       <div class="grid-3">
         <div class="card">
-          <div class="mini-title">Decision backbone</div>
-          <pre>forward  = nodes reachable from evidence
-backward = nodes that can reach the target decision
-backbone = forward ∩ backward
-dangling = forward - backbone</pre>
-          <p>Structural extraction shows which facts carried the decision, not just narrative justification.</p>
+          <h3>Resource Stability</h3>
+          <p>Resource-constrained population/regime selection under explicit constraints, including a walkthrough and a sensitivity grid experiment.</p>
+          <p><a class="btn" href="https://github.com/yanixkz/sce-core/blob/main/docs/resource_stability_walkthrough.md" target="_blank" rel="noreferrer">Walkthrough</a> <a class="btn" href="https://github.com/yanixkz/sce-core/blob/main/docs/resource_stability_sensitivity.md" target="_blank" rel="noreferrer">Sensitivity grid</a></p>
         </div>
         <div class="card">
-          <div class="mini-title">Reliability-aware planning</div>
-          <pre>base score
-+ memory bias
-+ remembered reliability
-→ selected plan</pre>
-          <p>Reliability is tracked from outcome quality and fed back into reselection, not treated as generic confidence.</p>
+          <h3>Epidemic Regime</h3>
+          <p>Toy epidemic regime stability under transmission, capacity, and intervention constraints, designed for deterministic cross-domain CDS checks.</p>
+          <p><a class="btn" href="https://github.com/yanixkz/sce-core/blob/main/docs/epidemic_regime_demo.md" target="_blank" rel="noreferrer">Epidemic walkthrough</a></p>
         </div>
         <div class="card">
-          <div class="mini-title">Episodic memory + inspectability</div>
-          <p>Remembered episodes affect later choices, while API/graph/UI views keep state observable for debugging and audits.</p>
-        </div>
-      </div>
-    </section>
-
-    <section id="demo-blocks">
-      <h2>Live demo blocks</h2>
-      <p class="lead">A compact product trace of the adaptive loop, using <code>supplier-risk</code> as the concrete walkthrough.</p>
-      <div class="tabs">
-        <div class="tab active">CLI output</div>
-        <div class="tab">Decision before/after</div>
-        <div class="tab">Backbone vs context</div>
-        <div class="tab">Graph payload</div>
-      </div>
-      <div class="demo-grid">
-        <div class="terminal">
-          <div class="mini-title">Supplier risk run</div>
-          <pre>$ sce demo
-
-SCE Supplier Risk Demo
-======================
-
-1) Decide
-supplier_risk_plan   0.60
-escalation_plan      0.40
-monitor_plan         0.10
-
-Initial selected plan: supplier_risk_plan
-
-2) Explain
-late_delivery
-invoice_risk
-missing_certificate
-
-3) Improve
-reliability: 0.79
-final choice: escalation_plan</pre>
-        </div>
-        <div class="card before-after">
-          <div class="mini-title">Decision changed after learning</div>
-          <div class="state before">
-            <strong>Before</strong>
-            <pre>selected_plan = supplier_risk_plan
-reason = base score leader</pre>
-          </div>
-          <div class="arrow">↓ reliability feedback</div>
-          <div class="state after">
-            <strong>After</strong>
-            <pre>selected_plan = escalation_plan
-reason = reliability-adjusted choice</pre>
-          </div>
-          <p class="good">Changed choice: YES</p>
-        </div>
-      </div>
-      <div class="demo-grid" style="margin-top:18px;">
-        <div class="card">
-          <div class="mini-title">Backbone vs dangling context</div>
-          <pre>Decision-carrying facts
-----------------------
-late_delivery
-invoice_risk
-missing_certificate
-supplier_risk
-escalation_plan
-
-Dangling context
----------------
-marketing_tag
-old_positive_history</pre>
-        </div>
-        <div class="code">
-          <div class="mini-title">Graph API example</div>
-          <pre>{
-  "version": "v1",
-  "graph": {
-    "nodes": [
-      {"id": "supplier_risk", "stability": 0.90},
-      {"id": "escalation_plan", "stability": 0.41}
-    ],
-    "edges": [
-      {"from": "late_delivery", "to": "supplier_risk", "type": "supports"},
-      {"from": "supplier_risk", "to": "escalation_plan", "type": "supports"}
-    ]
-  },
-  "meta": {"source": "supplier-reliability"}
-}</pre>
-        </div>
-      </div>
-    </section>
-
-    <section id="api">
-      <h2>Reusable API surface</h2>
-      <p class="lead">SCE Core is not demo-only. GitHub Pages hosts this static landing, while interactive API docs (Swagger UI) are runtime FastAPI endpoints available when the app is running locally or in a live deployment.</p>
-      <div class="cta" style="margin-top:0;margin-bottom:18px;">
-        <a class="btn primary" href="https://github.com/yanixkz/sce-core#run-api-locally" target="_blank" rel="noreferrer">Local Swagger UI guide</a>
-      </div>
-      <div class="split">
-        <div class="code"><pre>Core endpoints
---------------
-POST /decide
-GET  /memory
-GET  /reliability
-GET  /graph
-GET  /ui
-
-Showcase endpoints
-------------------
-POST /ask
-GET  /demo
-POST /demo
-POST /demo/explain</pre></div>
-        <div class="code"><pre>{
-  "version": "v1",
-  "goal": "assess supplier risk",
-  "selected_plan": "escalation_plan",
-  "scores": [{ "plan": "...", "total_score": 0.79 }],
-  "meta": { "reliability_weight": 1.0 }
-}</pre></div>
-      </div>
-    </section>
-
-    <section id="bridge">
-      <h2>Theory bridge and research program (compact)</h2>
-      <p class="lead">Theory and research are present to strengthen product clarity, not replace it.</p>
-      <div class="compare">
-        <div class="card">
-          <div class="mini-title">CDS → SCE bridge</div>
-          <p>Constraint-Driven Stability concepts are mapped to implemented mechanisms (constraints, selection, backbone, reliability, memory, reselection).</p>
-          <a class="btn" href="docs/constraint_driven_stability.md">Open theory bridge</a>
-        </div>
-        <div class="card">
-          <div class="mini-title">Research program</div>
-          <p>Open problems are explicit: richer explanation attribution, temporal reliability policies, replay artifacts, and benchmark maturation.</p>
-          <a class="btn" href="docs/research_program.md">Open research program</a>
+          <h3>Hypothesis Research</h3>
+          <p>Research-facing decision/evidence demo on the same engine, useful for inspectable ranking and next-step action structure.</p>
+          <p><a class="btn" href="https://github.com/yanixkz/sce-core#demo-scenarios" target="_blank" rel="noreferrer">Scenario docs</a></p>
         </div>
       </div>
     </section>
 
     <section id="run">
-      <h2>Run it now</h2>
-      <div class="terminal"><pre>$ sce demo
-$ sce demo list
+      <h2>What you can run today</h2>
+      <div class="terminal"><pre>$ sce demo resource-stability
+$ python examples/resource_stability_walkthrough.py
+$ python examples/resource_stability_sensitivity.py
+$ sce demo epidemic-regime
 $ sce demo hypothesis
-$ sce demo supplier-risk --json
-$ uvicorn sce.api:app --reload</pre></div>
+$ uvicorn sce.api:app --reload
+# then open http://127.0.0.1:8000/docs and http://127.0.0.1:8000/ui</pre></div>
+    </section>
+
+    <section id="applied">
+      <h2>Applied decision-engine surface (for AI agents)</h2>
+      <p class="lead">The AI-agent product surface remains first-class: it is one applied layer built on the broader CDS computational framework.</p>
+      <div class="split">
+        <div class="code"><pre>Core endpoints
+--------------
+POST /decide
+POST /compare
+GET  /memory
+GET  /reliability
+GET  /graph
+GET  /ui</pre></div>
+        <div class="card">
+          <h3>Why this matters</h3>
+          <p>Use the same runtime for scientific toy examples and practical agent workflows, while keeping decisions observable through API, graph, and browser UI surfaces.</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="bridge">
+      <h2>Theory and research bridge</h2>
+      <p class="lead">CDS framing is explicitly connected to implementation, documentation, and roadmap work.</p>
+      <div class="compare">
+        <div class="card">
+          <div class="mini-title">Scientific positioning + examples</div>
+          <p>See current positioning, claims boundaries, and the scientific examples index.</p>
+          <p><a class="btn" href="https://github.com/yanixkz/sce-core/blob/main/docs/scientific_positioning.md" target="_blank" rel="noreferrer">Scientific positioning</a>
+          <a class="btn" href="https://github.com/yanixkz/sce-core/blob/main/docs/scientific_examples.md" target="_blank" rel="noreferrer">Scientific examples index</a></p>
+        </div>
+        <div class="card">
+          <div class="mini-title">CDS bridge + research program</div>
+          <p>Bridge theory to mechanisms, then track open problems and milestones without overclaiming validity.</p>
+          <p><a class="btn" href="https://github.com/yanixkz/sce-core/blob/main/docs/constraint_driven_stability.md" target="_blank" rel="noreferrer">CDS → SCE bridge</a>
+          <a class="btn" href="https://github.com/yanixkz/sce-core/blob/main/docs/research_program.md" target="_blank" rel="noreferrer">Research program</a>
+          <a class="btn" href="https://github.com/yanixkz/sce-core/blob/main/ROADMAP.md" target="_blank" rel="noreferrer">Roadmap</a></p>
+        </div>
+      </div>
     </section>
 
     <section>
-      <h2>Where it is going</h2>
+      <h2>Alpha scope and limits</h2>
       <div class="grid-3">
-        <div class="card"><h3>Near-term product</h3><p>Harden inspectability and replayability while keeping API contracts coherent.</p></div>
-        <div class="card"><h3>Practical evolution</h3><p>Evolve <code>supplier-risk</code> and <code>hypothesis</code> as a stronger shared benchmark pair.</p></div>
-        <div class="card"><h3>Research evolution</h3><p>Advance memory/reliability dynamics and structural attribution without diverging from shipped surfaces.</p></div>
+        <div class="card"><h3>Early alpha</h3><p>Interfaces and examples are evolving. Treat this as a compact research/product platform, not a finalized system.</p></div>
+        <div class="card"><h3>Toy-model disclaimer</h3><p>Scientific demos are deterministic, reproducible toy models meant for method study, not validated scientific simulators.</p></div>
+        <div class="card"><h3>No broken docs assumptions</h3><p>Swagger UI is a runtime FastAPI surface when running locally; GitHub Pages is static.</p></div>
       </div>
     </section>
 
-    <section id="use-cases">
-      <h2>Use cases</h2>
-      <div class="grid-3">
-        <div class="card"><h3>AI copilots</h3><p>Give operators decisions with visible reasoning and improving reliability.</p></div>
-        <div class="card"><h3>Operations agents</h3><p>Use auditable plan selection and reliability-aware execution loops.</p></div>
-        <div class="card"><h3>Research systems</h3><p>Rank hypotheses, inspect evidence paths, and turn winning hypotheses into next actions.</p></div>
-      </div>
-    </section>
-
-    <section>
-      <h2>Ready to inspect your agent system?</h2>
-      <p class="lead">SCE Core turns agent behavior into something you can run, explain, debug, and improve.</p>
-      <div class="cta">
-        <a class="btn primary" href="https://github.com/yanixkz/sce-core">Open the repo</a>
-        <a class="btn" href="#run">Run the demo</a>
-      </div>
-    </section>
-
-    <div class="footer">SCE Core — execution, explainability, observability, reliability.</div>
+    <div class="footer">SCE Core — constraint-driven stability, explainability, observability, reliability.</div>
   </main>
 </body>
 </html>
