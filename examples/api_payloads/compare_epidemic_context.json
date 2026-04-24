@@ -1,0 +1,17 @@
+{
+  "goal": "choose an intervention regime under hospital pressure",
+  "context": {
+    "region": "toy-metro",
+    "active_cases_trend": "rising",
+    "icu_occupancy_ratio": 0.87,
+    "contact_rate": "high",
+    "intervention_budget_level": "moderate"
+  },
+  "constraints": [
+    "avoid hospital overload",
+    "prefer feasible interventions within budget"
+  ],
+  "execute": false,
+  "reliability_weight": 1.2,
+  "baseline_provider": "mock"
+}
