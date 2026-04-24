@@ -24,16 +24,20 @@ This folder contains layered documentation for SCE Core.
    - applied AI decision engine as one domain,
    - explicit non-claims and near-term scientific method.
 
-6. **Roadmap** — [`../ROADMAP.md`](../ROADMAP.md)
+6. **Scientific examples index** — [`scientific_examples.md`](scientific_examples.md)
+   - unified entrypoint for scientific demos, walkthroughs, and run order,
+   - cross-example CDS mapping and explicit limitations.
+
+7. **Roadmap** — [`../ROADMAP.md`](../ROADMAP.md)
    - implementation sequencing and near-term priorities.
 
-7. **Governance/workflow** — [`governance.md`](governance.md)
+8. **Governance/workflow** — [`governance.md`](governance.md)
    - compact workstream model for issues/PRs and contribution flow.
 
-8. **Release readiness** — [`release_readiness.md`](release_readiness.md)
+9. **Release readiness** — [`release_readiness.md`](release_readiness.md)
    - compact alpha release checklist and naming guidance.
 
-9. **Russian overview** — [`OVERVIEW_RU.md`](OVERVIEW_RU.md)
+10. **Russian overview** — [`OVERVIEW_RU.md`](OVERVIEW_RU.md)
    - concise, up-to-date Russian summary aligned with current layers.
 
 ## Additional technical notes

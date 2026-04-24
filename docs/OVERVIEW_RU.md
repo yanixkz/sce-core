@@ -37,6 +37,8 @@ SCE Core — не просто набор демо и не «чат-обёртк
 
 ## Флагманские демо
 
+Короткий научный entrypoint с тем, что запускать в первую очередь: [`scientific_examples.md`](scientific_examples.md).
+
 ### `supplier-risk` (product-facing)
 
 Практический вход в систему:
@@ -68,6 +70,8 @@ SCE Core — не просто набор демо и не «чат-обёртк
 - явные ограничения по transmission/capacity/intervention cost,
 - ранжирование по stability under constraints,
 - явный дисклеймер: это toy-модель, а не валидированный эпидемиологический симулятор.
+
+Научный набор примеров сейчас включает две CDS toy-линейки: `resource-stability` (включая sensitivity grid) и `epidemic-regime`.
 
 ---
 

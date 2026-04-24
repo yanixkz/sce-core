@@ -144,6 +144,8 @@ curl -X POST http://127.0.0.1:8000/compare \
 
 ## Flagship demos
 
+Scientific entrypoint (recommended first stop for labs): [`docs/scientific_examples.md`](docs/scientific_examples.md).
+
 ### `supplier-risk` (product-facing)
 
 Practical window into the core loop:
@@ -168,11 +170,7 @@ First compact CDS research-facing scenario:
 - selected carrying regime plus non-carrying regimes,
 - concrete follow-up research actions.
 
-Walkthrough artifacts:
-- runnable notebook-style script: [`examples/resource_stability_walkthrough.py`](examples/resource_stability_walkthrough.py)
-- scientific walkthrough notes: [`docs/resource_stability_walkthrough.md`](docs/resource_stability_walkthrough.md)
-- sensitivity grid experiment script: [`examples/resource_stability_sensitivity.py`](examples/resource_stability_sensitivity.py)
-- sensitivity experiment notes: [`docs/resource_stability_sensitivity.md`](docs/resource_stability_sensitivity.md)
+Details and run order are centralized in [`docs/scientific_examples.md`](docs/scientific_examples.md).
 
 ### `epidemic-regime` (scientific toy model)
 
@@ -182,9 +180,7 @@ Second compact CDS research-facing scenario in a different domain:
 - stability ranking with selected regime,
 - toy-model disclaimer to avoid epidemiological overclaiming.
 
-Walkthrough artifacts:
-- runnable walkthrough script: [`examples/epidemic_regime_walkthrough.py`](examples/epidemic_regime_walkthrough.py)
-- scientific walkthrough notes: [`docs/epidemic_regime_demo.md`](docs/epidemic_regime_demo.md)
+Details and run order are centralized in [`docs/scientific_examples.md`](docs/scientific_examples.md).
 
 ## Why this architecture matters
 
@@ -204,6 +200,7 @@ This coupling is what makes the system both practical and research-relevant.
 - **Roadmap / delivery priorities:** [`ROADMAP.md`](ROADMAP.md)
 - **Origin (history and motivation):** [`docs/origin.md`](docs/origin.md)
 - **Theory bridge (CDS → SCE):** [`docs/constraint_driven_stability.md`](docs/constraint_driven_stability.md)
+- **Scientific examples index (entrypoint):** [`docs/scientific_examples.md`](docs/scientific_examples.md)
 - **Scientific positioning:** [`docs/scientific_positioning.md`](docs/scientific_positioning.md)
 - **Research program (open problems):** [`docs/research_program.md`](docs/research_program.md)
 - **Russian overview:** [`docs/OVERVIEW_RU.md`](docs/OVERVIEW_RU.md)
