@@ -5,6 +5,7 @@ It maps CDS concepts to mechanisms that are already implemented.
 
 Related layers:
 - Product entrypoint: [`../README.md`](../README.md)
+- Scientific positioning: [`scientific_positioning.md`](scientific_positioning.md)
 - Historical origin: [`origin.md`](origin.md)
 - Open research agenda: [`research_program.md`](research_program.md)
 - Delivery roadmap: [`../ROADMAP.md`](../ROADMAP.md)

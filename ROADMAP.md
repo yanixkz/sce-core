@@ -6,7 +6,7 @@
 Decide. Explain. Improve.
 ```
 
-SCE Core is a decision engine for AI agents, with a product surface and a research program built on the same runtime loop.
+SCE Core is a computational CDS framework with an applied decision-engine surface for AI agents, built on one runtime loop.
 
 ## Scope of this roadmap
 
@@ -22,7 +22,7 @@ For issue/PR workstream routing, see [`docs/governance.md`](docs/governance.md).
 
 SCE Core already includes:
 
-- flagship demos: `supplier-risk` (product-facing), `hypothesis` (research-facing),
+- flagship demos: `supplier-risk` (applied), `hypothesis` (research-facing), `resource-stability` (scientific toy model),
 - decision selection over candidate plans,
 - constraint filtering/validation,
 - decision backbone extraction,
@@ -50,7 +50,7 @@ The demos are windows into one engine, not isolated subsystems.
 - constraint- and memory-aware explainability attribution,
 - richer temporal reliability policies,
 - replayable trajectory/audit artifacts,
-- benchmark growth across multiple constrained decision scenarios.
+- benchmark growth across constrained decision and scientific toy scenarios.
 
 These tracks are intentionally coupled: product surfaces expose the same mechanisms that research work extends.
 
@@ -72,7 +72,7 @@ These tracks are intentionally coupled: product surfaces expose the same mechani
 
 ### Stage 3 — Benchmark pair maturity
 
-- evolve `supplier-risk` and `hypothesis` into a small shared-metrics benchmark pair,
+- evolve `supplier-risk`, `hypothesis`, and `resource-stability` into a small shared-metrics benchmark set,
 - track where the same mechanisms transfer and where they fail,
 - document comparable evaluation signals.
 
@@ -101,6 +101,14 @@ Research-facing probe of the same mechanisms under different evidence/goal topol
 - inspectable evidence vs dangling context,
 - explicit next-step research actions.
 
+### `resource-stability`
+
+Scientific toy probe of:
+- population/resource regime viability under explicit constraints,
+- deterministic scoring/ranking of candidate regimes,
+- selected carrying regime and non-carrying trajectories,
+- reproducible baseline for notebook-based comparative modeling.
+
 ---
 
 ## Status summary
@@ -112,7 +120,7 @@ Current emphasis:
 ```text
 One engine
 ↓
-Two flagship windows (supplier-risk, hypothesis)
+Three flagship windows (supplier-risk, hypothesis, resource-stability)
 ↓
 Reusable inspectable API/UI/graph surfaces
 ↓

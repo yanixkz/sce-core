@@ -11,6 +11,7 @@ def test_list_demos_endpoint():
     names = {item["name"] for item in data}
     assert "supplier-risk" in names
     assert "hypothesis" in names
+    assert "resource-stability" in names
 
 
 def test_run_demo_json():
