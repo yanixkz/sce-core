@@ -170,6 +170,8 @@ First compact CDS research-facing scenario:
 Walkthrough artifacts:
 - runnable notebook-style script: [`examples/resource_stability_walkthrough.py`](examples/resource_stability_walkthrough.py)
 - scientific walkthrough notes: [`docs/resource_stability_walkthrough.md`](docs/resource_stability_walkthrough.md)
+- sensitivity grid experiment script: [`examples/resource_stability_sensitivity.py`](examples/resource_stability_sensitivity.py)
+- sensitivity experiment notes: [`docs/resource_stability_sensitivity.md`](docs/resource_stability_sensitivity.md)
 
 ## Why this architecture matters
 

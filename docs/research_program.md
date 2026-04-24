@@ -139,5 +139,6 @@ The research program is intentionally coupled to product surfaces:
 - `supplier-risk` is the product-facing window into the adaptive decision loop.
 - `hypothesis` is the research-facing window into the same loop.
 - `resource-stability` is the first scientific toy-model window for CDS-oriented regime viability analysis.
+  - sensitivity extension: [`resource_stability_sensitivity.md`](resource_stability_sensitivity.md) for reproducible parameter-grid inspection.
 
 Roadmap sequencing of these priorities is tracked in [`../ROADMAP.md`](../ROADMAP.md).
