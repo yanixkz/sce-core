@@ -46,6 +46,7 @@ This folder contains layered documentation for SCE Core.
 ## Additional technical notes
 
 - Public demo script (5–7 min): [`public_demo_script.md`](public_demo_script.md)
+- Verify the live API in 5 minutes: [`live_api_quickstart.md`](live_api_quickstart.md)
 - Resource-stability scientific walkthrough: [`resource_stability_walkthrough.md`](resource_stability_walkthrough.md)
 - Resource-stability sensitivity grid: [`resource_stability_sensitivity.md`](resource_stability_sensitivity.md)
 - Epidemic-regime scientific walkthrough: [`epidemic_regime_demo.md`](epidemic_regime_demo.md)

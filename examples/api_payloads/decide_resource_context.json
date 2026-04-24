@@ -1,0 +1,16 @@
+{
+  "goal": "stabilize resource allocation for the next planning cycle",
+  "context": {
+    "population": 150,
+    "resource_stock": 80,
+    "consumption_per_step": 1.05,
+    "regeneration_per_step": 0.7,
+    "supply_chain_disruption": "moderate"
+  },
+  "constraints": [
+    "avoid stockout within two steps",
+    "prefer plans with lower cumulative error"
+  ],
+  "execute": true,
+  "reliability_weight": 1.0
+}

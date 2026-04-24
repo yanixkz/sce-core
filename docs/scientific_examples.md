@@ -5,6 +5,8 @@ They are transparent and reproducible, but they are **not** validated domain sim
 
 ## Quick start
 
+Want to validate backend endpoints with real requests (outside CLI demos)? See [`live_api_quickstart.md`](live_api_quickstart.md).
+
 | Example | Command | Artifact type | What it demonstrates | CDS concepts used |
 |---|---|---|---|---|
 | `resource-stability` | `sce demo resource-stability` | CLI scientific demo | Resource-constrained regime selection and carrying-state preference under explicit hard/soft constraints. | `I`, `E`, `C`, `t`, `Stab`, `S` |

@@ -47,6 +47,8 @@ uvicorn sce.api:app --reload
 # then open http://127.0.0.1:8000/ui
 ```
 
+Verify the live API in 5 minutes: [`docs/live_api_quickstart.md`](docs/live_api_quickstart.md).
+
 ## What SCE Core is (and is not)
 
 SCE Core is not a chat wrapper and not only a demo collection.
@@ -100,6 +102,7 @@ Notes:
 - `/memory` and `/reliability` default to process-local in-memory inspection and automatically switch to durable PostgreSQL-backed episode history when `SCE_DATABASE_URL` is configured.
 - Demo endpoints remain as product/story routes over the same engine.
 - Baseline providers for `/compare` are optional: default is deterministic/mock; OpenAI/Anthropic are opt-in and fall back to mock if not configured.
+- Need a practical live proof flow (including sample payloads and a verification script)? See [`docs/live_api_quickstart.md`](docs/live_api_quickstart.md).
 
 ## Run API locally
 
