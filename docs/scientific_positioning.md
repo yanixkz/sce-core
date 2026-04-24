@@ -79,3 +79,4 @@ The disciplined next phase is:
 4. comparison against known dynamics where possible.
 
 The first concrete step is the `resource-stability` scenario: a compact population/resource regime selection example under explicit constraints.
+Its next lightweight step is a reproducible sensitivity grid (`resource_stability_sensitivity.md`) to inspect regime-selection shifts under small parameter sweeps.
