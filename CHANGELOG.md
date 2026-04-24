@@ -6,15 +6,18 @@ The project is currently in **alpha**; compatibility may evolve between alpha re
 
 ## v0.1-alpha (package `0.1.0a0`) — 2026-04-23
 
-Initial external-facing alpha surface centered on a reusable decision engine.
+Initial external-facing alpha surface for SCE Core as a reusable CDS-oriented computational framework, with applied AI decision-engine endpoints.
 
 ### Included in this alpha
 
 - Flagship demos through CLI:
   - `sce demo` (defaults to `supplier-risk`)
   - `sce demo hypothesis`
+  - `sce demo resource-stability`
+  - `sce demo epidemic-regime`
 - Reusable API endpoints:
   - `POST /decide`
+  - `POST /compare`
   - `GET /memory`
   - `GET /reliability`
   - `GET /graph`

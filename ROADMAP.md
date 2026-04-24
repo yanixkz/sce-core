@@ -22,14 +22,14 @@ For issue/PR workstream routing, see [`docs/governance.md`](docs/governance.md).
 
 SCE Core already includes:
 
-- flagship demos: `supplier-risk` (applied), `hypothesis` (research-facing), `resource-stability` (scientific toy model),
+- flagship demos: `supplier-risk` (applied), `hypothesis` (research-facing), `resource-stability` and `epidemic-regime` (scientific toy models),
 - decision selection over candidate plans,
 - constraint filtering/validation,
 - decision backbone extraction,
 - prediction-error-based reliability tracking,
 - episodic memory with optional PostgreSQL persistence,
 - adaptive reselection influenced by memory/reliability,
-- inspectable API/graph/UI surfaces (`/decide`, `/memory`, `/reliability`, `/graph`, `/ui`),
+- inspectable API/graph/UI surfaces (`/decide`, `/compare`, `/memory`, `/reliability`, `/graph`, `/ui`),
 - CLI entrypoints (`sce demo`, `sce export-graph`, `sce visualize-graph`).
 
 The demos are windows into one engine, not isolated subsystems.
@@ -109,6 +109,14 @@ Scientific toy probe of:
 - selected carrying regime and non-carrying trajectories,
 - reproducible baseline for notebook-based comparative modeling.
 
+### `epidemic-regime`
+
+Scientific toy probe of:
+- deterministic epidemic regime candidates under explicit constraints,
+- stability ranking under spread/capacity/intervention-cost pressures,
+- selected regime with transparent non-selected alternatives,
+- explicit toy-model disclaimer to avoid epidemiological overclaiming.
+
 ---
 
 ## Status summary
@@ -120,7 +128,7 @@ Current emphasis:
 ```text
 One engine
 ↓
-Three flagship windows (supplier-risk, hypothesis, resource-stability)
+Four flagship windows (supplier-risk, hypothesis, resource-stability, epidemic-regime)
 ↓
 Reusable inspectable API/UI/graph surfaces
 ↓

@@ -80,6 +80,7 @@ SCE Core — не просто набор демо и не «чат-обёртк
 Базовые endpoints:
 
 - `POST /decide`
+- `POST /compare`
 - `GET /memory`
 - `GET /reliability`
 - `GET /graph`
@@ -92,7 +93,7 @@ SCE Core — не просто набор демо и не «чат-обёртк
 - `POST /demo`
 - `POST /demo/explain`
 
-Важно: `/memory` и `/reliability` отражают процесс-локальное состояние текущего API-процесса.
+Важно: `/memory` и `/reliability` по умолчанию отражают process-local состояние текущего API-процесса, а при `SCE_DATABASE_URL` переключаются на durable PostgreSQL-backed историю эпизодов.
 
 ---
 

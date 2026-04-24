@@ -65,6 +65,7 @@ sce demo
 sce demo supplier-risk
 sce demo hypothesis
 sce demo resource-stability
+sce demo epidemic-regime
 sce demo list
 sce export-graph
 sce visualize-graph
