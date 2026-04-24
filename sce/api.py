@@ -10,6 +10,7 @@ from pydantic import BaseModel, Field
 
 from sce.cli import DEMO_CHOICES, DEMO_REGISTRY, format_demo, run_demo
 from sce.core.cognitive_agent import CognitiveAgent
+from sce.core.baseline_ai import BASELINE_LIMITATIONS, build_baseline_client
 from sce.core.evolution import SCEEvolver
 from sce.core.llm_intent import LLMIntentParser
 from sce.core.planning import MemoryAwarePlanner, PlanExecutor, ReliabilityAwarePlanner, ToolPlanner
@@ -106,6 +107,44 @@ class DecideResponse(BaseModel):
     execution_success: bool | None = None
     execution_trace: list[DecisionExecutionStep] = Field(default_factory=list)
     scores: list[DecisionCandidateScore]
+    meta: Dict[str, Any] = Field(default_factory=dict)
+
+
+class CompareRequest(BaseModel):
+    goal: str = Field(..., min_length=1, description="Decision goal, task, or question")
+    context: Dict[str, Any] = Field(default_factory=dict, description="Current known facts")
+    constraints: list[str] = Field(default_factory=list, description="Optional natural-language constraints")
+    execute: bool = Field(False, description="Execute selected SCE plan after ranking")
+    reliability_weight: float = Field(1.0, ge=0.0, le=5.0, description="Weight of reliability in ranking")
+    baseline_provider: Optional[str] = Field(None, description="mock (default), openai, or anthropic")
+
+
+class CompareBaselineResponse(BaseModel):
+    answer: str
+    rationale: str
+    limitations: list[str] = Field(default_factory=list)
+    provider: str
+    source: str
+    meta: Dict[str, Any] = Field(default_factory=dict)
+
+
+class CompareSCEResponse(BaseModel):
+    selected_plan: str
+    selected_reason: str
+    action_names: list[str]
+    executed: bool
+    execution_success: bool | None = None
+    execution_trace: list[DecisionExecutionStep] = Field(default_factory=list)
+    scores: list[DecisionCandidateScore]
+    meta: Dict[str, Any] = Field(default_factory=dict)
+
+
+class CompareResponse(BaseModel):
+    version: str
+    input_summary: Dict[str, Any]
+    baseline: CompareBaselineResponse
+    sce: CompareSCEResponse
+    comparison: Dict[str, Any]
     meta: Dict[str, Any] = Field(default_factory=dict)
 
 
@@ -236,6 +275,81 @@ def _build_durable_episode_repository() -> PostgresEpisodeRepository | None:
     return repo
 
 
+def _run_sce_decision(
+    request: DecideRequest,
+    shared_episode_memory: EpisodeMemory,
+    durable_episode_repository: PostgresEpisodeRepository | None,
+    durable_status: str,
+) -> DecideResponse:
+    state = State("decision_request", request.context)
+    base_planner = ToolPlanner()
+    memory_planner = MemoryAwarePlanner(base_planner=base_planner, memory=shared_episode_memory)
+    planner = ReliabilityAwarePlanner(memory_planner=memory_planner, reliability_weight=request.reliability_weight)
+
+    candidates = base_planner.candidates(state, request.goal)
+    ranked_scores = planner.score(candidates, state, request.goal)
+    selected = ranked_scores[0]
+
+    execution_success: bool | None = None
+    execution_trace: list[DecisionExecutionStep] = []
+    if request.execute:
+        executor = _build_plan_executor()
+        execution = executor.execute(selected.plan, state)
+        execution_success = execution.success
+        shared_episode_memory.remember(
+            state=state,
+            goal=request.goal,
+            plan=selected.plan,
+            success=execution.success,
+            reward=1.0 if execution.success else -1.0,
+            reason="decide_execute",
+            reliability=1.0 if execution.success else 0.0,
+            source="/decide",
+            scope="api_execute",
+        )
+        execution_trace = [
+            DecisionExecutionStep(
+                action=result.resulting_state.data.get("action", "unknown"),
+                success=result.success,
+                message=result.message,
+            )
+            for result in execution.results
+        ]
+
+    return DecideResponse(
+        version=API_VERSION,
+        goal=request.goal,
+        selected_plan=selected.plan.name,
+        selected_reason=selected.plan.reason,
+        action_names=[action.name for action in selected.plan.actions],
+        executed=request.execute,
+        execution_success=execution_success,
+        execution_trace=execution_trace,
+        scores=[
+            DecisionCandidateScore(
+                plan=score.plan.name,
+                reason=score.plan.reason,
+                base_score=score.base_score,
+                memory_bias=score.memory_bias,
+                reliability=score.reliability,
+                reliability_bonus=score.reliability_bonus,
+                total_score=score.total_score,
+            )
+            for score in ranked_scores
+        ],
+        meta={
+            "constraints": request.constraints,
+            "constraints_supported": False,
+            "context_keys": sorted(request.context.keys()),
+            "candidate_count": len(ranked_scores),
+            "memory_matches": len(shared_episode_memory.similar(state, request.goal, limit=5)),
+            "memory_scope": "process-local in-memory episodes collected by /decide with execute=true",
+            "memory_persistence": "postgres+memory" if durable_episode_repository is not None else "memory-only",
+            "memory_durable_status": durable_status,
+        },
+    )
+
+
 def build_app() -> FastAPI:
     app = FastAPI(title="SCE Core API", version="0.1.0a0")
     durable_episode_repository: PostgresEpisodeRepository | None = None
@@ -314,71 +428,84 @@ def build_app() -> FastAPI:
 
     @app.post("/decide", response_model=DecideResponse)
     def decide(request: DecideRequest) -> DecideResponse:
-        state = State("decision_request", request.context)
-        base_planner = ToolPlanner()
-        memory_planner = MemoryAwarePlanner(base_planner=base_planner, memory=shared_episode_memory)
-        planner = ReliabilityAwarePlanner(memory_planner=memory_planner, reliability_weight=request.reliability_weight)
+        return _run_sce_decision(
+            request=request,
+            shared_episode_memory=shared_episode_memory,
+            durable_episode_repository=durable_episode_repository,
+            durable_status=durable_status,
+        )
 
-        candidates = base_planner.candidates(state, request.goal)
-        ranked_scores = planner.score(candidates, state, request.goal)
-        selected = ranked_scores[0]
-
-        execution_success: bool | None = None
-        execution_trace: list[DecisionExecutionStep] = []
-        if request.execute:
-            executor = _build_plan_executor()
-            execution = executor.execute(selected.plan, state)
-            execution_success = execution.success
-            shared_episode_memory.remember(
-                state=state,
+    @app.post("/compare", response_model=CompareResponse)
+    def compare(request: CompareRequest) -> CompareResponse:
+        decision = _run_sce_decision(
+            request=DecideRequest(
                 goal=request.goal,
-                plan=selected.plan,
-                success=execution.success,
-                reward=1.0 if execution.success else -1.0,
-                reason="decide_execute",
-                reliability=1.0 if execution.success else 0.0,
-                source="/decide",
-                scope="api_execute",
-            )
-            execution_trace = [
-                DecisionExecutionStep(
-                    action=result.resulting_state.data.get("action", "unknown"),
-                    success=result.success,
-                    message=result.message,
-                )
-                for result in execution.results
-            ]
+                context=request.context,
+                constraints=request.constraints,
+                execute=request.execute,
+                reliability_weight=request.reliability_weight,
+            ),
+            shared_episode_memory=shared_episode_memory,
+            durable_episode_repository=durable_episode_repository,
+            durable_status=durable_status,
+        )
 
-        return DecideResponse(
+        baseline_meta: Dict[str, Any] = {}
+        try:
+            baseline_client, baseline_meta = build_baseline_client(request.baseline_provider)
+            baseline = baseline_client.generate(request.goal, request.context, request.constraints)
+        except Exception as exc:
+            fallback_client, fallback_meta = build_baseline_client("mock")
+            baseline = fallback_client.generate(request.goal, request.context, request.constraints)
+            baseline_meta = {
+                "requested_provider": request.baseline_provider or "mock",
+                "effective_provider": "mock",
+                "fallback_used": True,
+                "fallback_reason": f"provider initialization failed: {exc.__class__.__name__}",
+                **fallback_meta,
+            }
+
+        return CompareResponse(
             version=API_VERSION,
-            goal=request.goal,
-            selected_plan=selected.plan.name,
-            selected_reason=selected.plan.reason,
-            action_names=[action.name for action in selected.plan.actions],
-            executed=request.execute,
-            execution_success=execution_success,
-            execution_trace=execution_trace,
-            scores=[
-                DecisionCandidateScore(
-                    plan=score.plan.name,
-                    reason=score.plan.reason,
-                    base_score=score.base_score,
-                    memory_bias=score.memory_bias,
-                    reliability=score.reliability,
-                    reliability_bonus=score.reliability_bonus,
-                    total_score=score.total_score,
-                )
-                for score in ranked_scores
-            ],
-            meta={
-                "constraints": request.constraints,
-                "constraints_supported": False,
+            input_summary={
+                "goal": request.goal,
                 "context_keys": sorted(request.context.keys()),
-                "candidate_count": len(ranked_scores),
-                "memory_matches": len(shared_episode_memory.similar(state, request.goal, limit=5)),
-                "memory_scope": "process-local in-memory episodes collected by /decide with execute=true",
-                "memory_persistence": "postgres+memory" if durable_episode_repository is not None else "memory-only",
-                "memory_durable_status": durable_status,
+                "constraints": request.constraints,
+                "execute": request.execute,
+                "reliability_weight": request.reliability_weight,
+            },
+            baseline=CompareBaselineResponse(
+                answer=baseline.answer,
+                rationale=baseline.rationale,
+                limitations=baseline.limitations,
+                provider=baseline.provider,
+                source=baseline.source,
+                meta={**baseline.meta, **baseline_meta},
+            ),
+            sce=CompareSCEResponse(
+                selected_plan=decision.selected_plan,
+                selected_reason=decision.selected_reason,
+                action_names=decision.action_names,
+                executed=decision.executed,
+                execution_success=decision.execution_success,
+                execution_trace=decision.execution_trace,
+                scores=decision.scores,
+                meta=decision.meta,
+            ),
+            comparison={
+                "differences": [
+                    "Baseline returns one answer; SCE returns ranked candidate decisions.",
+                    "Baseline rationale is generic; SCE ties explanation to selected plan and score structure.",
+                    "Baseline has no adaptive memory; SCE can reuse remembered episodes.",
+                    "Baseline has no reliability signal; SCE tracks reliability-aware selection.",
+                ],
+                "baseline_has_ranking": False,
+                "baseline_has_memory": False,
+                "baseline_has_reliability": False,
+            },
+            meta={
+                "purpose": "Generic AI vs SCE structured decision contrast on the same input.",
+                "baseline_limitations_reference": BASELINE_LIMITATIONS,
             },
         )
 

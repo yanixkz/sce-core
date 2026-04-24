@@ -70,6 +70,7 @@ Core reusable endpoints:
 
 ```text
 POST /decide
+POST /compare
 GET  /memory
 GET  /reliability
 GET  /graph
@@ -87,8 +88,11 @@ POST /demo/explain
 
 Notes:
 - `/decide` is the generalized decision endpoint (`goal + context → ranked decision response`).
+- `/compare` is an additive comparison surface for **Generic AI vs SCE** on the same input:
+  deterministic mock baseline answer + real SCE structured decision output.
 - `/memory` and `/reliability` default to process-local in-memory inspection and automatically switch to durable PostgreSQL-backed episode history when `SCE_DATABASE_URL` is configured.
 - Demo endpoints remain as product/story routes over the same engine.
+- Baseline providers for `/compare` are optional: default is deterministic/mock; OpenAI/Anthropic are opt-in and fall back to mock if not configured.
 
 ## Run API locally
 
@@ -114,6 +118,23 @@ curl -X POST http://127.0.0.1:8000/decide \
     "execute":true
   }'
 ```
+
+Example comparison call:
+
+```bash
+curl -X POST http://127.0.0.1:8000/compare \
+  -H "Content-Type: application/json" \
+  -d '{
+    "goal":"assess supplier risk",
+    "context":{"supplier_id":"supplier A","claim":"supplier may be unreliable"},
+    "constraints":["prefer external verification"],
+    "execute":false
+  }'
+```
+
+`/compare` is intended for visual comparison experiences where the same input is rendered as:
+- Generic AI one-shot answer (baseline),
+- SCE ranked and inspectable decision output.
 
 ## Flagship demos
 
