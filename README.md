@@ -211,6 +211,7 @@ This coupling is what makes the system both practical and research-relevant.
 - **Theory bridge (CDS → SCE):** [`docs/constraint_driven_stability.md`](docs/constraint_driven_stability.md)
 - **Scientific examples index (entrypoint):** [`docs/scientific_examples.md`](docs/scientific_examples.md)
 - **Resource-stability CSV batch runner:** [`docs/resource_stability_csv.md`](docs/resource_stability_csv.md)
+- **Resource-stability heuristic validation baseline:** [`docs/resource_stability_validation.md`](docs/resource_stability_validation.md)
 - **Scientist outreach/readiness pitch:** [`docs/scientist_pitch.md`](docs/scientist_pitch.md)
 - **Public demo script (5–7 min):** [`docs/public_demo_script.md`](docs/public_demo_script.md)
 - **Scientific positioning:** [`docs/scientific_positioning.md`](docs/scientific_positioning.md)

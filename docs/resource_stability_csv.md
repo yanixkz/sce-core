@@ -52,6 +52,10 @@ A larger positive margin suggests clearer separation between the selected regime
 - **Sensitivity grid** (`examples/resource_stability_sensitivity.py`): built-in deterministic parameter sweep.
 - **CSV runner** (`examples/run_resource_stability_csv.py`): user-provided case list.
 
+## Related baseline comparison
+
+For an early behavioral sanity check against a transparent heuristic baseline, see [`resource_stability_validation.md`](resource_stability_validation.md).
+
 ## Limitations
 
 - This is a toy parameter sweep helper, not a scientific validation pipeline.
