@@ -142,6 +142,7 @@ The research program is intentionally coupled to product surfaces:
 - `hypothesis` is the research-facing window into the same loop.
 - `resource-stability` is the first scientific toy-model window for CDS-oriented regime viability analysis.
   - sensitivity extension: [`resource_stability_sensitivity.md`](resource_stability_sensitivity.md) for reproducible parameter-grid inspection.
+  - heuristic baseline comparison: [`resource_stability_validation.md`](resource_stability_validation.md) for transparent early sanity checks (not ground truth validation).
 - `epidemic-regime` is a second scientific toy-model window to test CDS stability selection in a different constrained domain.
   - walkthrough: [`epidemic_regime_demo.md`](epidemic_regime_demo.md).
 
