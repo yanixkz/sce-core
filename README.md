@@ -214,6 +214,7 @@ This coupling is what makes the system both practical and research-relevant.
 - **Resource-stability CSV batch runner:** [`docs/resource_stability_csv.md`](docs/resource_stability_csv.md)
 - **Epidemic-regime CSV batch runner:** [`docs/epidemic_regime_csv.md`](docs/epidemic_regime_csv.md)
 - **Resource-stability heuristic validation baseline:** [`docs/resource_stability_validation.md`](docs/resource_stability_validation.md)
+- **Epidemic-regime heuristic validation baseline:** [`docs/epidemic_regime_validation.md`](docs/epidemic_regime_validation.md)
 - **Scientist outreach/readiness pitch:** [`docs/scientist_pitch.md`](docs/scientist_pitch.md)
 - **Public demo script (5–7 min):** [`docs/public_demo_script.md`](docs/public_demo_script.md)
 - **Scientific positioning:** [`docs/scientific_positioning.md`](docs/scientific_positioning.md)

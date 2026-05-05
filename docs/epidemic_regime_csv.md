@@ -68,3 +68,8 @@ Each result row includes:
   - one guided example with narrative interpretation.
 - `examples/run_epidemic_regime_csv.py` + this page:
   - user-provided batch cases in CSV with concise comparable result rows.
+
+
+## Heuristic sanity-check companion
+
+For an explicit baseline comparison (SCE vs deterministic heuristic) over the same CSV cases, see [`epidemic_regime_validation.md`](epidemic_regime_validation.md).

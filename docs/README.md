@@ -52,6 +52,7 @@ This folder contains layered documentation for SCE Core.
 - Resource-stability CSV batch runner: [`resource_stability_csv.md`](resource_stability_csv.md)
 - Epidemic-regime CSV batch runner: [`epidemic_regime_csv.md`](epidemic_regime_csv.md)
 - Resource-stability heuristic validation baseline: [`resource_stability_validation.md`](resource_stability_validation.md)
+- Epidemic-regime heuristic validation baseline: [`epidemic_regime_validation.md`](epidemic_regime_validation.md)
 - Epidemic-regime scientific walkthrough: [`epidemic_regime_demo.md`](epidemic_regime_demo.md)
 - Decision backbone details: [`DECISION_BACKBONE.md`](DECISION_BACKBONE.md)
 - Reliability-aware planning note: [`RELIABILITY_AWARE_PLANNING.md`](RELIABILITY_AWARE_PLANNING.md)
