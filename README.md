@@ -49,6 +49,11 @@ uvicorn sce.api:app --reload
 
 Verify the live API in 5 minutes: [`docs/live_api_quickstart.md`](docs/live_api_quickstart.md).
 
+Run user-provided resource-stability cases from CSV:
+```bash
+python examples/run_resource_stability_csv.py examples/data/resource_stability_cases.csv
+```
+
 ## What SCE Core is (and is not)
 
 SCE Core is not a chat wrapper and not only a demo collection.
@@ -205,6 +210,7 @@ This coupling is what makes the system both practical and research-relevant.
 - **Origin (history and motivation):** [`docs/origin.md`](docs/origin.md)
 - **Theory bridge (CDS → SCE):** [`docs/constraint_driven_stability.md`](docs/constraint_driven_stability.md)
 - **Scientific examples index (entrypoint):** [`docs/scientific_examples.md`](docs/scientific_examples.md)
+- **Resource-stability CSV batch runner:** [`docs/resource_stability_csv.md`](docs/resource_stability_csv.md)
 - **Scientist outreach/readiness pitch:** [`docs/scientist_pitch.md`](docs/scientist_pitch.md)
 - **Public demo script (5–7 min):** [`docs/public_demo_script.md`](docs/public_demo_script.md)
 - **Scientific positioning:** [`docs/scientific_positioning.md`](docs/scientific_positioning.md)

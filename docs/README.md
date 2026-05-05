@@ -49,6 +49,7 @@ This folder contains layered documentation for SCE Core.
 - Verify the live API in 5 minutes: [`live_api_quickstart.md`](live_api_quickstart.md)
 - Resource-stability scientific walkthrough: [`resource_stability_walkthrough.md`](resource_stability_walkthrough.md)
 - Resource-stability sensitivity grid: [`resource_stability_sensitivity.md`](resource_stability_sensitivity.md)
+- Resource-stability CSV batch runner: [`resource_stability_csv.md`](resource_stability_csv.md)
 - Epidemic-regime scientific walkthrough: [`epidemic_regime_demo.md`](epidemic_regime_demo.md)
 - Decision backbone details: [`DECISION_BACKBONE.md`](DECISION_BACKBONE.md)
 - Reliability-aware planning note: [`RELIABILITY_AWARE_PLANNING.md`](RELIABILITY_AWARE_PLANNING.md)

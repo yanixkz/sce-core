@@ -1,0 +1,8 @@
+case_id,population_multiplier,consumption_rate_multiplier,regeneration_rate_multiplier
+baseline,1.00,1.00,1.00
+high_consumption,1.00,1.18,1.00
+low_regeneration,1.00,1.00,0.86
+high_population_pressure,1.16,1.08,0.95
+recovery_support,0.94,0.92,1.10
+resource_shock,1.08,1.12,0.88
+low_pressure,0.90,0.90,1.05

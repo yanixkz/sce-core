@@ -12,6 +12,7 @@ Want to validate backend endpoints with real requests (outside CLI demos)? See [
 | `resource-stability` | `sce demo resource-stability` | CLI scientific demo | Resource-constrained regime selection and carrying-state preference under explicit hard/soft constraints. | `I`, `E`, `C`, `t`, `Stab`, `S` |
 | `resource-stability` walkthrough | `python examples/resource_stability_walkthrough.py` | Walkthrough script + notes (`docs/resource_stability_walkthrough.md`) | Stepwise interpretation of candidate regimes, ranking, selected state, and one-parameter stress rerun. | `I`, `E`, `C`, `t`, `Stab`, `S` |
 | `resource-stability` sensitivity grid | `python examples/resource_stability_sensitivity.py` | Parameter grid script + notes (`docs/resource_stability_sensitivity.md`) | Deterministic sweep over pressure/demand/regeneration multipliers and stability-margin shifts. | `I`, `E`, `C`, `t`, `Stab`, `S` |
+| `resource-stability` CSV runner | `python examples/run_resource_stability_csv.py examples/data/resource_stability_cases.csv` | User-case batch script + notes (`docs/resource_stability_csv.md`) | User-provided case list with deterministic stability-selection outputs. | `I`, `E`, `C`, `t`, `Stab`, `S` |
 | `epidemic-regime` | `sce demo epidemic-regime` | CLI scientific demo | Regime selection under transmission, capacity, and intervention-cost constraints with explicit toy-model disclaimer. | `I`, `E`, `C`, `t`, `Stab`, `S` |
 | `epidemic-regime` walkthrough | `python examples/epidemic_regime_walkthrough.py` | Walkthrough script + notes (`docs/epidemic_regime_demo.md`) | Candidate comparison and deterministic sensitivity checks in a second constrained domain. | `I`, `E`, `C`, `t`, `Stab`, `S` |
 
@@ -21,8 +22,9 @@ Want to validate backend endpoints with real requests (outside CLI demos)? See [
 2. Read the scientist-facing outreach/readiness note in [`scientist_pitch.md`](scientist_pitch.md).
 3. Run `sce demo resource-stability`.
 4. Run the resource sensitivity grid (`python examples/resource_stability_sensitivity.py`).
-5. Run `sce demo epidemic-regime`.
-6. Read the broader open-problems roadmap in [`research_program.md`](research_program.md).
+5. Run the CSV case runner (`python examples/run_resource_stability_csv.py examples/data/resource_stability_cases.csv`).
+6. Run `sce demo epidemic-regime`.
+7. Read the broader open-problems roadmap in [`research_program.md`](research_program.md).
 
 ## CDS mapping summary across examples
 
