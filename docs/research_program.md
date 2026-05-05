@@ -145,5 +145,6 @@ The research program is intentionally coupled to product surfaces:
   - heuristic baseline comparison: [`resource_stability_validation.md`](resource_stability_validation.md) for transparent early sanity checks (not ground truth validation).
 - `epidemic-regime` is a second scientific toy-model window to test CDS stability selection in a different constrained domain.
   - walkthrough: [`epidemic_regime_demo.md`](epidemic_regime_demo.md).
+  - heuristic baseline comparison: [`epidemic_regime_validation.md`](epidemic_regime_validation.md) for transparent early sanity checks (not ground truth validation).
 
 Roadmap sequencing of these priorities is tracked in [`../ROADMAP.md`](../ROADMAP.md).
