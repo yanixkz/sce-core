@@ -70,3 +70,11 @@ These default to `1.0` and preserve backward-compatible behavior.
 - Add explicit age/contact strata while preserving deterministic selection.
 - Add a small parameter grid to map regime boundary transitions.
 - Compare ranking trends with a simple compartment baseline for sanity checks.
+
+
+## Batch cases from CSV
+
+For a lightweight bring-your-own-cases workflow, use:
+
+- `python examples/run_epidemic_regime_csv.py examples/data/epidemic_regime_cases.csv`
+- Details: [`epidemic_regime_csv.md`](epidemic_regime_csv.md)

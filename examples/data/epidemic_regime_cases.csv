@@ -1,0 +1,9 @@
+case_id,transmission_multiplier,recovery_support_multiplier,healthcare_capacity_multiplier,intervention_cost_multiplier
+baseline,1.0,1.0,1.0,1.0
+high_transmission,1.2,1.0,1.0,1.0
+low_capacity,1.0,1.0,0.85,1.0
+strong_recovery,1.0,1.2,1.0,1.0
+high_intervention_cost,1.0,1.0,1.0,1.2
+overload_pressure,1.15,0.95,0.82,1.05
+containment_support,0.88,1.15,1.08,1.0
+low_activity,0.78,1.05,1.1,0.9
