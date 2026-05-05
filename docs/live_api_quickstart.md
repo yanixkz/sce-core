@@ -120,7 +120,7 @@ The script calls all key endpoints, prints concise pass/fail status, and exits n
 Current API usage is request-driven:
 - Inputs are JSON requests and scenario parameters in endpoint payloads.
 - CSV/dataset file upload is **not implemented yet** in current API routes.
-- For offline scientific batch runs with user-provided toy cases, use `python examples/run_resource_stability_csv.py examples/data/resource_stability_cases.csv` (see [`resource_stability_csv.md`](resource_stability_csv.md)).
+- For offline scientific batch runs with user-provided toy cases, use `python examples/run_resource_stability_csv.py examples/data/resource_stability_cases.csv` and `python examples/run_epidemic_regime_csv.py examples/data/epidemic_regime_cases.csv` (see [`resource_stability_csv.md`](resource_stability_csv.md) and [`epidemic_regime_csv.md`](epidemic_regime_csv.md)).
 - Starter payloads are provided in [`examples/api_payloads/`](../examples/api_payloads).
 - A future extension can add dataset adapters/upload routes.
 

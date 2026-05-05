@@ -16,6 +16,7 @@ Want to validate backend endpoints with real requests (outside CLI demos)? See [
 | `resource-stability` heuristic validation | `python examples/validate_resource_stability_csv.py examples/data/resource_stability_cases.csv` | Baseline comparison script + notes (`docs/resource_stability_validation.md`) | Early behavioral sanity check: SCE selected regime vs transparent heuristic expectation. | `C`, `Stab`, `S` |
 | `epidemic-regime` | `sce demo epidemic-regime` | CLI scientific demo | Regime selection under transmission, capacity, and intervention-cost constraints with explicit toy-model disclaimer. | `I`, `E`, `C`, `t`, `Stab`, `S` |
 | `epidemic-regime` walkthrough | `python examples/epidemic_regime_walkthrough.py` | Walkthrough script + notes (`docs/epidemic_regime_demo.md`) | Candidate comparison and deterministic sensitivity checks in a second constrained domain. | `I`, `E`, `C`, `t`, `Stab`, `S` |
+| `epidemic-regime` CSV runner | `python examples/run_epidemic_regime_csv.py examples/data/epidemic_regime_cases.csv` | User-case batch script + notes (`docs/epidemic_regime_csv.md`) | User-provided epidemic toy cases with deterministic regime-selection outputs. | `I`, `E`, `C`, `t`, `Stab`, `S` |
 
 ## Recommended path for a new scientific reader
 
