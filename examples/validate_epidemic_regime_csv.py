@@ -20,16 +20,20 @@ DEFAULT_INPUT = Path("examples/data/epidemic_regime_cases.csv")
 
 def _format_validation_table(rows: list[dict]) -> str:
     header = (
-        "case_id                sce_regime              heuristic               agree  top_score"
-        "\n----------------------------------------------------------------------------------"
+        "case_id                tx_x rec_x cap_x cost_x sce_regime              heuristic               agree  top"
+        "\n---------------------------------------------------------------------------------------------------------"
     )
     body = [
         (
             f"{row['case_id']:<22} "
+            f"{row['transmission_multiplier']:>4.2f} "
+            f"{row['recovery_support_multiplier']:>5.2f} "
+            f"{row['healthcare_capacity_multiplier']:>5.2f} "
+            f"{row['intervention_cost_multiplier']:>6.2f} "
             f"{row['selected_regime']:<23} "
             f"{row['heuristic_expected_regime']:<22} "
             f"{str(row['agreement']):<5} "
-            f"{row['top_score']:>8.4f}"
+            f"{row['top_score']:>7.4f}"
         )
         for row in rows
     ]

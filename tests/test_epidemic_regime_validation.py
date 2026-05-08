@@ -7,6 +7,7 @@ from pathlib import Path
 
 from sce.scenarios.epidemic_regime_csv import parse_epidemic_regime_cases, run_epidemic_regime_csv_cases
 from sce.scenarios.epidemic_regime_validation import (
+    EPIDEMIC_REGIME_LABELS,
     build_epidemic_regime_validation_rows,
     evaluate_epidemic_regime_heuristic,
 )
@@ -27,13 +28,26 @@ def test_heuristic_is_deterministic_for_known_case():
     )
 
     assert first == second
-    assert first["expected_regime"] in {
-        "uncontrolled_spread",
-        "managed_containment",
-        "overload_risk",
-        "recovery_dominant",
-        "suppressed_low_activity",
-    }
+    assert first["expected_regime"] == "overload_risk"
+    assert first["expected_regime"] in EPIDEMIC_REGIME_LABELS
+    assert {
+        "pressure_index",
+        "capacity_gap",
+        "recovery_balance",
+        "intervention_burden",
+    }.issubset(first)
+
+
+def test_heuristic_uses_existing_low_activity_regime_label():
+    result = evaluate_epidemic_regime_heuristic(
+        transmission_multiplier=0.78,
+        recovery_support_multiplier=1.05,
+        healthcare_capacity_multiplier=1.1,
+        intervention_cost_multiplier=0.9,
+    )
+
+    assert result["expected_regime"] == "suppressed_low_activity"
+    assert result["expected_regime"] in EPIDEMIC_REGIME_LABELS
 
 
 def test_validation_rows_include_agreement_boolean():
@@ -66,6 +80,9 @@ def test_validation_runner_writes_csv(tmp_path):
         rows = list(csv.DictReader(csv_file))
     assert rows
     assert rows[0]["agreement"] in {"True", "False"}
+    assert rows[0]["sce_selected_regime"]
+    assert rows[0]["pressure_index"]
+    assert rows[0]["heuristic_reason"]
 
 
 def test_validation_runner_fails_for_invalid_csv(tmp_path):
