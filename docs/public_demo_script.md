@@ -73,7 +73,37 @@ What to narrate:
 
 ---
 
-## 5) Hypothesis research demo (45–60 sec)
+## 5) Cyrillic Babel demo (45–60 sec)
+
+Command:
+
+```bash
+sce demo cyrillic-babel
+```
+
+What to narrate:
+- This is a finite possibility-space toy over Cyrillic candidates.
+- SCE applies normalization constraints and deterministic selection to produce one reproducible pattern.
+- Explicit non-claim: this is not language understanding; it is a transparent selection-and-persistence demonstration.
+
+---
+
+## 6) Selection Landscape demo (45–60 sec)
+
+Command:
+
+```bash
+sce demo selection-landscape
+```
+
+What to narrate:
+- This reports a sampled population rather than only a winner.
+- Show best, median, and worst candidates to make the stability distribution visible.
+- Position it as the bridge toward planned Constraint Sweep experiments.
+
+---
+
+## 7) Hypothesis research demo (45–60 sec)
 
 Command:
 

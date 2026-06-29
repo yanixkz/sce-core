@@ -25,13 +25,15 @@ SCE Core already provides:
 - episodic memory over executed episodes,
 - adaptive reselection influenced by memory/reliability,
 - inspectable API/graph/UI surfaces,
-- four flagship demos (`supplier-risk`, `hypothesis`, `resource-stability`, `epidemic-regime`) on one engine.
+- applied and research-facing demos (`supplier-risk`, `hypothesis`) plus scientific toy models (`resource-stability`, `epidemic-regime`, `cyrillic-babel`, `selection-landscape`) on one engine.
 
 The research agenda below extends this baseline. It starts with possibility spaces and stability selection because those concepts define what later CDS tracks operate on: candidate states, constraints, dynamics, selection pressure, and persistence signals.
 
 Concrete scientific scenarios in-repo:
 - `resource-stability` — deterministic toy population/resource regime selection under explicit constraints.
 - `epidemic-regime` — deterministic toy epidemic regime selection under spread/capacity/intervention constraints (not a validated epidemiology simulator).
+- `cyrillic-babel` — finite possibility-space and deterministic-selection toy without language-understanding claims.
+- `selection-landscape` — sampled candidate population with a transparent stability distribution.
 
 ---
 
@@ -78,8 +80,9 @@ represented, constrained, selected, and evaluated for persistence.
 - **Need:** compare different selection mechanisms across toy models using shared
   reporting: constraint strength, cost pressure, conflict pressure, support
   signals, reliability influence, and memory influence.
-- **Gap now:** resource-stability and epidemic-regime examples demonstrate
-  feasibility, but controlled comparison of selection pressures is limited.
+- **Gap now:** resource-stability, epidemic-regime, cyrillic-babel, and
+  selection-landscape examples demonstrate feasibility, but controlled comparison
+  of selection pressures is limited.
 - **CDS link:** comparing selection pressures helps distinguish model-specific
   behavior from reusable CDS mechanisms without claiming universal laws.
 
@@ -184,7 +187,7 @@ laws.
 2. **Constraint- and memory-aware explanation outputs**
 3. **Temporal reliability policy evaluation**
 4. **Replay/audit artifact standardization + transparent notebook path**
-5. **Shared-metric benchmark set (`supplier-risk`, `hypothesis`, `resource-stability`, `epidemic-regime`)**
+5. **Shared-metric benchmark set (`supplier-risk`, `hypothesis`, `resource-stability`, `epidemic-regime`, `cyrillic-babel`, `selection-landscape`)**
 6. **Reproducible toy-model comparisons against known dynamics where feasible**
 
 These steps stay close to current interfaces and avoid speculative architecture jumps.
@@ -203,5 +206,9 @@ The research program is intentionally coupled to product surfaces:
 - `epidemic-regime` is a second scientific toy-model window to test CDS stability selection in a different constrained domain.
   - walkthrough: [`epidemic_regime_demo.md`](epidemic_regime_demo.md).
   - heuristic baseline comparison: [`epidemic_regime_validation.md`](epidemic_regime_validation.md) for transparent early sanity checks (not ground truth validation).
+- `cyrillic-babel` is a possibility-space and deterministic-selection toy.
+  - demo notes: [`cyrillic_babel_demo.md`](cyrillic_babel_demo.md).
+- `selection-landscape` is a sampled stability-distribution toy and bridge to planned Constraint Sweep experiments.
+  - demo notes: [`selection_landscape.md`](selection_landscape.md).
 
 Roadmap sequencing of these priorities is tracked in [`../ROADMAP.md`](../ROADMAP.md).

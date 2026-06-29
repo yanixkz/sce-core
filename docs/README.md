@@ -26,7 +26,7 @@ This folder contains layered documentation for SCE Core.
 
 6. **Scientific positioning** — [`scientific_positioning.md`](scientific_positioning.md)
    - primary scientific framing: SCE as a CDS computational framework,
-   - applied AI decision engine as one domain,
+   - applied AI decision engine as one surface on the CDS framework,
    - explicit non-claims and near-term scientific method.
 
 7. **Scientific examples index** — [`scientific_examples.md`](scientific_examples.md)
@@ -60,6 +60,7 @@ This folder contains layered documentation for SCE Core.
 - Epidemic-regime heuristic validation baseline: [`epidemic_regime_validation.md`](epidemic_regime_validation.md)
 - Epidemic-regime scientific walkthrough: [`epidemic_regime_demo.md`](epidemic_regime_demo.md)
 - Cyrillic Babel possibility-space demo: [`cyrillic_babel_demo.md`](cyrillic_babel_demo.md)
+- Selection Landscape Explorer: [`selection_landscape.md`](selection_landscape.md)
 - Decision backbone details: [`DECISION_BACKBONE.md`](DECISION_BACKBONE.md)
 - Reliability-aware planning note: [`RELIABILITY_AWARE_PLANNING.md`](RELIABILITY_AWARE_PLANNING.md)
 - Controlled evolution note: [`CONTROLLED_EVOLUTION.md`](CONTROLLED_EVOLUTION.md)

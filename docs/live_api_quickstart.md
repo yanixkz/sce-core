@@ -48,6 +48,22 @@ curl -sS -X POST http://127.0.0.1:8000/demo \
   -d @examples/api_payloads/demo_epidemic_regime.json
 ```
 
+### `POST /demo` — cyrillic-babel
+
+```bash
+curl -sS -X POST http://127.0.0.1:8000/demo \
+  -H "Content-Type: application/json" \
+  -d @examples/api_payloads/demo_cyrillic_babel.json
+```
+
+### `POST /demo` — selection-landscape
+
+```bash
+curl -sS -X POST http://127.0.0.1:8000/demo \
+  -H "Content-Type: application/json" \
+  -d @examples/api_payloads/demo_selection_landscape.json
+```
+
 ### `POST /demo` — hypothesis
 
 ```bash

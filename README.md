@@ -8,15 +8,26 @@ dynamics select persistent structures from larger possibility spaces,
 with an applied decision-engine surface for AI agents.
 
 It combines:
-- constrained decision selection over explicit possibility spaces,
-- explainability via decision backbone extraction,
+- explicit possibility spaces for plans, hypotheses, regimes, and toy candidates,
+- constraints and dynamics that reduce and reshape those spaces,
+- stability selection and transparent ranking,
 - reliability tracking from outcomes and persistence signals,
-- episodic memory that influences later choices,
-- inspectable API/graph/UI surfaces.
+- episodic memory and inspectable API/graph/UI surfaces as applied layers.
 
 ```text
-Decide → Explain → Remember/Reliability → Improve
+Possibility Space
+↓
+Constraints
+↓
+Dynamics
+↓
+Selection
+↓
+Persistence
 ```
+
+The decision engine, API, memory, and reliability features remain practical surfaces
+built on the same CDS framework.
 
 ## Alpha release status
 
@@ -61,10 +72,10 @@ python examples/run_epidemic_regime_csv.py examples/data/epidemic_regime_cases.c
 ## What SCE Core is (and is not)
 
 SCE Core is not a chat wrapper and not only a demo collection.
-It is a reusable computational research and decision layer with demos, API endpoints, and theory/research documentation for constrained experiments over possibility spaces.
+It is a computational framework for studying selection and persistence in constrained experiments over possibility spaces, with reusable decision, API, memory, and reliability surfaces for applied workflows.
 
 - **Scientific framework layer:** CDS-oriented toy models and inspectable stability-selection workflows.
-- **Applied decision layer:** runnable demos and API/UI surfaces for agent decision tasks.
+- **Applied decision layer:** runnable demos and API/UI surfaces for agent decision tasks built on the same framework.
 - **Theory bridge:** CDS → SCE operational mapping.
 - **Research layer:** open problems grounded in implemented mechanisms for constraints, dynamics, selection, and persistence.
 - **Origin layer:** historical and philosophical motivation.
@@ -157,6 +168,30 @@ curl -X POST http://127.0.0.1:8000/compare \
 - Generic AI one-shot answer (baseline),
 - SCE ranked and inspectable decision output.
 
+## Scientific Evolution
+
+The scientific examples are evolving from single constrained-regime demos toward broader possibility-space and persistence experiments:
+
+```text
+Resource Stability
+↓
+Epidemic Regime
+↓
+Cyrillic Babel
+↓
+Selection Landscape
+↓
+Constraint Sweep (planned)
+```
+
+- **Resource Stability** demonstrates stable regime emergence under explicit resource constraints.
+- **Epidemic Regime** demonstrates selection among competing intervention regimes in a deterministic toy domain.
+- **Cyrillic Babel** demonstrates a finite possibility space, normalization constraints, deterministic selection, and a reproducible persistent pattern.
+- **Selection Landscape** demonstrates how stability is distributed across a sampled candidate population rather than only reporting the selected candidate.
+- **Constraint Sweep (planned)** will explore how changing constraint strength reshapes selected structures and persistence signals.
+
+SCE is not a theory of generation. It is a working research direction for studying selection and persistence through reproducible toy models, transparent scoring, and possibility-space exploration.
+
 ## Flagship demos
 
 Scientific entrypoint (recommended first stop for labs): [`docs/scientific_examples.md`](docs/scientific_examples.md).
@@ -194,6 +229,16 @@ Second compact CDS research-facing scenario in a different domain:
 - explicit spread/capacity/intervention constraints,
 - stability ranking with selected regime,
 - toy-model disclaimer to avoid epidemiological overclaiming.
+
+Details and run order are centralized in [`docs/scientific_examples.md`](docs/scientific_examples.md).
+
+### `cyrillic-babel` (scientific toy model)
+
+Possibility-space and deterministic-selection toy:
+- finite Cyrillic alphabet candidate space,
+- normalization constraints and deterministic address generation,
+- toy selection pressure over sampled candidates,
+- reproducible persistent pattern without language-understanding claims.
 
 Details and run order are centralized in [`docs/scientific_examples.md`](docs/scientific_examples.md).
 

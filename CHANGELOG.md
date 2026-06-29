@@ -15,6 +15,8 @@ Initial external-facing alpha surface for SCE Core as a reusable CDS-oriented co
   - `sce demo hypothesis`
   - `sce demo resource-stability`
   - `sce demo epidemic-regime`
+  - `sce demo cyrillic-babel`
+  - `sce demo selection-landscape`
 - Reusable API endpoints:
   - `POST /decide`
   - `POST /compare`

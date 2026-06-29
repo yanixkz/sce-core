@@ -3,10 +3,18 @@
 ## North Star
 
 ```text
-Decide. Explain. Improve.
+Possibility Space
+↓
+Constraints
+↓
+Dynamics
+↓
+Selection
+↓
+Persistence
 ```
 
-SCE Core is a computational CDS framework with an applied decision-engine surface for AI agents, built on one runtime loop.
+SCE Core is a computational framework for studying Constraint-Driven Stability (CDS): how constraints and dynamics select persistent structures from larger possibility spaces. Its decision engine, API, memory, and reliability features are applied surfaces on the same runtime loop.
 
 ## Scope of this roadmap
 
@@ -72,8 +80,9 @@ These tracks are intentionally coupled: product surfaces expose the same mechani
 - improve continuity between decision outputs and graph/backbone evidence,
 - strengthen reliability + episodic memory observability over multi-step runs.
 
-### Stage 3 — Benchmark pair maturity
+### Stage 3 — Scientific example maturity
 
+- maintain implemented scientific examples: Resource Stability, Epidemic Regime, Cyrillic Babel, and Selection Landscape,
 - evolve applied, research-facing, and scientific toy examples into a small shared-metrics benchmark set,
 - track where the same mechanisms transfer and where they fail,
 - document comparable evaluation signals.
@@ -156,9 +165,15 @@ Reusable inspectable API/UI/graph surfaces
 ↓
 Theory-anchored research expansion
 ↓
-Next planned scientific example: Constraint Sweep Explorer
+Planned scientific examples: Constraint Sweep Explorer, Persistence Over Time, Stability Basin Explorer
 ```
+
+## Planned scientific examples
+
+- **Constraint Sweep Explorer:** vary constraint strength and inspect how selection changes across a candidate population.
+- **Persistence Over Time:** replay or rerun toy systems to inspect persistence signals beyond one-step selection.
+- **Stability Basin Explorer:** map local neighborhoods around selected candidates to study robustness under perturbation.
 
 ## Documentation audit note
 
-Top-level roadmap documentation was synchronized after PRs #73–#75 to include `cyrillic-babel`, Cyrillic Babel v2 selection pressure, and `selection-landscape` while preserving conservative toy-model and non-claim language.
+Top-level roadmap documentation was synchronized after PRs #73–#75 to include `cyrillic-babel`, Cyrillic Babel v2 selection pressure, and `selection-landscape`; to list planned Constraint Sweep Explorer, Persistence Over Time, and Stability Basin Explorer work; and to preserve conservative toy-model and non-claim language.

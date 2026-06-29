@@ -89,8 +89,8 @@
     <section class="hero" id="positioning">
       <div>
         <div class="eyebrow">Constraint-Driven Stability framework · v0.1-alpha</div>
-        <h1>Model how adaptive systems select stable regimes under constraints.</h1>
-        <p class="sub">SCE Core is an early alpha computational framework for studying Constraint-Driven Stability (CDS): reproducible, deterministic toy models for explainable adaptive systems, plus an applied decision-engine surface for AI agents.</p>
+        <h1>Study how constraints and dynamics select persistent structures.</h1>
+        <p class="sub">SCE Core is an early alpha computational framework for studying Constraint-Driven Stability (CDS): how constraints and dynamics select persistent structures from larger possibility spaces, with an applied decision-engine surface for AI agents.</p>
         <div class="cta">
           <a class="btn primary" href="#science">See scientific examples</a>
           <a class="btn" href="#run">What you can run today</a>
@@ -107,48 +107,35 @@
         </div>
       </div>
       <div class="hero-side">
-        <div class="mini-title">Core cycle</div>
-        <pre>Constrained state
+        <div class="mini-title">Conceptual backbone</div>
+        <pre>Possibility Space
 ↓
-Candidate regimes / plans
+Constraints
 ↓
-Selection + ranking
+Dynamics
 ↓
-Explain decision-carrying structure
+Selection
 ↓
-Observe outcomes
-↓
-Reliability + episodic memory update
-↓
-Reselect under updated pressure</pre>
+Persistence</pre>
         <div class="hero-proof">
           <div class="proof"><strong>resource-stability</strong><span>Population/resource regime toy line</span></div>
           <div class="proof"><strong>epidemic-regime</strong><span>Transmission/capacity constraint toy line</span></div>
-          <div class="proof"><strong>hypothesis</strong><span>Research-facing decision/evidence demo</span></div>
-          <div class="proof"><strong>/decide · /compare · /ui</strong><span>Applied integration surfaces</span></div>
+          <div class="proof"><strong>cyrillic-babel</strong><span>Finite possibility-space toy</span></div>
+          <div class="proof"><strong>selection-landscape</strong><span>Sampled stability distribution</span></div>
         </div>
       </div>
     </section>
 
     <section id="science">
       <h2>Scientific examples (reproducible toy models)</h2>
-      <p class="lead">SCE Core now highlights deterministic toy examples for CDS-oriented study. These are reproducible and inspectable, but they are <strong>not</strong> validated domain simulators or production science models.</p>
+      <p class="lead">SCE Core now highlights deterministic toy examples for CDS-oriented study. These are reproducible and inspectable, but they are <strong>not</strong> validated domain simulators or production science models. SCE is not a theory of generation; it is a working research direction for studying selection and persistence.</p>
       <div class="grid-3">
-        <div class="card">
-          <h3>Resource Stability</h3>
-          <p>Resource-constrained population/regime selection under explicit constraints, including a walkthrough and a sensitivity grid experiment.</p>
-          <p><a class="btn" href="https://github.com/yanixkz/sce-core/blob/main/docs/resource_stability_walkthrough.md" target="_blank" rel="noreferrer">Walkthrough</a> <a class="btn" href="https://github.com/yanixkz/sce-core/blob/main/docs/resource_stability_sensitivity.md" target="_blank" rel="noreferrer">Sensitivity grid</a></p>
-        </div>
-        <div class="card">
-          <h3>Epidemic Regime</h3>
-          <p>Toy epidemic regime stability under transmission, capacity, and intervention constraints, designed for deterministic cross-domain CDS checks.</p>
-          <p><a class="btn" href="https://github.com/yanixkz/sce-core/blob/main/docs/epidemic_regime_demo.md" target="_blank" rel="noreferrer">Epidemic walkthrough</a></p>
-        </div>
-        <div class="card">
-          <h3>Hypothesis Research</h3>
-          <p>Research-facing decision/evidence demo on the same engine, useful for inspectable ranking and next-step action structure.</p>
-          <p><a class="btn" href="https://github.com/yanixkz/sce-core#demo-scenarios" target="_blank" rel="noreferrer">Scenario docs</a></p>
-        </div>
+        <div class="card"><h3>Resource Stability</h3><p>How stable regimes emerge under resource constraints.</p><p><a class="btn" href="https://github.com/yanixkz/sce-core/blob/main/docs/resource_stability_walkthrough.md" target="_blank" rel="noreferrer">Walkthrough</a></p></div>
+        <div class="card"><h3>Epidemic Regime</h3><p>Selection among competing intervention regimes in a deterministic toy domain.</p><p><a class="btn" href="https://github.com/yanixkz/sce-core/blob/main/docs/epidemic_regime_demo.md" target="_blank" rel="noreferrer">Epidemic walkthrough</a></p></div>
+        <div class="card"><h3>Cyrillic Babel</h3><p>Possibility space, normalization constraints, deterministic selection, and one reproducible pattern.</p><p><a class="btn" href="https://github.com/yanixkz/sce-core/blob/main/docs/cyrillic_babel_demo.md" target="_blank" rel="noreferrer">Cyrillic Babel docs</a></p></div>
+        <div class="card"><h3>Selection Landscape</h3><p>Distribution of stability across a sampled candidate population, including best, median, and worst context.</p><p><a class="btn" href="https://github.com/yanixkz/sce-core/blob/main/docs/selection_landscape.md" target="_blank" rel="noreferrer">Selection Landscape docs</a></p></div>
+        <div class="card"><h3>Constraint Sweep</h3><p>Planned next experiment for exploring how changing constraint strength reshapes selection and persistence signals.</p><p><a class="btn" href="https://github.com/yanixkz/sce-core/blob/main/ROADMAP.md" target="_blank" rel="noreferrer">Roadmap</a></p></div>
+        <div class="card"><h3>Applied surfaces</h3><p>Decision engine, API, memory, and reliability remain practical utility layers on the same CDS framework.</p></div>
       </div>
     </section>
 
@@ -158,6 +145,8 @@ Reselect under updated pressure</pre>
 $ python examples/resource_stability_walkthrough.py
 $ python examples/resource_stability_sensitivity.py
 $ sce demo epidemic-regime
+$ sce demo cyrillic-babel
+$ sce demo selection-landscape
 $ sce demo hypothesis
 $ uvicorn sce.api:app --reload
 # then open http://127.0.0.1:8000/docs and http://127.0.0.1:8000/ui</pre></div>

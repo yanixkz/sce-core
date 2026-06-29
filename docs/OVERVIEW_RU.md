@@ -31,7 +31,7 @@ SCE Core — не просто набор демо и не «чат-обёртк
 - episodic memory (с опциональной PostgreSQL-персистентностью),
 - adaptive reselection под влиянием памяти и надёжности,
 - inspectable API: `/decide`, `/memory`, `/reliability`, `/graph`, `/ui`,
-- четыре флагманских демо на одном движке: `supplier-risk`, `hypothesis`, `resource-stability`, `epidemic-regime`.
+- прикладные и исследовательские демо (`supplier-risk`, `hypothesis`) плюс научные toy-модели (`resource-stability`, `epidemic-regime`, `cyrillic-babel`, `selection-landscape`) на одном движке.
 
 ---
 
@@ -72,7 +72,23 @@ SCE Core — не просто набор демо и не «чат-обёртк
 - ранжирование по stability under constraints,
 - явный дисклеймер: это toy-модель, а не валидированный эпидемиологический симулятор.
 
-Научный набор примеров сейчас включает две CDS toy-линейки: `resource-stability` (включая sensitivity grid) и `epidemic-regime`.
+### `cyrillic-babel` (scientific toy model)
+
+Toy-сценарий про possibility space и deterministic selection:
+- конечное пространство кандидатов на кириллице,
+- constraints нормализации,
+- воспроизводимый selection address,
+- persistent pattern без claims про понимание языка.
+
+### `selection-landscape` (scientific toy model)
+
+Toy-сценарий про распределение stability по population sample:
+- явные scoring dimensions,
+- weighted stability distribution,
+- best/median/worst context,
+- мост к planned Constraint Sweep Explorer.
+
+Научный набор примеров сейчас включает `resource-stability`, `epidemic-regime`, `cyrillic-babel` и `selection-landscape`; следующий запланированный шаг — Constraint Sweep Explorer.
 
 ---
 
@@ -120,7 +136,7 @@ SCE Core — не просто набор демо и не «чат-обёртк
 
 - усиление inspectability и replayability,
 - улучшение temporal dynamics для reliability/memory,
-- развитие набора `supplier-risk` + `hypothesis` + `resource-stability` + `epidemic-regime` как benchmark-минимума,
+- развитие набора `supplier-risk` + `hypothesis` + `resource-stability` + `epidemic-regime` + `cyrillic-babel` + `selection-landscape` как benchmark-минимума,
 - дальнейшее укрепление API/UI без ломки контрактов.
 
 Исследовательские открытые задачи: [`research_program.md`](research_program.md).
