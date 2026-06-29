@@ -68,6 +68,13 @@ DEMO_REGISTRY: dict[str, Callable[[], DemoSpec]] = {
         run_fn="run_cyrillic_babel_demo",
         format_fn="format_cyrillic_babel_demo",
     ),
+    "selection-landscape": _demo_spec_from_module(
+        name="selection-landscape",
+        title="Selection Landscape Explorer (Scientific Toy)",
+        module="sce.scenarios.selection_landscape",
+        run_fn="run_selection_landscape_demo",
+        format_fn="format_selection_landscape_demo",
+    ),
     "adaptive-agent": _demo_spec_from_module(
         name="adaptive-agent",
         title="Adaptive Agent",
@@ -245,7 +252,7 @@ def main() -> None:
         title="commands",
         description=(
             "Canonical entrypoints: `sce demo`, `sce demo supplier-risk`, "
-            "`sce demo hypothesis`, `sce demo resource-stability`, `sce demo epidemic-regime`, `sce demo cyrillic-babel`, `sce demo list`."
+            "`sce demo hypothesis`, `sce demo resource-stability`, `sce demo epidemic-regime`, `sce demo cyrillic-babel`, `sce demo selection-landscape`, `sce demo list`."
         ),
     )
     demo_parser = sub.add_parser(
@@ -254,7 +261,7 @@ def main() -> None:
         description=(
             "Run canonical SCE demos. Use `supplier-risk` for a practical product story "
             "`hypothesis` for competing hypotheses, `resource-stability` for CDS toy modeling, "
-            "and `epidemic-regime` or `cyrillic-babel` for scientific toy domains."
+            "and `epidemic-regime`, `cyrillic-babel`, or `selection-landscape` for scientific toy domains."
         ),
     )
     demo_parser.add_argument(
