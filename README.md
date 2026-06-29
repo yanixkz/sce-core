@@ -38,6 +38,7 @@ sce demo
 sce demo hypothesis
 sce demo resource-stability
 sce demo epidemic-regime
+sce demo cyrillic-babel
 ```
 
 Run the API and open UI:
@@ -74,6 +75,7 @@ sce demo supplier-risk
 sce demo hypothesis
 sce demo resource-stability
 sce demo epidemic-regime
+sce demo cyrillic-babel
 sce demo list
 sce export-graph
 sce visualize-graph

@@ -54,6 +54,7 @@ This folder contains layered documentation for SCE Core.
 - Resource-stability heuristic validation baseline: [`resource_stability_validation.md`](resource_stability_validation.md)
 - Epidemic-regime heuristic validation baseline: [`epidemic_regime_validation.md`](epidemic_regime_validation.md)
 - Epidemic-regime scientific walkthrough: [`epidemic_regime_demo.md`](epidemic_regime_demo.md)
+- Cyrillic Babel possibility-space demo: [`cyrillic_babel_demo.md`](cyrillic_babel_demo.md)
 - Decision backbone details: [`DECISION_BACKBONE.md`](DECISION_BACKBONE.md)
 - Reliability-aware planning note: [`RELIABILITY_AWARE_PLANNING.md`](RELIABILITY_AWARE_PLANNING.md)
 - Controlled evolution note: [`CONTROLLED_EVOLUTION.md`](CONTROLLED_EVOLUTION.md)
