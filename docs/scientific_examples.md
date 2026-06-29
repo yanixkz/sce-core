@@ -18,6 +18,7 @@ Want to validate backend endpoints with real requests (outside CLI demos)? See [
 | `epidemic-regime` walkthrough | `python examples/epidemic_regime_walkthrough.py` | Walkthrough script + notes (`docs/epidemic_regime_demo.md`) | Candidate comparison and deterministic sensitivity checks in a second constrained domain. | `I`, `E`, `C`, `t`, `Stab`, `S` |
 | `epidemic-regime` CSV runner | `python examples/run_epidemic_regime_csv.py examples/data/epidemic_regime_cases.csv` | User-case batch script + notes (`docs/epidemic_regime_csv.md`) | User-provided epidemic toy cases with deterministic regime-selection outputs. | `I`, `E`, `C`, `t`, `Stab`, `S` |
 | `cyrillic-babel` | `sce demo cyrillic-babel` or `python examples/cyrillic_babel_demo.py` | CLI scientific toy + standalone example (`docs/cyrillic_babel_demo.md`) | Finite Cyrillic alphabet possibility space, normalization constraints, deterministic selection address, toy selection pressure over sampled Cyrillic candidates, and persistence of one reproducible pattern. | possibility space, `C`, selection, persistent pattern |
+| `selection-landscape` | `sce demo selection-landscape` or `python examples/selection_landscape_demo.py` | CLI scientific toy + standalone example (`docs/selection_landscape.md`) | Deterministic possibility-space sample with candidate score dimensions, weighted stability distribution, and best/median/worst selection context. | `I`, `E`, `C`, `t`, `Stab`, `S` |
 | `epidemic-regime` heuristic validation | `python examples/validate_epidemic_regime_csv.py examples/data/epidemic_regime_cases.csv` | Baseline comparison script + notes (`docs/epidemic_regime_validation.md`) | Early behavioral sanity check: SCE selected epidemic regime vs transparent heuristic expectation. | `C`, `Stab`, `S` |
 
 ## Recommended path for a new scientific reader
@@ -29,18 +30,23 @@ Want to validate backend endpoints with real requests (outside CLI demos)? See [
 5. Run the CSV case runner (`python examples/run_resource_stability_csv.py examples/data/resource_stability_cases.csv`).
 6. Run `sce demo epidemic-regime`.
 7. Run `sce demo cyrillic-babel` for a compact possibility-space and selection toy.
-8. Read the broader open-problems roadmap in [`research_program.md`](research_program.md).
+8. Run `sce demo selection-landscape` for a reproducible toy selection experiment over a sampled stability landscape.
+9. Read the broader open-problems roadmap in [`research_program.md`](research_program.md).
 
 ## CDS mapping summary across examples
 
-| CDS element | `resource-stability` family | `epidemic-regime` family | `cyrillic-babel` toy |
-|---|---|---|---|
-| `I` (state information) | Population, available resources, consumption and regeneration rates. | Susceptible/infected/recovered state, transmission and overload pressures. | Normalized phrase and string length. |
-| `E` (capacity/support) | Resource stock and regeneration capacity. | Healthcare capacity and recovery support. | Finite alphabet capacity that bounds constructible strings. |
-| `C` (constraints) | Hard pressure guardrail + soft regeneration-vs-consumption viability pressure. | Hard overload guardrail + soft transmission and intervention-cost pressures. | Allowed characters, fixed length, and normalization. |
-| `t` (candidate transition step) | Deterministic transition from initial unstable regime to candidate carrying/non-carrying regimes. | Deterministic transition from escalating regime to candidate intervention regimes. | Deterministic normalization, candidate sampling, scoring, and hash-address generation. |
-| `Stab` (scoring + selection) | Weighted CDS-style stability ranking under explicit constraints. | Same ranking principle in a different constrained domain. | Toy scorer; illustrates transparent selection pressure over sampled Cyrillic candidates from a constrained space. |
-| `S` (selected stable regime) | Top-ranked selected state (`selected_state`) with transparent score table. | Top-ranked selected regime (`selected_regime`) with transparent score table. | The normalized phrase as selected point and persistent pattern. |
+| CDS element | `resource-stability` family | `epidemic-regime` family | `cyrillic-babel` toy | `selection-landscape` toy |
+|---|---|---|---|---|
+| `I` (state information) | Population, available resources, consumption and regeneration rates. | Susceptible/infected/recovered state, transmission and overload pressures. | Normalized phrase and string length. | Candidate score dimensions and population state. |
+| `E` (capacity/support) | Resource stock and regeneration capacity. | Healthcare capacity and recovery support. | Finite alphabet capacity that bounds constructible strings. | Support/capacity dimension in the candidate score. |
+| `C` (constraints) | Hard pressure guardrail + soft regeneration-vs-consumption viability pressure. | Hard overload guardrail + soft transmission and intervention-cost pressures. | Allowed characters, fixed length, and normalization. | Scoring constraints and penalties for entropy, conflict, and cost. |
+| `t` (candidate transition step) | Deterministic transition from initial unstable regime to candidate carrying/non-carrying regimes. | Deterministic transition from escalating regime to candidate intervention regimes. | Deterministic normalization, candidate sampling, scoring, and hash-address generation. | Deterministic candidate generation and ranking step. |
+| `Stab` (scoring + selection) | Weighted CDS-style stability ranking under explicit constraints. | Same ranking principle in a different constrained domain. | Toy scorer; illustrates transparent selection pressure over sampled Cyrillic candidates from a constrained space. | Weighted stability score across the sampled landscape. |
+| `S` (selected stable regime) | Top-ranked selected state (`selected_state`) with transparent score table. | Top-ranked selected regime (`selected_regime`) with transparent score table. | The normalized phrase as selected point and persistent pattern. | Best-ranked candidate plus distribution context. |
+
+## Documentation audit note
+
+Top-level scientific documentation was synchronized after PRs #73–#75 to include the Cyrillic Babel, Cyrillic Babel v2 selection-pressure, and Selection Landscape Explorer additions without adding prediction, intelligence, consciousness, or validated-simulator claims.
 
 ## Extension ideas
 

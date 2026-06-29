@@ -22,7 +22,9 @@ For issue/PR workstream routing, see [`docs/governance.md`](docs/governance.md).
 
 SCE Core already includes:
 
-- flagship demos: `supplier-risk` (applied), `hypothesis` (research-facing), `resource-stability` and `epidemic-regime` (scientific toy models),
+- applied demo: `supplier-risk`,
+- research-facing demo: `hypothesis`,
+- scientific toy models: `resource-stability`, `epidemic-regime`, `cyrillic-babel`, and `selection-landscape`,
 - decision selection over candidate plans,
 - constraint filtering/validation,
 - decision backbone extraction,
@@ -72,7 +74,7 @@ These tracks are intentionally coupled: product surfaces expose the same mechani
 
 ### Stage 3 — Benchmark pair maturity
 
-- evolve `supplier-risk`, `hypothesis`, and `resource-stability` into a small shared-metrics benchmark set,
+- evolve applied, research-facing, and scientific toy examples into a small shared-metrics benchmark set,
 - track where the same mechanisms transfer and where they fail,
 - document comparable evaluation signals.
 
@@ -117,6 +119,22 @@ Scientific toy probe of:
 - selected regime with transparent non-selected alternatives,
 - explicit toy-model disclaimer to avoid epidemiological overclaiming.
 
+### `cyrillic-babel`
+
+Scientific toy probe of:
+- finite Cyrillic alphabet possibility space,
+- deterministic normalization and selection address,
+- transparent toy selection pressure over sampled candidates,
+- reproducible persistent pattern without language-understanding claims.
+
+### `selection-landscape`
+
+Scientific toy probe of:
+- deterministic candidate population sampled from a toy possibility space,
+- explicit scoring dimensions and weighted stability distribution,
+- best, median, and worst candidates for ranking context,
+- bridge toward future Constraint Sweep Explorer experiments.
+
 ---
 
 ## Status summary
@@ -128,9 +146,19 @@ Current emphasis:
 ```text
 One engine
 ↓
-Four flagship windows (supplier-risk, hypothesis, resource-stability, epidemic-regime)
+Applied: supplier-risk
+↓
+Research-facing: hypothesis
+↓
+Scientific toy models: resource-stability, epidemic-regime, cyrillic-babel, selection-landscape
 ↓
 Reusable inspectable API/UI/graph surfaces
 ↓
 Theory-anchored research expansion
+↓
+Next planned scientific example: Constraint Sweep Explorer
 ```
+
+## Documentation audit note
+
+Top-level roadmap documentation was synchronized after PRs #73–#75 to include `cyrillic-babel`, Cyrillic Babel v2 selection pressure, and `selection-landscape` while preserving conservative toy-model and non-claim language.

@@ -40,6 +40,7 @@ sce demo hypothesis
 sce demo resource-stability
 sce demo epidemic-regime
 sce demo cyrillic-babel
+sce demo selection-landscape
 ```
 
 Run the API and open UI:
@@ -77,6 +78,7 @@ sce demo hypothesis
 sce demo resource-stability
 sce demo epidemic-regime
 sce demo cyrillic-babel
+sce demo selection-landscape
 sce demo list
 sce export-graph
 sce visualize-graph
@@ -195,6 +197,16 @@ Second compact CDS research-facing scenario in a different domain:
 
 Details and run order are centralized in [`docs/scientific_examples.md`](docs/scientific_examples.md).
 
+### `selection-landscape` (scientific toy model)
+
+Deterministic possibility-space sample for a reproducible selection experiment:
+- toy candidate population with explicit scoring dimensions,
+- weighted stability distribution over the full sampled landscape,
+- best, median, and worst candidates reported for distribution context,
+- bridge toward future Constraint Sweep Explorer experiments.
+
+This demo is a toy model only; it makes no prediction or intelligence claims. Details and run order are centralized in [`docs/scientific_examples.md`](docs/scientific_examples.md).
+
 ## Why this architecture matters
 
 SCE Core treats candidate plans, hypotheses, or toy regimes as a bounded
@@ -223,6 +235,8 @@ This coupling is what makes the system both practical and research-relevant.
 - **Epidemic-regime CSV batch runner:** [`docs/epidemic_regime_csv.md`](docs/epidemic_regime_csv.md)
 - **Resource-stability heuristic validation baseline:** [`docs/resource_stability_validation.md`](docs/resource_stability_validation.md)
 - **Epidemic-regime heuristic validation baseline:** [`docs/epidemic_regime_validation.md`](docs/epidemic_regime_validation.md)
+- **Cyrillic Babel scientific toy:** [`docs/cyrillic_babel_demo.md`](docs/cyrillic_babel_demo.md)
+- **Selection Landscape Explorer:** [`docs/selection_landscape.md`](docs/selection_landscape.md)
 - **Scientist outreach/readiness pitch:** [`docs/scientist_pitch.md`](docs/scientist_pitch.md)
 - **Public demo script (5–7 min):** [`docs/public_demo_script.md`](docs/public_demo_script.md)
 - **Scientific positioning:** [`docs/scientific_positioning.md`](docs/scientific_positioning.md)
@@ -238,7 +252,7 @@ Near-term work stays split across product and research, on one engine:
 
 - improve decision inspectability and replayability,
 - make reliability/memory policies more robust over time,
-- evolve `supplier-risk`, `hypothesis`, `resource-stability`, and `epidemic-regime` into a compact benchmark set,
+- evolve `supplier-risk`, `hypothesis`, `resource-stability`, `epidemic-regime`, `cyrillic-babel`, and `selection-landscape` into a compact benchmark set,
 - continue hardening API/UI surfaces without breaking compatibility.
 
 Details: [`ROADMAP.md`](ROADMAP.md) and [`docs/research_program.md`](docs/research_program.md).
