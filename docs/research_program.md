@@ -8,6 +8,7 @@ It is not a product guide and not a manifesto.
 Related layers:
 - Product entrypoint: [`../README.md`](../README.md)
 - Theory bridge (CDS → SCE): [`constraint_driven_stability.md`](constraint_driven_stability.md)
+- Possibility spaces and stability selection: [`possibility_and_selection.md`](possibility_and_selection.md)
 - Scientific examples entrypoint: [`scientific_examples.md`](scientific_examples.md)
 - Historical origin: [`origin.md`](origin.md)
 - Delivery sequencing: [`../ROADMAP.md`](../ROADMAP.md)
@@ -26,11 +27,66 @@ SCE Core already provides:
 - inspectable API/graph/UI surfaces,
 - four flagship demos (`supplier-risk`, `hypothesis`, `resource-stability`, `epidemic-regime`) on one engine.
 
-The research agenda below extends this baseline.
+The research agenda below extends this baseline. It starts with possibility spaces and stability selection because those concepts define what later CDS tracks operate on: candidate states, constraints, dynamics, selection pressure, and persistence signals.
 
 Concrete scientific scenarios in-repo:
 - `resource-stability` — deterministic toy population/resource regime selection under explicit constraints.
 - `epidemic-regime` — deterministic toy epidemic regime selection under spread/capacity/intervention constraints (not a validated epidemiology simulator).
+
+---
+
+## Track 0 — Possibility Spaces and Stability Selection
+
+This track makes the new CDS framing explicit:
+
+```text
+Possibility Space → Constraints → Dynamics → Selection → Persistence
+```
+
+It connects to every later track because structural explainability, reliability,
+memory, graph analysis, and benchmarks all depend on how candidate spaces are
+represented, constrained, selected, and evaluated for persistence.
+
+### 0.1 Representation of possibility spaces
+
+- **Need:** define how candidate states, plans, hypotheses, regimes, or graph
+  paths are represented before selection begins.
+- **Gap now:** current demos expose candidate sets, but representation choices are
+  not yet compared systematically across domains.
+- **CDS link:** constraints and dynamics can only be studied relative to a stated
+  possibility space.
+
+### 0.2 Stability selection mechanisms
+
+- **Need:** compare how constraints, dynamics, costs, conflicts, support signals,
+  memory, and reliability reduce large possibility spaces.
+- **Gap now:** selection is inspectable inside individual demos, but cross-demo
+  selection mechanisms are not yet organized as a shared research object.
+- **CDS link:** stability selection is the operational bridge between possible
+  candidates and persistent structures.
+
+### 0.3 Persistence metrics
+
+- **Need:** measure persistence beyond immediate viability or one-step ranking.
+- **Gap now:** reliability and repeated outcomes exist, but persistence metrics
+  across perturbations, reselection cycles, and memory updates remain early.
+- **CDS link:** persistence is the observable target of stability-oriented
+  experiments.
+
+### 0.4 Selection pressure comparison
+
+- **Need:** compare different selection mechanisms across toy models using shared
+  reporting: constraint strength, cost pressure, conflict pressure, support
+  signals, reliability influence, and memory influence.
+- **Gap now:** resource-stability and epidemic-regime examples demonstrate
+  feasibility, but controlled comparison of selection pressures is limited.
+- **CDS link:** comparing selection pressures helps distinguish model-specific
+  behavior from reusable CDS mechanisms without claiming universal laws.
+
+Track 0 should remain conservative: it supports computational frameworks, toy
+models, inspectable mechanisms, and constrained experiments. It should not be
+used to claim that CDS explains reality, consciousness, physics, or universal
+laws.
 
 ---
 
@@ -124,11 +180,12 @@ Concrete scientific scenarios in-repo:
 
 ## Near-term grounded research priorities
 
-1. **Constraint- and memory-aware explanation outputs**
-2. **Temporal reliability policy evaluation**
-3. **Replay/audit artifact standardization + transparent notebook path**
-4. **Shared-metric benchmark set (`supplier-risk`, `hypothesis`, `resource-stability`, `epidemic-regime`)**
-5. **Reproducible toy-model comparisons against known dynamics where feasible**
+1. **Possibility-space representation and persistence-metric specification**
+2. **Constraint- and memory-aware explanation outputs**
+3. **Temporal reliability policy evaluation**
+4. **Replay/audit artifact standardization + transparent notebook path**
+5. **Shared-metric benchmark set (`supplier-risk`, `hypothesis`, `resource-stability`, `epidemic-regime`)**
+6. **Reproducible toy-model comparisons against known dynamics where feasible**
 
 These steps stay close to current interfaces and avoid speculative architecture jumps.
 

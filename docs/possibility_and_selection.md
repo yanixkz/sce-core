@@ -1,137 +1,182 @@
 # Possibility Spaces and Stability Selection
 
-This note adds a foundational framing layer for Constraint-Driven Stability (CDS).
+This document introduces a conservative framing layer for Constraint-Driven
+Stability (CDS) and SCE Core:
 
-CDS is not only a way to describe how stable structures emerge. It can also be read as a way to study how persistent structures are selected from a much larger space of possible states.
+```text
+Possibility Space → Constraints → Dynamics → Selection → Persistence
+```
+
+The purpose is not to expand CDS into a universal theory. The purpose is to make
+explicit a research perspective that is already present in the implemented toy
+models: many candidate states are possible, only some are admissible under
+constraints, fewer remain viable under dynamics, and a smaller subset persists
+across repeated evaluation.
 
 ## The Library of Babel problem
 
-Jorge Luis Borges' *The Library of Babel* and later computational versions of that idea illustrate a maximal possibility space: every possible text exists somewhere in the library.
+Borges' *Library of Babel* is a useful metaphor for a maximal possibility space:
+if every possible text exists somewhere, then truth, usefulness, and coherence are
+not produced by possibility alone.
 
-The important lesson is not that the library contains truth. It is that possibility alone does not create meaning, usefulness, or persistence.
+A maximal library contains coherent statements, false statements, contradictions,
+near misses, accidental patterns, and overwhelming noise. The scientific lesson
+for SCE Core is modest: generation is not enough. A system that can enumerate or
+sample possibilities still needs inspectable mechanisms for filtering, ranking,
+and retaining candidates.
 
-A maximal possibility space contains:
+In this framing, the central problem is selection under constraints rather than
+unbounded generation.
 
-- coherent statements,
-- false statements,
-- near-truths,
-- contradictions,
-- accidental patterns,
-- overwhelming noise.
+## Possibility spaces
 
-The central problem is therefore not generation. It is selection.
+A **possibility space** is the set of candidate states, actions, regimes, or
+hypotheses available under a given representation.
 
-If many states are possible, which ones become observable, usable, repeatable, or persistent?
+Examples in or near the current project include:
 
-## Possibility space
+- candidate plans for an agent decision task,
+- candidate hypotheses in a research workflow,
+- candidate population/resource regimes in a toy ecology,
+- candidate epidemic response regimes in a toy public-health model,
+- candidate graph trajectories under explicit constraints.
 
-A **possibility space** is the set of candidate states that could exist under a given representation.
+A possibility space may be finite, continuous, generated lazily, or represented
+only by a candidate sampler. SCE Core currently uses small and inspectable spaces
+so that constraints, scoring, and explanations remain auditable.
 
-Examples:
+## Constraints
 
-- all possible texts under a fixed alphabet and length,
-- all possible decisions available to an agent,
-- all possible resource/population regimes in a toy ecology,
-- all possible epidemic response regimes in a toy public-health model,
-- all possible market configurations under a set of commercial constraints.
+Constraints define which parts of a possibility space are admissible or relevant
+for a given experiment. They may encode resource limits, safety requirements,
+capacity bounds, intervention limits, reliability thresholds, or domain-specific
+rules.
 
-A possibility space may be finite, countably large, continuous, or only implicitly represented.
+In CDS-oriented work, constraints should be stated explicitly because they shape
+what can be selected. A candidate that looks stable under one constraint set may
+be fragile or inadmissible under another.
 
-For SCE Core, the operational form is usually smaller and explicit:
+## Dynamics
 
-```text
-candidate states/actions + context + constraints + scoring/reliability signals
-```
+Dynamics describe how candidate states change, compete, degrade, reinforce, or
+are re-evaluated over time. In the current repository, these dynamics are
+intentionally simple: deterministic toy-model updates, scoring rules,
+reselection, memory effects, and reliability updates.
 
-The philosophical form is broader:
-
-```text
-possibility space -> constraints -> dynamics -> stability selection -> persistence
-```
+This simplicity is a feature of the research method. It keeps the mechanism
+inspectable and avoids implying that the framework already models open-ended
+physical, biological, social, or cognitive reality.
 
 ## Stability selection
 
-**Stability selection** is the filtering process by which some candidate states persist while most alternatives disappear, fail, remain unreachable, or become irrelevant.
+**Stability selection** is the process by which constraints and dynamics reduce a
+large possibility space to candidates that are viable enough to be selected,
+reselected, or retained.
 
-In CDS terms, selection is shaped by:
+Operationally, SCE Core studies stability selection through mechanisms such as:
 
-- constraints that define admissible trajectories,
-- dynamics that transform states over time,
-- costs that penalize unsustainable paths,
-- conflicts that destabilize incompatible structures,
-- support signals that reinforce viable configurations,
-- memory/reliability traces that change later selection pressure.
+- candidate generation or enumeration,
+- admissibility checks,
+- stability-oriented scoring,
+- ranking and choice,
+- reliability updates from observed outcomes,
+- episodic memory that can influence future reselection,
+- decision-backbone extraction for inspectable explanations.
 
-The CDS stability score remains a local operational approximation of this broader selection process:
-
-```text
-Stab(x) = a*Cohesion - b*Cost - c*Conflict - d*Entropy + e*Support
-```
-
-This is not claimed as a universal law. It is a working formalization for inspectable experiments.
+The current scoring functions are working approximations for constrained
+experiments, not claims about universal laws.
 
 ## Persistent structures
 
-A persistent structure is not merely a generated candidate. It is a candidate that survives repeated filtering under constraints and dynamics.
+A **persistent structure** is a candidate pattern, regime, plan, hypothesis, or
+trajectory that survives relevant selection pressure beyond immediate generation.
+Persistence may mean that a candidate remains viable across repeated runs,
+continues to satisfy constraints after perturbation, receives stable reliability
+signals, or leaves memory traces that support future reselection.
 
-This distinction matters:
+Persistence should not be equated with truth, optimality, or inevitability. In
+SCE Core, it is an operational property measured within a specific model,
+constraint set, and evaluation protocol.
 
-- A generated answer is not necessarily reliable.
-- A possible regime is not necessarily viable.
-- A reachable state is not necessarily stable.
-- A repeated pattern is not necessarily meaningful unless it survives relevant selection pressures.
+## Relation to CDS
 
-CDS focuses on the subset of possibilities that can persist.
+CDS can be framed as the study of how stable or persistent structures appear
+within constrained dynamical settings. The possibility-space perspective makes
+the selection problem explicit:
+
+```text
+large candidate space
+→ explicit constraints
+→ model dynamics and scoring
+→ stability selection
+→ measured persistence or failure
+```
+
+This connects directly to CDS without requiring grand claims. It asks how
+constraints and dynamics alter the distribution of selected outcomes in toy
+models and decision workflows.
 
 ## Relation to SCE Core
 
-SCE Core implements a small, inspectable version of this idea.
+SCE Core implements small, inspectable versions of this framing.
 
-Current mechanisms map to the framing as follows:
-
-| Foundational concept | SCE Core mechanism |
+| Framing concept | SCE Core operational counterpart |
 | --- | --- |
-| Possibility space | candidate actions / regimes / hypotheses |
-| Constraints | admissibility checks and explicit context limits |
-| Dynamics | scoring, reselection, demo-specific transition logic |
-| Selection | ranking, viability checks, stability-oriented choice |
-| Persistence | memory, reliability, repeated successful outcomes |
-| Explanation | decision backbone and inspectable API/graph surfaces |
+| Possibility space | candidate actions, regimes, hypotheses, or graph paths |
+| Constraints | explicit context limits, admissibility checks, and policy rules |
+| Dynamics | scoring, deterministic demo updates, reselection, reliability, memory |
+| Selection | ranked choices, viability checks, stability-oriented decisions |
+| Persistence | repeated viability, reliability traces, memory-supported reselection |
+| Explanation | decision backbone, graph export, API/UI inspection surfaces |
 
-This means SCE Core can be described as a computational research framework for studying how stability-oriented selection operates over constrained possibility spaces.
+The repository should therefore be read as a computational framework and research
+program for constrained experiments, not as a completed theory of nature.
 
 ## Research question
 
-The updated foundational question is:
+The guiding research question is:
 
 > Why do some structures persist while most possibilities disappear?
 
-A shorter philosophical form is:
+A narrower operational version is:
+
+> Under explicit constraints and toy dynamics, which candidates are selected,
+> which disappear, and what measurable signals distinguish persistent structures
+> from transient possibilities?
+
+## Philosophical version
+
+The philosophical version is:
 
 > What selects reality from possibility?
 
-The near-term scientific version is narrower and testable:
+Within this repository, that question is treated as motivation only. The
+scientific work remains limited to computational frameworks, toy models,
+inspectable mechanisms, and constrained experiments.
 
-> Under explicit toy constraints and scoring rules, which candidate regimes are repeatedly selected as viable, and how does that selection change when constraints, costs, reliability, or memory change?
+## Explicit non-claims
 
-## Non-claims
+This document does not claim that CDS or SCE Core:
 
-This note does not claim that SCE Core solves Borges' Library of Babel, explains reality in full, or provides a universal physics of selection.
+- explains reality as a whole,
+- provides a theory of consciousness,
+- replaces physics, biology, economics, or social science,
+- discovers universal laws of selection,
+- proves that persistence implies truth or value,
+- validates real-world epidemiological, ecological, or market predictions from
+  the current toy models.
 
-It only adds a framing layer:
+The claim is narrower: possibility spaces, constraints, dynamics, selection, and
+persistence provide a useful vocabulary for organizing SCE Core experiments and
+future CDS research.
 
-- possibility spaces are usually much larger than observed structures,
-- generation alone is insufficient,
-- constraints and dynamics create selection pressure,
-- persistence is the observable result to study.
+## Practical checklist for future examples
 
-## Practical implication
+Each new CDS/SCE example should state:
 
-For future SCE/CDS work, each scientific example should make four things explicit:
-
-1. What is the possibility space?
-2. What constraints reduce or shape it?
-3. What selection mechanism ranks or filters candidates?
-4. What counts as persistence or stability?
-
-This keeps the project grounded while preserving the broader philosophical motivation.
+1. What possibility space is being represented?
+2. Which constraints shape admissibility?
+3. What dynamics update or transform candidates?
+4. What selection mechanism ranks or filters candidates?
+5. What counts as persistence, instability, or disappearance?
+6. Which claims are explicitly out of scope?
