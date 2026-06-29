@@ -25,6 +25,8 @@ python examples/resource_stability_walkthrough.py
 python examples/resource_stability_sensitivity.py
 sce demo epidemic-regime
 python examples/epidemic_regime_walkthrough.py
+sce demo cyrillic-babel
+sce demo selection-landscape
 sce demo hypothesis
 ```
 
@@ -75,6 +77,8 @@ If you have 15–20 minutes, I’d value your feedback on whether this framing i
 If useful, I can send a minimal run path and outputs for:
 - `resource-stability` (+ sensitivity grid)
 - `epidemic-regime`
+- `cyrillic-babel`
+- `selection-landscape`
 - `hypothesis`
 
 Thanks for considering it,

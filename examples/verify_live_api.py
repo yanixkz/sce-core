@@ -98,6 +98,8 @@ def main() -> int:
     checks = [
         EndpointCheck("POST /demo (resource-stability)", "POST", "/demo", "demo_resource_stability.json"),
         EndpointCheck("POST /demo (epidemic-regime)", "POST", "/demo", "demo_epidemic_regime.json"),
+        EndpointCheck("POST /demo (cyrillic-babel)", "POST", "/demo", "demo_cyrillic_babel.json"),
+        EndpointCheck("POST /demo (selection-landscape)", "POST", "/demo", "demo_selection_landscape.json"),
         EndpointCheck("POST /demo (hypothesis)", "POST", "/demo", "demo_hypothesis.json"),
         EndpointCheck("POST /compare", "POST", "/compare", "compare_epidemic_context.json"),
         EndpointCheck("POST /decide", "POST", "/decide", "decide_resource_context.json"),

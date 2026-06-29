@@ -18,7 +18,7 @@
 <body>
   <div class="container">
     <h1>SCE Core v0.1-alpha: computational framework for Constraint-Driven Stability</h1>
-    <p>Mirror page: SCE Core is an early alpha CDS-oriented framework with reproducible deterministic toy examples and an applied AI-agent decision API surface.</p>
+    <p>Mirror page: SCE Core is an early alpha computational framework for studying Constraint-Driven Stability: how constraints and dynamics select persistent structures from larger possibility spaces. The AI-agent decision API is an applied surface on the same framework.</p>
 
     <div class="cta">
       <a class="btn" href="../index.html">Open main landing</a>
@@ -26,11 +26,16 @@
       <a class="btn" href="https://github.com/yanixkz/sce-core">GitHub</a>
     </div>
 
+    <h2>Conceptual backbone</h2>
+    <div class="card">Possibility Space<br/>↓<br/>Constraints<br/>↓<br/>Dynamics<br/>↓<br/>Selection<br/>↓<br/>Persistence</div>
+
     <h2>Scientific examples</h2>
     <div class="card">
-      <strong>resource-stability</strong> + walkthrough + sensitivity grid<br/>
-      <strong>epidemic-regime</strong> toy regime selection under explicit constraints<br/>
-      <strong>hypothesis</strong> research-facing decision/evidence demo
+      <strong>resource-stability</strong> — stable regimes under resource constraints<br/>
+      <strong>epidemic-regime</strong> — selection among competing intervention regimes<br/>
+      <strong>cyrillic-babel</strong> — possibility space and deterministic selection<br/>
+      <strong>selection-landscape</strong> — stability distribution across candidates<br/>
+      <strong>constraint-sweep</strong> — planned next experiment
     </div>
 
     <h2>What you can run today</h2>
@@ -39,6 +44,8 @@
       <code>python examples/resource_stability_walkthrough.py</code><br/>
       <code>python examples/resource_stability_sensitivity.py</code><br/>
       <code>sce demo epidemic-regime</code><br/>
+      <code>sce demo cyrillic-babel</code><br/>
+      <code>sce demo selection-landscape</code><br/>
       <code>sce demo hypothesis</code><br/>
       <code>uvicorn sce.api:app --reload</code> then open <code>http://127.0.0.1:8000/docs</code>
     </div>

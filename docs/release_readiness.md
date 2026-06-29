@@ -25,6 +25,8 @@ Each alpha release note should include:
   - `sce demo hypothesis`
   - `sce demo resource-stability`
   - `sce demo epidemic-regime`
+  - `sce demo cyrillic-babel`
+  - `sce demo selection-landscape`
 - Confirm API docs/UI routes are reachable in local run:
   - `/docs`
   - `/ui`
