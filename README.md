@@ -3,13 +3,14 @@
 [![Tests](https://img.shields.io/github/actions/workflow/status/yanixkz/sce-core/tests.yml?branch=main&label=tests)](https://github.com/yanixkz/sce-core/actions/workflows/tests.yml)
 
 SCE Core is an **early alpha** computational framework for studying
-**Constraint-Driven Stability (CDS)** in adaptive systems,
+**Constraint-Driven Stability (CDS)** in adaptive systems: how constraints and
+dynamics select persistent structures from larger possibility spaces,
 with an applied decision-engine surface for AI agents.
 
 It combines:
-- constrained decision selection,
+- constrained decision selection over explicit possibility spaces,
 - explainability via decision backbone extraction,
-- reliability tracking from outcomes,
+- reliability tracking from outcomes and persistence signals,
 - episodic memory that influences later choices,
 - inspectable API/graph/UI surfaces.
 
@@ -58,12 +59,12 @@ python examples/run_epidemic_regime_csv.py examples/data/epidemic_regime_cases.c
 ## What SCE Core is (and is not)
 
 SCE Core is not a chat wrapper and not only a demo collection.
-It is a reusable computational research and decision layer with demos, API endpoints, and theory/research documentation.
+It is a reusable computational research and decision layer with demos, API endpoints, and theory/research documentation for constrained experiments over possibility spaces.
 
-- **Scientific framework layer:** CDS-oriented toy models and inspectable stability workflows.
+- **Scientific framework layer:** CDS-oriented toy models and inspectable stability-selection workflows.
 - **Applied decision layer:** runnable demos and API/UI surfaces for agent decision tasks.
 - **Theory bridge:** CDS → SCE operational mapping.
-- **Research layer:** open problems grounded in implemented mechanisms.
+- **Research layer:** open problems grounded in implemented mechanisms for constraints, dynamics, selection, and persistence.
 - **Origin layer:** historical and philosophical motivation.
 
 ## Canonical CLI and graph commands
@@ -194,12 +195,16 @@ Details and run order are centralized in [`docs/scientific_examples.md`](docs/sc
 
 ## Why this architecture matters
 
+SCE Core treats candidate plans, hypotheses, or toy regimes as a bounded
+possibility space. Constraints and dynamics reduce that space, selection ranks
+viable candidates, and reliability/memory provide early persistence signals.
+
 SCE Core keeps four mechanisms coupled in one inspectable loop:
 
-1. **Constraints + trajectory selection** choose admissible plans.
+1. **Constraints + trajectory selection** choose admissible plans from a possibility space.
 2. **Decision backbone** shows what carried the decision.
 3. **Reliability tracking** measures empirical stability quality.
-4. **Episodic memory** changes future reselection pressure.
+4. **Episodic memory** changes future reselection pressure and persistence tracking.
 
 This coupling is what makes the system both practical and research-relevant.
 
@@ -210,6 +215,7 @@ This coupling is what makes the system both practical and research-relevant.
 - **Roadmap / delivery priorities:** [`ROADMAP.md`](ROADMAP.md)
 - **Origin (history and motivation):** [`docs/origin.md`](docs/origin.md)
 - **Theory bridge (CDS → SCE):** [`docs/constraint_driven_stability.md`](docs/constraint_driven_stability.md)
+- **Possibility spaces and stability selection:** [`docs/possibility_and_selection.md`](docs/possibility_and_selection.md)
 - **Scientific examples index (entrypoint):** [`docs/scientific_examples.md`](docs/scientific_examples.md)
 - **Resource-stability CSV batch runner:** [`docs/resource_stability_csv.md`](docs/resource_stability_csv.md)
 - **Epidemic-regime CSV batch runner:** [`docs/epidemic_regime_csv.md`](docs/epidemic_regime_csv.md)
