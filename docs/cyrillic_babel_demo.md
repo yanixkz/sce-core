@@ -42,7 +42,21 @@ Unsupported characters are removed, whitespace is normalized, and the resulting 
 alphabet_size ** target_length
 ```
 
-Finally, the normalized phrase receives a deterministic SHA-256 based address. This address makes the selected phrase reproducibly identifiable without claiming that the system performed exhaustive search.
+Finally, the normalized phrase receives a deterministic SHA-256 based address. This address makes the selected phrase reproducibly identifiable without claiming that the system performed exhaustive search. The CLI also prints the possibility-space size, candidate sample size, selection criteria, top candidates, and selected candidate.
+
+## Selection-pressure extension
+
+The demo now adds a small v2 selection layer on top of the original fixed-alphabet and deterministic-address illustration. It samples a small, deterministic set of same-length Cyrillic candidate strings from the enormous possibility space and intentionally includes the normalized target phrase as one candidate. Including the target is an interpretable anchor, not a claim that the system found meaning by itself.
+
+Each sampled candidate is scored with transparent toy rules:
+
+- hits against a tiny in-code Russian word list,
+- rough whitespace plausibility for the target length,
+- a penalty for long repeated-character runs,
+- character-diversity measurement, and
+- hits against a tiny in-code Cyrillic bigram list.
+
+The highest-scoring sampled candidate is reported as the selected candidate, together with a scoring breakdown for the top candidates. This demonstrates reproducible candidate filtering under explicit criteria: a toy form of selection pressure over sampled strings. It is not semantic understanding, real Russian NLP, consciousness modeling, or a reproduction of the Library of Babel.
 
 ## Why Cyrillic
 
@@ -64,10 +78,10 @@ The demo maps the toy problem to Constraint-Driven Stability (CDS) conservativel
 |---|---|
 | Possibility space | All strings of the target length over the finite Cyrillic alphabet. |
 | Constraints | Allowed alphabet, fixed length, and normalization rules. |
-| Search/selection | A target phrase is selected and assigned a deterministic hash address. |
+| Search/selection | A deterministic sample is scored with transparent toy rules; the target phrase is included as an anchor and also assigned a deterministic hash address. |
 | Meaningful/persistent pattern | The normalized phrase is a reproducible pattern that can be interpreted by a reader or downstream task. |
 
-This is not a full SCE decision workflow. It is a minimal illustration of how constraints reduce an unstructured space to a bounded set, and how selection identifies a tiny subset of interest.
+This is not a full SCE decision workflow. It is a minimal illustration of how constraints define a bounded space, how a deterministic sample can be filtered by explicit toy criteria, and how selection identifies a tiny subset of interest.
 
 ## Why possibility alone is not meaning
 
