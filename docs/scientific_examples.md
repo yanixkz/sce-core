@@ -17,6 +17,7 @@ Want to validate backend endpoints with real requests (outside CLI demos)? See [
 | `epidemic-regime` | `sce demo epidemic-regime` | CLI scientific demo | Regime selection under transmission, capacity, and intervention-cost constraints with explicit toy-model disclaimer. | `I`, `E`, `C`, `t`, `Stab`, `S` |
 | `epidemic-regime` walkthrough | `python examples/epidemic_regime_walkthrough.py` | Walkthrough script + notes (`docs/epidemic_regime_demo.md`) | Candidate comparison and deterministic sensitivity checks in a second constrained domain. | `I`, `E`, `C`, `t`, `Stab`, `S` |
 | `epidemic-regime` CSV runner | `python examples/run_epidemic_regime_csv.py examples/data/epidemic_regime_cases.csv` | User-case batch script + notes (`docs/epidemic_regime_csv.md`) | User-provided epidemic toy cases with deterministic regime-selection outputs. | `I`, `E`, `C`, `t`, `Stab`, `S` |
+| `cyrillic-babel` | `sce demo cyrillic-babel` or `python examples/cyrillic_babel_demo.py` | CLI scientific toy + standalone example (`docs/cyrillic_babel_demo.md`) | Finite Cyrillic alphabet possibility space, normalization constraints, deterministic selection address, and persistence of one meaningful pattern. | possibility space, `C`, selection, persistent pattern |
 | `epidemic-regime` heuristic validation | `python examples/validate_epidemic_regime_csv.py examples/data/epidemic_regime_cases.csv` | Baseline comparison script + notes (`docs/epidemic_regime_validation.md`) | Early behavioral sanity check: SCE selected epidemic regime vs transparent heuristic expectation. | `C`, `Stab`, `S` |
 
 ## Recommended path for a new scientific reader
@@ -27,18 +28,19 @@ Want to validate backend endpoints with real requests (outside CLI demos)? See [
 4. Run the resource sensitivity grid (`python examples/resource_stability_sensitivity.py`).
 5. Run the CSV case runner (`python examples/run_resource_stability_csv.py examples/data/resource_stability_cases.csv`).
 6. Run `sce demo epidemic-regime`.
-7. Read the broader open-problems roadmap in [`research_program.md`](research_program.md).
+7. Run `sce demo cyrillic-babel` for a compact possibility-space and selection toy.
+8. Read the broader open-problems roadmap in [`research_program.md`](research_program.md).
 
 ## CDS mapping summary across examples
 
-| CDS element | `resource-stability` family | `epidemic-regime` family |
-|---|---|---|
-| `I` (state information) | Population, available resources, consumption and regeneration rates. | Susceptible/infected/recovered state, transmission and overload pressures. |
-| `E` (capacity/support) | Resource stock and regeneration capacity. | Healthcare capacity and recovery support. |
-| `C` (constraints) | Hard pressure guardrail + soft regeneration-vs-consumption viability pressure. | Hard overload guardrail + soft transmission and intervention-cost pressures. |
-| `t` (candidate transition step) | Deterministic transition from initial unstable regime to candidate carrying/non-carrying regimes. | Deterministic transition from escalating regime to candidate intervention regimes. |
-| `Stab` (scoring + selection) | Weighted CDS-style stability ranking under explicit constraints. | Same ranking principle in a different constrained domain. |
-| `S` (selected stable regime) | Top-ranked selected state (`selected_state`) with transparent score table. | Top-ranked selected regime (`selected_regime`) with transparent score table. |
+| CDS element | `resource-stability` family | `epidemic-regime` family | `cyrillic-babel` toy |
+|---|---|---|---|
+| `I` (state information) | Population, available resources, consumption and regeneration rates. | Susceptible/infected/recovered state, transmission and overload pressures. | Normalized phrase and string length. |
+| `E` (capacity/support) | Resource stock and regeneration capacity. | Healthcare capacity and recovery support. | Finite alphabet capacity that bounds constructible strings. |
+| `C` (constraints) | Hard pressure guardrail + soft regeneration-vs-consumption viability pressure. | Hard overload guardrail + soft transmission and intervention-cost pressures. | Allowed characters, fixed length, and normalization. |
+| `t` (candidate transition step) | Deterministic transition from initial unstable regime to candidate carrying/non-carrying regimes. | Deterministic transition from escalating regime to candidate intervention regimes. | Deterministic normalization and hash-address generation. |
+| `Stab` (scoring + selection) | Weighted CDS-style stability ranking under explicit constraints. | Same ranking principle in a different constrained domain. | Not a scorer; illustrates selection of one reproducible pattern from a constrained space. |
+| `S` (selected stable regime) | Top-ranked selected state (`selected_state`) with transparent score table. | Top-ranked selected regime (`selected_regime`) with transparent score table. | The normalized phrase as selected point and persistent pattern. |
 
 ## Extension ideas
 
