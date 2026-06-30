@@ -52,6 +52,7 @@ sce demo resource-stability
 sce demo epidemic-regime
 sce demo cyrillic-babel
 sce demo selection-landscape
+sce demo constraint-sweep
 ```
 
 Run the API and open UI:
@@ -90,6 +91,7 @@ sce demo resource-stability
 sce demo epidemic-regime
 sce demo cyrillic-babel
 sce demo selection-landscape
+sce demo constraint-sweep
 sce demo list
 sce export-graph
 sce visualize-graph
@@ -181,14 +183,14 @@ Cyrillic Babel
 ↓
 Selection Landscape
 ↓
-Constraint Sweep (planned)
+Constraint Sweep
 ```
 
 - **Resource Stability** demonstrates stable regime emergence under explicit resource constraints.
 - **Epidemic Regime** demonstrates selection among competing intervention regimes in a deterministic toy domain.
 - **Cyrillic Babel** demonstrates a finite possibility space, normalization constraints, deterministic selection, and a reproducible persistent pattern.
 - **Selection Landscape** demonstrates how stability is distributed across a sampled candidate population rather than only reporting the selected candidate.
-- **Constraint Sweep (planned)** will explore how changing constraint strength reshapes selected structures and persistence signals.
+- **Constraint Sweep** demonstrates how selection changes as constraint strength changes in a deterministic toy population.
 
 SCE is not a theory of generation. It is a working research direction for studying selection and persistence through reproducible toy models, transparent scoring, and possibility-space exploration.
 
@@ -248,7 +250,7 @@ Deterministic possibility-space sample for a reproducible selection experiment:
 - toy candidate population with explicit scoring dimensions,
 - weighted stability distribution over the full sampled landscape,
 - best, median, and worst candidates reported for distribution context,
-- bridge toward future Constraint Sweep Explorer experiments.
+- bridge to the Constraint Sweep Explorer experiment.
 
 This demo is a toy model only; it makes no prediction or intelligence claims. Details and run order are centralized in [`docs/scientific_examples.md`](docs/scientific_examples.md).
 
@@ -282,6 +284,7 @@ This coupling is what makes the system both practical and research-relevant.
 - **Epidemic-regime heuristic validation baseline:** [`docs/epidemic_regime_validation.md`](docs/epidemic_regime_validation.md)
 - **Cyrillic Babel scientific toy:** [`docs/cyrillic_babel_demo.md`](docs/cyrillic_babel_demo.md)
 - **Selection Landscape Explorer:** [`docs/selection_landscape.md`](docs/selection_landscape.md)
+- **Constraint Sweep Explorer:** [`docs/constraint_sweep.md`](docs/constraint_sweep.md)
 - **Scientist outreach/readiness pitch:** [`docs/scientist_pitch.md`](docs/scientist_pitch.md)
 - **Public demo script (5–7 min):** [`docs/public_demo_script.md`](docs/public_demo_script.md)
 - **Scientific positioning:** [`docs/scientific_positioning.md`](docs/scientific_positioning.md)
