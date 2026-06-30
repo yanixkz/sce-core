@@ -75,6 +75,13 @@ DEMO_REGISTRY: dict[str, Callable[[], DemoSpec]] = {
         run_fn="run_selection_landscape_demo",
         format_fn="format_selection_landscape_demo",
     ),
+    "constraint-sweep": _demo_spec_from_module(
+        name="constraint-sweep",
+        title="Constraint Sweep Explorer (Scientific Toy)",
+        module="sce.scenarios.constraint_sweep",
+        run_fn="run_constraint_sweep_demo",
+        format_fn="format_constraint_sweep_demo",
+    ),
     "adaptive-agent": _demo_spec_from_module(
         name="adaptive-agent",
         title="Adaptive Agent",
@@ -252,7 +259,7 @@ def main() -> None:
         title="commands",
         description=(
             "Canonical entrypoints: `sce demo`, `sce demo supplier-risk`, "
-            "`sce demo hypothesis`, `sce demo resource-stability`, `sce demo epidemic-regime`, `sce demo cyrillic-babel`, `sce demo selection-landscape`, `sce demo list`."
+            "`sce demo hypothesis`, `sce demo resource-stability`, `sce demo epidemic-regime`, `sce demo cyrillic-babel`, `sce demo selection-landscape`, `sce demo constraint-sweep`, `sce demo list`."
         ),
     )
     demo_parser = sub.add_parser(
@@ -261,7 +268,7 @@ def main() -> None:
         description=(
             "Run canonical SCE demos. Use `supplier-risk` for a practical product story "
             "`hypothesis` for competing hypotheses, `resource-stability` for CDS toy modeling, "
-            "and `epidemic-regime`, `cyrillic-babel`, or `selection-landscape` for scientific toy domains."
+            "and `epidemic-regime`, `cyrillic-babel`, `selection-landscape`, or `constraint-sweep` for scientific toy domains."
         ),
     )
     demo_parser.add_argument(

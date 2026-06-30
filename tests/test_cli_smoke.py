@@ -39,6 +39,14 @@ def test_cli_demo_json_mode():
     assert isinstance(payload, dict)
 
 
+def test_cli_constraint_sweep_demo_runs():
+    result = run_cli("demo constraint-sweep")
+
+    assert result.returncode == 0, result.stderr
+    assert "Constraint Sweep Explorer" in result.stdout
+    assert "0.4 -> Candidate A -> Candidate B" in result.stdout
+
+
 def test_cli_hypothesis_research_demo_runs():
     result = run_cli("run-hypothesis-research-demo-pretty")
 
@@ -61,6 +69,7 @@ def test_cli_demo_help_highlights_canonical_demos():
     assert "hypothesis" in result.stdout
     assert "resource-stability" in result.stdout
     assert "epidemic-regime" in result.stdout
+    assert "constraint-sweep" in result.stdout
     assert "list" in result.stdout
 
 
