@@ -82,6 +82,13 @@ DEMO_REGISTRY: dict[str, Callable[[], DemoSpec]] = {
         run_fn="run_constraint_sweep_demo",
         format_fn="format_constraint_sweep_demo",
     ),
+    "stability-basin": _demo_spec_from_module(
+        name="stability-basin",
+        title="Stability Basin Robustness (Scientific Toy)",
+        module="sce.scenarios.stability_basin",
+        run_fn="run_stability_basin_demo",
+        format_fn="format_stability_basin_demo",
+    ),
     "persistence": _demo_spec_from_module(
         name="persistence",
         title="Persistence Over Time (Scientific Toy)",
@@ -266,7 +273,7 @@ def main() -> None:
         title="commands",
         description=(
             "Canonical entrypoints: `sce demo`, `sce demo supplier-risk`, "
-            "`sce demo hypothesis`, `sce demo resource-stability`, `sce demo epidemic-regime`, `sce demo cyrillic-babel`, `sce demo selection-landscape`, `sce demo constraint-sweep`, `sce demo persistence`, `sce demo list`."
+            "`sce demo hypothesis`, `sce demo resource-stability`, `sce demo epidemic-regime`, `sce demo cyrillic-babel`, `sce demo selection-landscape`, `sce demo constraint-sweep`, `sce demo stability-basin`, `sce demo persistence`, `sce demo list`."
         ),
     )
     demo_parser = sub.add_parser(
@@ -275,7 +282,7 @@ def main() -> None:
         description=(
             "Run canonical SCE demos. Use `supplier-risk` for a practical product story "
             "`hypothesis` for competing hypotheses, `resource-stability` for CDS toy modeling, "
-            "and `epidemic-regime`, `cyrillic-babel`, `selection-landscape`, `constraint-sweep`, or `persistence` for scientific toy domains."
+            "and `epidemic-regime`, `cyrillic-babel`, `selection-landscape`, `constraint-sweep`, `stability-basin`, or `persistence` for scientific toy domains."
         ),
     )
     demo_parser.add_argument(

@@ -47,6 +47,15 @@ def test_cli_constraint_sweep_demo_runs():
     assert "0.4 -> Candidate A -> Candidate B" in result.stdout
 
 
+def test_cli_stability_basin_demo_runs():
+    result = run_cli("demo stability-basin")
+
+    assert result.returncode == 0, result.stderr
+    assert "Stability Basin" in result.stdout
+    assert "Stability Basin Size: 10%" in result.stdout
+    assert " 20%          No" in result.stdout
+
+
 def test_cli_hypothesis_research_demo_runs():
     result = run_cli("run-hypothesis-research-demo-pretty")
 
@@ -70,6 +79,7 @@ def test_cli_demo_help_highlights_canonical_demos():
     assert "resource-stability" in result.stdout
     assert "epidemic-regime" in result.stdout
     assert "constraint-sweep" in result.stdout
+    assert "stability-basin" in result.stdout
     assert "list" in result.stdout
 
 

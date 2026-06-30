@@ -60,6 +60,7 @@ This folder contains layered documentation for SCE Core.
 - Epidemic-regime heuristic validation baseline: [`epidemic_regime_validation.md`](epidemic_regime_validation.md)
 - Epidemic-regime scientific walkthrough: [`epidemic_regime_demo.md`](epidemic_regime_demo.md)
 - Cyrillic Babel possibility-space demo: [`cyrillic_babel_demo.md`](cyrillic_babel_demo.md)
+- Stability basin robustness demo: [`stability_basin.md`](stability_basin.md)
 - Selection Landscape Explorer: [`selection_landscape.md`](selection_landscape.md)
 - Constraint Sweep Explorer: [`constraint_sweep.md`](constraint_sweep.md)
 - Decision backbone details: [`DECISION_BACKBONE.md`](DECISION_BACKBONE.md)
