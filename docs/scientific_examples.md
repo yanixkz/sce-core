@@ -20,6 +20,7 @@ Want to validate backend endpoints with real requests (outside CLI demos)? See [
 | `cyrillic-babel` | `sce demo cyrillic-babel` or `python examples/cyrillic_babel_demo.py` | CLI scientific toy + standalone example (`docs/cyrillic_babel_demo.md`) | Finite Cyrillic alphabet possibility space, normalization constraints, deterministic selection address, toy selection pressure over sampled Cyrillic candidates, and persistence of one reproducible pattern. | possibility space, `C`, selection, persistent pattern |
 | `selection-landscape` | `sce demo selection-landscape` or `python examples/selection_landscape_demo.py` | CLI scientific toy + standalone example (`docs/selection_landscape.md`) | Deterministic possibility-space sample with candidate score dimensions, weighted stability distribution, and best/median/worst selection context. | `I`, `E`, `C`, `t`, `Stab`, `S` |
 | `constraint-sweep` | `sce demo constraint-sweep` or `python examples/constraint_sweep_demo.py` | CLI scientific toy + standalone example (`docs/constraint_sweep.md`) | Deterministic constraint-strength sweep showing winner changes, phase-transition points, regime shifts, and constraint sensitivity. | `C`, `Stab`, `S`, phase transition, regime shift |
+| `stability-basin` | `sce demo stability-basin` | CLI scientific toy + notes (`docs/stability_basin.md`) | Selects the best toy structure, applies fixed perturbations, and reports the largest tested perturbation that remains stable. | selection, persistence, robustness, `Stab` |
 | `epidemic-regime` heuristic validation | `python examples/validate_epidemic_regime_csv.py examples/data/epidemic_regime_cases.csv` | Baseline comparison script + notes (`docs/epidemic_regime_validation.md`) | Early behavioral sanity check: SCE selected epidemic regime vs transparent heuristic expectation. | `C`, `Stab`, `S` |
 
 ## Recommended path for a new scientific reader
@@ -33,7 +34,8 @@ Want to validate backend endpoints with real requests (outside CLI demos)? See [
 7. Run `sce demo cyrillic-babel` for a compact possibility-space and selection toy.
 8. Run `sce demo selection-landscape` for a reproducible toy selection experiment over a sampled stability landscape.
 9. Run `sce demo constraint-sweep` to inspect how changing constraint strength changes selection.
-10. Read the broader open-problems roadmap in [`research_program.md`](research_program.md).
+10. Run `sce demo stability-basin` to inspect perturbation robustness after selection.
+11. Read the broader open-problems roadmap in [`research_program.md`](research_program.md).
 
 ## CDS mapping summary across examples
 
