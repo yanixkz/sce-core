@@ -26,3 +26,14 @@ def test_visualize_graph_writes_ascii_to_outfile(monkeypatch, tmp_path, capsys):
     assert out_file.read_text(encoding="utf-8") == "ASCII GRAPH"
     captured = capsys.readouterr()
     assert captured.out == ""
+
+
+def test_persistence_demo_cli_output(monkeypatch, capsys):
+    monkeypatch.setattr("sys.argv", ["sce", "demo", "persistence"])
+
+    cli.main()
+
+    captured = capsys.readouterr()
+    assert "Persistence Score = survival_steps / total_steps" in captured.out
+    assert "Candidate A = 1.00" in captured.out
+    assert "D █" in captured.out
