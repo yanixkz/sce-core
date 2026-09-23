@@ -38,7 +38,7 @@ def summarize_signal_value(rows):
 
 def matched_controls(points, event_times, spacing_days=30):
     blocked=set()
-    times=[p["time"] for p in points]
+    times=[(p.time.isoformat().replace("+00:00","Z") if hasattr(p,"time") else p["time"]) for p in points]
     event_idx={i for i,t in enumerate(times) if t in set(event_times)}
     for i in event_idx:
         blocked.update(range(max(0,i-spacing_days),min(len(points),i+spacing_days+1)))
