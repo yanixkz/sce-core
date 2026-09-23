@@ -44,3 +44,38 @@ On the main BTC time axis overlay:
 - bull/bear direction encoded independently from hit/miss state
 
 Do not hard-code the old 78.09% into the UI. Read current evaluation output because Research metrics can change as methodology is corrected.
+
+
+## Price Response / Trading View (required)
+
+The visualization agent should add a dedicated **Price Response** research panel sourced only from `bitcoin_regime_evaluation.json` fields `price_response_summary`, `price_responses`, `event_window_5d_summary`, `event_window_5d_by_transition`, and `event_windows_5d`.
+
+### Primary view
+- Event-centered price trajectory with x-axis D-5 ... D0 ... D+30 and price normalized to 0% at D0.
+- Regime selector: All, 0→1, 1→0, 0→-1, -1→0.
+- Show median return trajectory plus individual-event traces on demand; never fabricate/interpolate missing observations.
+- Visually align D0 with the coherence/stability trajectory for D-5...D+5.
+
+### Trading-distribution view
+For selected regime show:
+- median returns at +1,+2,+3,+5,+10,+20,+30 days;
+- positive-return frequency for each horizon;
+- median MFE and MAE over 30 days;
+- first-touch probabilities for ±1%, ±2%, ±3%, ±5%, ±10%.
+Use paired horizontal bars for UP-first vs DOWN-first so adverse excursion is visible, not only terminal return.
+
+### Event explorer
+- sortable list of all transition events;
+- selecting an event shows date, D0 BTC price, pre-5d return, returns by horizon, MFE/MAE, first-touch day for every level, from/to regime;
+- synchronize selection with the existing Time Scanner and event markers.
+
+### Interpretation / safeguards
+- Label this **historical conditional distribution**, not a trading signal or forecast.
+- Do not call event recall “accuracy”.
+- Show sample size N prominently for every regime/filter.
+- Keep future-derived regime labels visually distinct from causal CDS features.
+- Add a visible warning when a subgroup is small.
+- No leverage/PnL projection in this panel yet.
+
+### Data contract
+The Research agent now emits all required raw event records and summaries. Visualization must consume those fields directly; do not hard-code percentages or recompute alternative labels in the frontend.
