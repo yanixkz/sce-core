@@ -32,7 +32,7 @@ def fetch_range(symbol, interval, start_ms, end_ms):
     return rows
 
 def normalized_rows(raw, scale):
-    return [{"time":datetime.fromtimestamp(r[0]/1000,tz=timezone.utc).isoformat().replace("+00:00","Z"),
+    return [{"time":datetime.fromtimestamp(int(r[0])/1000,tz=timezone.utc).isoformat().replace("+00:00","Z"),
              "scale":scale,"open":float(r[1]),"high":float(r[2]),"low":float(r[3]),"close":float(r[4]),
              "volume":float(r[5]),"close_time_ms":int(r[6])} for r in raw]
 
