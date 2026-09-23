@@ -5,7 +5,7 @@ HORIZONS=(1,2,3,5,10,20,30)
 LEVELS=(.01,.02,.03,.05,.10)
 
 def price_response_study(points, events):
-    times=[getattr(p,"time",None) or p["time"] for p in points]; prices=[getattr(p,"price_usd",None) or p["price_usd"] for p in points]; by={t:i for i,t in enumerate(times)}
+    times=[(p.time.isoformat().replace("+00:00","Z") if hasattr(p,"time") else p["time"]) for p in points]; prices=[(p.price if hasattr(p,"price") else p["price_usd"]) for p in points]; by={t:i for i,t in enumerate(times)}
     out=[]
     for e in events:
         i=by.get(e["time"])
