@@ -2,7 +2,7 @@ from __future__ import annotations
 import argparse, json
 from pathlib import Path
 from sce.research.bitcoin_temporal_field import parse_price_csv, build_temporal_field
-from sce.research.bitcoin_regime_evaluation import TransitionLabelConfig, independent_regime_labels, persistent_transitions, evaluate_leading_signal
+from sce.research.bitcoin_regime_evaluation import TransitionLabelConfig, independent_regime_labels, persistent_transitions, evaluate_leading_signal, build_event_records, build_false_alarm_episodes
 from sce.research.bitcoin_baselines import evaluate_simple_baselines
 from sce.research.bitcoin_robustness import evaluate_by_era
 
@@ -25,7 +25,7 @@ def main():
         "evaluation":evaluation,
         "eras":evaluate_by_era(field,events,ERAS),
         "baselines":evaluate_simple_baselines(field,events),
-        "events":events,
+        "events":build_event_records(field,events),\n        "false_alarm_episodes":build_false_alarm_episodes(field,events),
     }
     out=Path(args.out);out.parent.mkdir(parents=True,exist_ok=True);out.write_text(json.dumps(result,indent=2))
     print(json.dumps({"evaluation":evaluation,"eras":result["eras"],"baselines":result["baselines"]},indent=2))
