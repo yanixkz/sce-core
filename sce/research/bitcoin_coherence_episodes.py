@@ -31,11 +31,12 @@ def summarize_coherence_episodes(episodes):
     groups={}
     for label in ("transition_associated","false_alarm"):
         rows=[r for r in episodes if r["classification"]==label]
+        leads=[r["lead_days"] for r in rows if r["lead_days"] is not None]
         groups[label]={
             "episodes":len(rows),
             "median_duration_days":median([r["duration_days"] for r in rows]) if rows else None,
             "median_min_coherence":median([r["min_coherence"] for r in rows]) if rows else None,
             "median_depth":median([r["depth"] for r in rows]) if rows else None,
-            "median_lead_days":median([r["lead_days"] for r in rows if r["lead_days"] is not None]) if rows else None,
+            "median_lead_days":median(leads) if leads else None,
         }
     return groups
