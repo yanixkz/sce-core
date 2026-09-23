@@ -18,8 +18,12 @@ jobs:
         with:
           python-version: "3.11"
       - name: Fetch Coin Metrics BTC history
+        env:
+          PYTHONPATH: .
         run: python examples/fetch_bitcoin_history.py
       - name: Evaluate CDS regime-transition signal
+        env:
+          PYTHONPATH: .
         run: python examples/evaluate_bitcoin_regimes.py
       - name: Upload empirical result
         uses: actions/upload-artifact@v4
