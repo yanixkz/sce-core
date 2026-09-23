@@ -2,7 +2,7 @@ from __future__ import annotations
 import argparse, json
 from pathlib import Path
 from sce.research.bitcoin_temporal_field import parse_price_csv, build_temporal_field
-from sce.research.bitcoin_regime_evaluation import independent_regime_labels, persistent_transitions, evaluate_leading_signal
+from sce.research.bitcoin_regime_evaluation import TransitionLabelConfig, independent_regime_labels, persistent_transitions, evaluate_leading_signal
 
 def main():
     p=argparse.ArgumentParser()
