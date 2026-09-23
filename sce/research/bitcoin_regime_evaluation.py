@@ -74,3 +74,44 @@ def evaluate_leading_signal(field: dict, events: list[dict], lookback_days: int 
         "false_alarm_fraction": round(false_alarms / len(alarms), 4) if alarms else 0.0,
         "parameters": {"lookback_days": lookback_days, "pressure_threshold": pressure_threshold, "coherence_threshold": coherence_threshold},
     }
+
+
+def build_event_records(field: dict, events: list[dict], lookback_days: int = 30, pressure_threshold: float = 0.65, coherence_threshold: float = 0.45) -> list[dict]:
+    """Materialize visualization-ready causal alarm -> confirmed-transition records."""
+    timeline=field["timeline"]; by_time={r["time"]:i for i,r in enumerate(timeline)}
+    records=[]
+    for event in events:
+        idx=by_time.get(event["time"])
+        if idx is None: continue
+        start=max(0,idx-lookback_days)
+        candidates=[(j,timeline[j]) for j in range(start,idx) if timeline[j]["transition_pressure"]>=pressure_threshold or timeline[j]["coherence"]<=coherence_threshold]
+        signal_idx,signal=(candidates[-1] if candidates else (None,None))
+        records.append({
+            **event,
+            "detected": signal is not None,
+            "classification": "hit" if signal is not None else "miss",
+            "signal_time": signal["time"] if signal else None,
+            "lead_days": idx-signal_idx if signal is not None else None,
+            "transition_snapshot": {k:timeline[idx].get(k) for k in ("price_usd","coherence","transition_pressure","mean_stability")},
+            "signal_snapshot": ({k:signal.get(k) for k in ("price_usd","coherence","transition_pressure","mean_stability")} if signal else None),
+        })
+    return records
+
+def build_false_alarm_episodes(field: dict, events: list[dict], lookback_days: int = 30, pressure_threshold: float = 0.65, coherence_threshold: float = 0.45) -> list[dict]:
+    timeline=field["timeline"]; by_time={r["time"]:i for i,r in enumerate(timeline)}
+    protected=set()
+    for event in events:
+        idx=by_time.get(event["time"])
+        if idx is not None: protected.update(range(max(0,idx-lookback_days),idx+1))
+    flags=[(r["transition_pressure"]>=pressure_threshold or r["coherence"]<=coherence_threshold) and i not in protected for i,r in enumerate(timeline)]
+    episodes=[]; start=None
+    for i,flag in enumerate(flags+[False]):
+        if flag and start is None:start=i
+        elif not flag and start is not None:
+            end=i-1
+            peak=max(range(start,end+1),key=lambda j:timeline[j]["transition_pressure"])
+            episodes.append({"classification":"false_alarm","start_time":timeline[start]["time"],"end_time":timeline[end]["time"],
+                             "duration_days":end-start+1,"peak_time":timeline[peak]["time"],
+                             "peak_snapshot":{k:timeline[peak].get(k) for k in ("price_usd","coherence","transition_pressure","mean_stability")}})
+            start=None
+    return episodes
