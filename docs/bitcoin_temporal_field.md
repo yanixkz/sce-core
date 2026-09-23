@@ -285,3 +285,42 @@ Bitcoin Temporal Field does not currently claim:
 The field language is an operational mathematical representation to be tested against
 data. Physical or philosophical field analogies remain hypotheses unless independently
 supported.
+
+
+## Historical data provider — first empirical source
+
+The first connected provider is the **Coin Metrics Community API v4** asset-metrics
+endpoint. The initial fetch intentionally requests only daily `PriceUSD` for BTC.
+This gives the whole-history layer a simple, inspectable starting series before we add
+venue-specific OHLCV and higher-frequency fields.
+
+Run:
+
+```bash
+python examples/fetch_bitcoin_history.py
+```
+
+Optional bounded request:
+
+```bash
+python examples/fetch_bitcoin_history.py --start 2010-07-17 --end 2020-12-31
+```
+
+Outputs:
+
+```text
+data/bitcoin/btc_priceusd_1d.csv
+data/bitcoin/btc_priceusd_1d.provenance.json
+```
+
+The provenance sidecar records provider, endpoint, requested coverage, actual first and
+last observations, timezone, retrieval date, and a license/redistribution reminder.
+
+Important distinction: Coin Metrics `PriceUSD` is an asset-level price metric, not a
+single-exchange OHLCV candle series. It is suitable for the first long-history price
+field, while venue-specific OHLCV will be connected separately. Kraken's downloadable
+OHLCVT archive is a candidate for the later market microstructure/high-frequency layer
+because it provides multiple candle intervals from the beginning of each Kraken market.
+
+The repository does not commit downloaded market data by default. This avoids silently
+freezing a third-party dataset or redistributing it without an explicit data policy.
