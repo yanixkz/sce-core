@@ -1,0 +1,40 @@
+name: Bitcoin Multiscale Propagation
+
+on:
+  workflow_dispatch:
+  pull_request:
+    paths:
+      - "sce/data/binance_btc.py"
+      - "sce/research/bitcoin_multiscale_field.py"
+      - "sce/research/bitcoin_propagation_geometry.py"
+      - "examples/fetch_bitcoin_multiscale.py"
+      - "examples/evaluate_bitcoin_propagation.py"
+      - ".github/workflows/bitcoin-multiscale-propagation.yml"
+
+jobs:
+  evaluate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Fetch daily evaluation data
+        env:
+          PYTHONPATH: .
+        run: |
+          python examples/fetch_bitcoin_history.py
+          python examples/evaluate_bitcoin_regimes.py
+      - name: Fetch Binance nine-scale history
+        env:
+          PYTHONPATH: .
+        run: python examples/fetch_bitcoin_multiscale.py --start 2025-01-01T00:00:00Z
+      - name: Evaluate propagation geometry
+        env:
+          PYTHONPATH: .
+        run: python examples/evaluate_bitcoin_propagation.py
+      - uses: actions/upload-artifact@v4
+        with:
+          name: bitcoin-multiscale-propagation
+          path: |
+            data/bitcoin/bitcoin_propagation_evaluation.json
