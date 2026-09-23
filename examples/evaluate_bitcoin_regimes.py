@@ -5,6 +5,7 @@ from sce.research.bitcoin_temporal_field import parse_price_csv, build_temporal_
 from sce.research.bitcoin_regime_evaluation import TransitionLabelConfig, independent_regime_labels, persistent_transitions, evaluate_leading_signal, build_event_records, build_false_alarm_episodes
 from sce.research.bitcoin_baselines import evaluate_simple_baselines
 from sce.research.bitcoin_robustness import evaluate_by_era
+from sce.research.bitcoin_coherence_episodes import classify_coherence_episodes, summarize_coherence_episodes
 
 ERAS=(("early","2010-07-18","2016-12-31"),("middle","2017-01-01","2020-12-31"),("later","2021-01-01","2099-12-31"))
 
@@ -19,15 +20,18 @@ def main():
     labels=independent_regime_labels(points,config)
     events=persistent_transitions(labels,config.persistence_days)
     evaluation=evaluate_leading_signal(field,events)
+    coherence_episodes=classify_coherence_episodes(field,events)
     result={
         "method":"independent forward-regime labels; CDS field remains causal",
         "scale_semantics":field.get("scale_semantics"),
         "evaluation":evaluation,
         "eras":evaluate_by_era(field,events,ERAS),
         "baselines":evaluate_simple_baselines(field,events),
+        "coherence_episode_summary":summarize_coherence_episodes(coherence_episodes),
+        "coherence_episodes":coherence_episodes,
         "events":build_event_records(field,events),
         "false_alarm_episodes":build_false_alarm_episodes(field,events),
     }
     out=Path(args.out);out.parent.mkdir(parents=True,exist_ok=True);out.write_text(json.dumps(result,indent=2))
-    print(json.dumps({"evaluation":evaluation,"eras":result["eras"],"baselines":result["baselines"]},indent=2))
+    print(json.dumps({"evaluation":evaluation,"eras":result["eras"],"baselines":result["baselines"],"coherence_episode_summary":result["coherence_episode_summary"]},indent=2))
 if __name__=="__main__": main()
