@@ -324,3 +324,26 @@ because it provides multiple candle intervals from the beginning of each Kraken 
 
 The repository does not commit downloaded market data by default. This avoids silently
 freezing a third-party dataset or redistributing it without an explicit data policy.
+
+
+## First empirical field pipeline
+
+The repository now contains an end-to-end v0.2 path:
+
+\`\`\`bash
+python examples/fetch_bitcoin_history.py
+python examples/build_bitcoin_temporal_field.py
+python examples/render_bitcoin_temporal_field.py
+\`\`\`
+
+This produces normalized daily price history, a heatmap-ready empirical \`F(t, tau)\`
+JSON field, and a standalone interactive HTML view.
+
+The first field uses the daily price layer to derive causal 1d/1w/1m observations.
+Every cell is computed from data at or before that timestamp. A regression test verifies
+that appending future price observations does not rewrite previously computed cells.
+
+Current feature normalization constants and the stability formula are provisional
+research parameters, not fitted trading parameters. The next empirical step is to
+freeze benchmark transition labels and compare the field against simple baselines
+before any parameter optimization.
