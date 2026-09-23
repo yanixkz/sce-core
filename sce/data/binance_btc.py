@@ -2,7 +2,7 @@ from __future__ import annotations
 import csv, io, json, urllib.parse, urllib.request
 from datetime import datetime, timezone
 
-BASE="https://api.binance.com/api/v3/klines"
+BASES=("https://api.binance.com/api/v3/klines","https://api1.binance.com/api/v3/klines","https://api2.binance.com/api/v3/klines","https://api3.binance.com/api/v3/klines","https://api4.binance.com/api/v3/klines")
 INTERVALS=("1m","5m","15m","30m","1h","4h","1d","1w","1M")
 
 def fetch_klines(symbol="BTCUSDT", interval="1m", start_ms=None, end_ms=None, limit=1000):
@@ -10,8 +10,14 @@ def fetch_klines(symbol="BTCUSDT", interval="1m", start_ms=None, end_ms=None, li
     params={"symbol":symbol,"interval":interval,"limit":min(limit,1000)}
     if start_ms is not None: params["startTime"]=int(start_ms)
     if end_ms is not None: params["endTime"]=int(end_ms)
-    req=urllib.request.Request(BASE+"?"+urllib.parse.urlencode(params),headers={"User-Agent":"sce-core/bitcoin-research"})
-    with urllib.request.urlopen(req,timeout=30) as r:return json.load(r)
+    last=None
+    for base in BASES:
+        req=urllib.request.Request(base+"?"+urllib.parse.urlencode(params),headers={"User-Agent":"sce-core/bitcoin-research"})
+        try:
+            with urllib.request.urlopen(req,timeout=30) as r:return json.load(r)
+        except Exception as exc:
+            last=exc
+    raise last
 
 def fetch_range(symbol, interval, start_ms, end_ms):
     rows=[]; cursor=int(start_ms)
