@@ -8,6 +8,7 @@ from sce.research.bitcoin_robustness import evaluate_by_era
 from sce.research.bitcoin_event_windows import event_windows, summarize_event_windows, summarize_by_transition
 from sce.research.bitcoin_price_response import price_response_study, summarize_price_responses
 from sce.research.bitcoin_signal_value import enrich_price_responses, summarize_signal_value, matched_controls
+from sce.research.bitcoin_event_table import event_table_csv
 from sce.research.bitcoin_coherence_episodes import classify_coherence_episodes, summarize_coherence_episodes
 
 ERAS=(("early","2010-07-18","2016-12-31"),("middle","2017-01-01","2020-12-31"),("later","2021-01-01","2099-12-31"))
