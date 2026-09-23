@@ -12,6 +12,7 @@ from sce.research.bitcoin_event_table import event_table_csv
 from sce.research.bitcoin_coherence_episodes import classify_coherence_episodes, summarize_coherence_episodes
 from sce.research.bitcoin_causal_surfing import causal_alarm_responses, summarize_causal_alarms
 from sce.research.bitcoin_alarm_features import causal_alarm_features, summarize_feature_separation
+from sce.research.bitcoin_surfing_backtest import walk_forward_predictions, backtest_predictions
 
 ERAS=(("early","2010-07-18","2016-12-31"),("middle","2017-01-01","2020-12-31"),("later","2021-01-01","2099-12-31"))
 
@@ -35,6 +36,8 @@ def main():
     coherence_episodes=classify_coherence_episodes(field,events)
     causal_alarms=causal_alarm_responses(field,events)
     alarm_features=causal_alarm_features(field,causal_alarms)
+    surfing_predictions=walk_forward_predictions(alarm_features)
+    surfing_backtest=backtest_predictions(surfing_predictions)
     result={
         "method":"independent forward-regime labels; CDS field remains causal",
         "scale_semantics":field.get("scale_semantics"),
@@ -57,6 +60,8 @@ def main():
         "causal_alarm_responses":causal_alarms,
         "causal_alarm_feature_summary":summarize_feature_separation(alarm_features),
         "causal_alarm_features":alarm_features,
+        "surfing_backtest":surfing_backtest,
+        "surfing_predictions":surfing_predictions,
     }
     out=Path(args.out);out.parent.mkdir(parents=True,exist_ok=True);out.write_text(json.dumps(result,indent=2))
     print(json.dumps({"evaluation":evaluation,"eras":result["eras"],"baselines":result["baselines"],"coherence_episode_summary":result["coherence_episode_summary"]},indent=2))
