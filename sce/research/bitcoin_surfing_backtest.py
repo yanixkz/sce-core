@@ -25,7 +25,7 @@ def _distance(a,b,scales):
 def walk_forward_predictions(rows):
     out=[]
     for i,r in enumerate(rows):
-        train=[x for x in rows[:i] if 0 < (r["index"]-x["index"]) <= 730 and x.get("return_20d_pct") is not None]
+        train=[x for x in rows[:i] if 20 <= (r["index"]-x["index"]) <= 730 and x.get("return_20d_pct") is not None]
         if len(train)<8: continue
         scales={}
         for k in FEATURES:
@@ -49,7 +49,7 @@ def backtest_predictions(preds, fee_bps=10.0):
     equity=1.0; peak=1.0; max_dd=0.0; wins=0; gp=0.0; gl=0.0
     for t in trades:
         equity*=1+t["net_return"]; peak=max(peak,equity); max_dd=min(max_dd,equity/peak-1)
-        if t["net_return"]>0:wins+=1;gp+=max(0,t["net_return"]);gl+=min(0,t["net_return"])
+        if t["net_return"]>0: wins+=1\n        gp+=max(0,t["net_return"])\n        gl+=min(0,t["net_return"])
     return {"trades":len(trades),"longs":sum(t["action"]==1 for t in trades),"shorts":sum(t["action"]==-1 for t in trades),
             "total_return_pct":(equity-1)*100,"win_rate":wins/len(trades) if trades else None,
             "max_drawdown_pct":max_dd*100,"profit_factor":gp/abs(gl) if gl else None,
