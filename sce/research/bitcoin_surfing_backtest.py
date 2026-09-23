@@ -38,19 +38,40 @@ def walk_forward_predictions(rows):
     return out
 
 def backtest_predictions(preds, fee_bps=10.0):
-    # Non-overlapping alarm trades: enter at alarm close, exit after 20 days or before next accepted trade.
-    trades=[]; next_free=-1
+    """Non-overlapping 20-day trades entered only on causal alarm predictions."""
+    trades=[]
+    next_free=-1
     for r in preds:
-        if r["action"]==0 or r["index"]<next_free: continue
+        if r["action"]==0 or r["index"]<next_free:
+            continue
         gross=r["action"]*r["return_20d_pct"]/100
         net=gross-2*fee_bps/10000
         trades.append({**r,"gross_return":gross,"net_return":net})
         next_free=r["index"]+20
-    equity=1.0; peak=1.0; max_dd=0.0; wins=0; gp=0.0; gl=0.0
+
+    equity=1.0
+    peak=1.0
+    max_dd=0.0
+    wins=0
+    gp=0.0
+    gl=0.0
     for t in trades:
-        equity*=1+t["net_return"]; peak=max(peak,equity); max_dd=min(max_dd,equity/peak-1)
-        if t["net_return"]>0: wins+=1\n        gp+=max(0,t["net_return"])\n        gl+=min(0,t["net_return"])
-    return {"trades":len(trades),"longs":sum(t["action"]==1 for t in trades),"shorts":sum(t["action"]==-1 for t in trades),
-            "total_return_pct":(equity-1)*100,"win_rate":wins/len(trades) if trades else None,
-            "max_drawdown_pct":max_dd*100,"profit_factor":gp/abs(gl) if gl else None,
-            "fee_bps_per_side":fee_bps,"trade_records":trades}
+        equity*=1+t["net_return"]
+        peak=max(peak,equity)
+        max_dd=min(max_dd,equity/peak-1)
+        if t["net_return"]>0:
+            wins+=1
+        gp+=max(0,t["net_return"])
+        gl+=min(0,t["net_return"])
+
+    return {
+        "trades":len(trades),
+        "longs":sum(t["action"]==1 for t in trades),
+        "shorts":sum(t["action"]==-1 for t in trades),
+        "total_return_pct":(equity-1)*100,
+        "win_rate":wins/len(trades) if trades else None,
+        "max_drawdown_pct":max_dd*100,
+        "profit_factor":gp/abs(gl) if gl else None,
+        "fee_bps_per_side":fee_bps,
+        "trade_records":trades,
+    }
