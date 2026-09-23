@@ -25,7 +25,8 @@ def main():
         "evaluation":evaluation,
         "eras":evaluate_by_era(field,events,ERAS),
         "baselines":evaluate_simple_baselines(field,events),
-        "events":build_event_records(field,events),\n        "false_alarm_episodes":build_false_alarm_episodes(field,events),
+        "events":build_event_records(field,events),
+        "false_alarm_episodes":build_false_alarm_episodes(field,events),
     }
     out=Path(args.out);out.parent.mkdir(parents=True,exist_ok=True);out.write_text(json.dumps(result,indent=2))
     print(json.dumps({"evaluation":evaluation,"eras":result["eras"],"baselines":result["baselines"]},indent=2))
