@@ -1,7 +1,7 @@
 from __future__ import annotations
 from dataclasses import dataclass
 from math import log, sqrt
-from statistics import pstdev
+from statistics import median, pstdev
 
 from sce.research.bitcoin_temporal_field import PricePoint
 
@@ -68,7 +68,7 @@ def evaluate_leading_signal(field: dict, events: list[dict], lookback_days: int 
         "events": len(events),
         "detected_events": hits,
         "recall": round(hits / len(events), 4) if events else 0.0,
-        "median_lead_days": sorted(leads)[len(leads)//2] if leads else None,
+        "median_lead_days": median(leads) if leads else None,
         "alarms": len(alarms),
         "false_alarms": false_alarms,
         "false_alarm_fraction": round(false_alarms / len(alarms), 4) if alarms else 0.0,
