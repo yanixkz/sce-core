@@ -1,6 +1,12 @@
 name: Bitcoin Coinbase Multiscale Data
 on:
   workflow_dispatch:
+  push:
+    branches: [experiment/bitcoin-temporal-field]
+    paths:
+      - 'sce/data/coinbase_btc.py'
+      - 'examples/fetch_bitcoin_coinbase_multiscale.py'
+      - '.github/workflows/bitcoin-coinbase-multiscale.yml'
 jobs:
   fetch:
     runs-on: ubuntu-latest
