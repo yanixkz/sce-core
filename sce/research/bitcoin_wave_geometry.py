@@ -20,7 +20,16 @@ def daily_wave_states(field, scales=("1d","1w","1m")):
     direction: majority sign; breadth: aligned fraction; velocity: change in breadth;
     front: highest ordered scale aligned with direction; persistence: consecutive direction days.
     """
-    rows=field["observations"] if isinstance(field,dict) else field
+    if isinstance(field,dict):
+        # The empirical field stores one row per time in timeline and one row
+        # per (time, scale) in cells. Rejoin them before extracting wave states.
+        by_time={}
+        for cell in field["cells"]:
+            by_time.setdefault(cell["time"],{})[cell["scale"]]=cell
+        rows=({"time":row["time"],"scales":by_time.get(row["time"],{})}
+              for row in field["timeline"])
+    else:
+        rows=field
     out=[];prev_b=0.0;prev_d=0;persist=0
     for r in rows:
         states=[]
