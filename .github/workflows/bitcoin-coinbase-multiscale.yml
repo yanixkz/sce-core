@@ -16,6 +16,8 @@ jobs:
       - uses: actions/setup-python@v5
         with: {python-version: '3.12'}
       - run: PYTHONPATH=. python examples/fetch_bitcoin_coinbase_multiscale.py --start 2017-01-01
+      - name: Analyze real multiscale wave geometry
+        run: PYTHONPATH=. python examples/analyze_bitcoin_real_multiscale.py
       - name: Quality gate
         run: |
           python - <<'PY'
