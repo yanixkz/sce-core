@@ -16,6 +16,7 @@ from sce.research.bitcoin_surfing_backtest import walk_forward_predictions, back
 from sce.research.bitcoin_confirmed_surfing import confirmation_sweep
 from sce.research.bitcoin_wave_rider import wave_rider
 from sce.research.bitcoin_wave_rider_exact import exact_wave_rider
+from sce.research.bitcoin_wave_geometry import daily_wave_states, summarize_wave_states
 
 ERAS=(("early","2010-07-18","2016-12-31"),("middle","2017-01-01","2020-12-31"),("later","2021-01-01","2099-12-31"))
 
@@ -44,6 +45,7 @@ def main():
     confirmed_surfing=confirmation_sweep(surfing_predictions)
     wave_rider_result=wave_rider(surfing_predictions,confirm=3)
     exact_wave_rider_result=exact_wave_rider(surfing_predictions,points,confirm=3)
+    wave_states=daily_wave_states(field)
     result={
         "method":"independent forward-regime labels; CDS field remains causal",
         "scale_semantics":field.get("scale_semantics"),
@@ -70,6 +72,8 @@ def main():
         "confirmed_surfing":confirmed_surfing,
         "wave_rider":wave_rider_result,
         "exact_wave_rider":exact_wave_rider_result,
+        "wave_geometry_summary":summarize_wave_states(wave_states),
+        "wave_states":wave_states,
         "surfing_predictions":surfing_predictions,
     }
     out=Path(args.out);out.parent.mkdir(parents=True,exist_ok=True);out.write_text(json.dumps(result,indent=2))
