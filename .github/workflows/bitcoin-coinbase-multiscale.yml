@@ -1,0 +1,27 @@
+name: Bitcoin Coinbase Multiscale Data
+on:
+  workflow_dispatch:
+jobs:
+  fetch:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: '3.12'}
+      - run: python examples/fetch_bitcoin_coinbase_multiscale.py --start 2017-01-01
+      - name: Quality gate
+        run: |
+          python - <<'PY'
+          import csv,glob,sys
+          mins={'15m':100000,'1h':30000,'4h':8000,'1d':2000}
+          for tf,n in mins.items():
+              p=f'data/bitcoin/coinbase/btc_usd_{tf}.csv'
+              rows=sum(1 for _ in open(p))-1
+              print(tf,rows)
+              if rows<n: raise SystemExit(f'quality gate failed: {tf} {rows} < {n}')
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: bitcoin-coinbase-multiscale
+          path: data/bitcoin/coinbase/
