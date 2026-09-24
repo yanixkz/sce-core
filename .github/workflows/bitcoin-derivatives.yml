@@ -1,0 +1,22 @@
+name: Bitcoin Derivatives Data
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - "examples/fetch_bitcoin_derivatives.py"
+      - ".github/workflows/bitcoin-derivatives.yml"
+  workflow_dispatch:
+jobs:
+  fetch:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: "3.12"}
+      - name: Fetch derivatives layers
+        run: PYTHONPATH=. python examples/fetch_bitcoin_derivatives.py
+      - uses: actions/upload-artifact@v4
+        with:
+          name: bitcoin-derivatives
+          path: data/bitcoin/derivatives/
