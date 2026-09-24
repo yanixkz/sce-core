@@ -1,5 +1,5 @@
 from __future__ import annotations
-import csv,json,math
+import csv,json,math\nfrom bisect import bisect_left
 from pathlib import Path
 
 # Scale-space experiment: one 15m price path, observed under progressively
@@ -26,9 +26,19 @@ def extrema(xs):
         elif xs[i]<xs[i-1] and xs[i]<=xs[i+1]: out.append((i,"L",xs[i]))
     return out
 
-def nearest(events,i,kind,maxdist):
-    cand=[e for e in events if e[1]==kind and abs(e[0]-i)<=maxdist]
-    return min(cand,key=lambda e:abs(e[0]-i)) if cand else None
+def build_index(events):
+    return {kind: ([e[0] for e in events if e[1]==kind],
+                   [e for e in events if e[1]==kind]) for kind in ("H","L")}
+
+def nearest(index,i,kind,maxdist):
+    positions, events = index[kind]
+    j=bisect_left(positions,i)
+    candidates=[]
+    if j < len(events): candidates.append(events[j])
+    if j: candidates.append(events[j-1])
+    if not candidates: return None
+    best=min(candidates,key=lambda e:abs(e[0]-i))
+    return best if abs(best[0]-i)<=maxdist else None
 
 def main():
     root=Path("data/bitcoin/coinbase")
@@ -36,7 +46,7 @@ def main():
     levels={}
     for tau in TAUS:
         sm=ema(prices,tau); ex=extrema(sm)
-        levels[tau]={"smooth":sm,"extrema":ex}
+        levels[tau]={"extrema":ex,"index":build_index(ex)}
     # Track extrema from fine to coarse. A feature persists if a same-kind extremum
     # survives near its previous location; tolerance grows with scale.
     tracks=[]
@@ -44,7 +54,7 @@ def main():
         tr=[(TAUS[0],e[0],e[1],e[2])]
         cur=e
         for tau in TAUS[1:]:
-            m=nearest(levels[tau]["extrema"],cur[0],cur[1],max(2,tau))
+            m=nearest(levels[tau]["index"],cur[0],cur[1],max(2,tau))
             if not m: break
             tr.append((tau,m[0],m[1],m[2]));cur=m
         tracks.append(tr)
