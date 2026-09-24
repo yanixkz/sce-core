@@ -9,6 +9,7 @@ on:
       - 'examples/analyze_bitcoin_scale_space.py'
       - 'examples/analyze_bitcoin_scale_space_robustness.py'
       - 'examples/analyze_bitcoin_scale_trajectory.py'
+      - 'examples/analyze_bitcoin_scale_hierarchy.py'
       - '.github/workflows/bitcoin-coinbase-multiscale.yml'
 jobs:
   fetch:
@@ -27,6 +28,8 @@ jobs:
         run: PYTHONPATH=. python examples/analyze_bitcoin_scale_space_robustness.py
       - name: Analyze scale-space trajectory geometry
         run: PYTHONPATH=. python examples/analyze_bitcoin_scale_trajectory.py
+      - name: Analyze adjacent-scale extremum hierarchy
+        run: PYTHONPATH=. python examples/analyze_bitcoin_scale_hierarchy.py
       - name: Quality gate
         run: |
           python - <<'PY'
