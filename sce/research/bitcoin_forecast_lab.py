@@ -131,7 +131,9 @@ def settle(record, rows, resolved_at, output_dir):
             "momentum_abs_pct": abs(y-f["momentum_price"])/record["observed_price"]*100,
             "momentum_direction_correct": (f["momentum_p_up"] > 0.5) == (y > record["observed_price"]),
             "momentum_brier": (f["momentum_p_up"]-float(y > record["observed_price"]))**2}
-    if not outcomes:
+    # All horizons settle together. A partial outcome must not seal the file
+    # while the other target candle is still incomplete or unavailable.
+    if len(outcomes) != len(record["forecasts"]):
         return None
     outcome = {"status": "RESOLVED", "forecast_id": record["forecast_id"],
                "resolved_at": resolved_at.isoformat(), "outcomes": outcomes}

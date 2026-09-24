@@ -34,15 +34,35 @@ def main():
             now = datetime.now(timezone.utc)
             wait = BAR_SECONDS-int(now.timestamp())%BAR_SECONDS+40
             time.sleep(wait)
+        if args.mode == "settle" and args.wait_for_boundary:
+            if not args.record:
+                parser.error("--record is required for settle")
+            pending = json.loads(Path(args.record).read_text())
+            final_target = max(datetime.fromisoformat(f["target_bar_close"])
+                               for f in pending["forecasts"].values())
+            time.sleep(max(0, (final_target+timedelta(seconds=90)-datetime.now(timezone.utc)).total_seconds()))
         now = datetime.now(timezone.utc)
-        rows = recent_rows(now)
         if args.mode == "issue":
-            result = issue(rows, datetime.now(timezone.utc), root, os.environ.get("GITHUB_RUN_ID"))
+            for attempt in range(9 if args.wait_for_boundary else 1):
+                rows = recent_rows(datetime.now(timezone.utc))
+                try:
+                    result = issue(rows, datetime.now(timezone.utc), root, os.environ.get("GITHUB_RUN_ID"))
+                    break
+                except ValueError as exc:
+                    if not args.wait_for_boundary or attempt == 8 or "not fresh" not in str(exc):
+                        raise
+                    time.sleep(20)
         else:
             if not args.record:
                 parser.error("--record is required for settle")
             record = json.loads(Path(args.record).read_text())
-            result = settle(record, rows, datetime.now(timezone.utc), root)
+            for attempt in range(12 if args.wait_for_boundary else 1):
+                rows = recent_rows(datetime.now(timezone.utc))
+                result = settle(record, rows, datetime.now(timezone.utc), root)
+                if result is not None:
+                    break
+                if args.wait_for_boundary and attempt < 11:
+                    time.sleep(20)
         if result is None:
             print("Target candle not complete; no settlement created")
             return

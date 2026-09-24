@@ -39,8 +39,9 @@ def test_settlement_is_separate_and_never_uses_incomplete_candle(tmp_path):
     record = issue(source, close+timedelta(seconds=40), tmp_path)
     future = rows(102)
     assert settle(record, future, close+timedelta(minutes=14), tmp_path) is None
-    result = settle(record, future, close+timedelta(minutes=16), tmp_path)
-    assert set(result["outcomes"]) == {"15"}
+    assert settle(record, future, close+timedelta(minutes=16), tmp_path) is None
+    result = settle(record, rows(102), close+timedelta(minutes=31), tmp_path)
+    assert set(result["outcomes"]) == {"15", "30"}
     assert len(list((tmp_path/"outcomes").glob("*.json"))) == 1
 
 

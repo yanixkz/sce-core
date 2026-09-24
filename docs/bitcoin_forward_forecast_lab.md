@@ -11,8 +11,9 @@ from the observation), and actual effective lead from issue. It **does not**
 read the future candles. Outcome is stored later in a separate exclusive file
 `outcomes/<forecast_id>.json`; the original forecast is never updated.
 
-The first CI workflow creates a research snapshot on PR updates and keeps its
-artifact for 90 days. That is an auditable prototype, **not yet a permanent
+The first CI workflow creates a research snapshot on PR updates and settles
+both outcomes in a separate job only after the target candles close; artifacts
+are kept for 90 days. That is an auditable prototype, **not yet a permanent
 or continuous ledger**. GitHub Actions scheduled workflows only run from the
 default branch; this research PR is not merged. A durable independent store
 and scheduler must be added before claiming a continuous forward trial.
