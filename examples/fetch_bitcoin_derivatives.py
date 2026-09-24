@@ -24,7 +24,7 @@ def write(rows,path):
         w=csv.DictWriter(f,fieldnames=keys);w.writeheader();w.writerows(rows)
 
 def main():
-    root=Path("data/bitcoin/derivatives")
+    root=Path("data/bitcoin/derivatives")\n    root.mkdir(parents=True,exist_ok=True)
     market="binance-BTCUSDT-future"
     report={"provider":"Coin Metrics Community API","market":market,"layers":{}}
     jobs=[
