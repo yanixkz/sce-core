@@ -1,8 +1,8 @@
 name: Bitcoin Coinbase Multiscale Data
 on:
   workflow_dispatch:
-  push:
-    branches: [experiment/bitcoin-temporal-field]
+  pull_request:
+    branches: [main]
     paths:
       - 'sce/data/coinbase_btc.py'
       - 'examples/fetch_bitcoin_coinbase_multiscale.py'
