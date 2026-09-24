@@ -18,6 +18,8 @@ jobs:
       - run: PYTHONPATH=. python examples/fetch_bitcoin_coinbase_multiscale.py --start 2017-01-01
       - name: Analyze real multiscale wave geometry
         run: PYTHONPATH=. python examples/analyze_bitcoin_real_multiscale.py
+      - name: Analyze scale-space persistence
+        run: PYTHONPATH=. python examples/analyze_bitcoin_scale_space.py
       - name: Quality gate
         run: |
           python - <<'PY'
