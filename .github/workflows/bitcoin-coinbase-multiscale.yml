@@ -10,6 +10,8 @@ on:
       - 'examples/analyze_bitcoin_scale_space_robustness.py'
       - 'examples/analyze_bitcoin_scale_trajectory.py'
       - 'examples/analyze_bitcoin_scale_hierarchy.py'
+      - 'sce/research/bitcoin_forecast_lab.py'
+      - 'examples/run_bitcoin_forecast_lab.py'
       - '.github/workflows/bitcoin-coinbase-multiscale.yml'
 jobs:
   fetch:
@@ -30,6 +32,8 @@ jobs:
         run: PYTHONPATH=. python examples/analyze_bitcoin_scale_trajectory.py
       - name: Analyze adjacent-scale extremum hierarchy
         run: PYTHONPATH=. python examples/analyze_bitcoin_scale_hierarchy.py
+      - name: Evaluate fixed 15m and 30m forecast baselines
+        run: PYTHONPATH=. python examples/run_bitcoin_forecast_lab.py backtest
       - name: Quality gate
         run: |
           python - <<'PY'

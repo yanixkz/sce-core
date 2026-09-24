@@ -1,0 +1,24 @@
+name: Bitcoin Forward Forecast Snapshot
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - 'sce/research/bitcoin_forecast_lab.py'
+      - 'examples/run_bitcoin_forecast_lab.py'
+      - '.github/workflows/bitcoin-forward-forecast.yml'
+jobs:
+  issue:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: '3.12'}
+      - name: Wait for a fully closed Coinbase candle and issue forecasts
+        run: PYTHONPATH=. python examples/run_bitcoin_forecast_lab.py issue --wait-for-boundary
+      - uses: actions/upload-artifact@v4
+        with:
+          name: bitcoin-forward-forecast-${{ github.run_id }}
+          path: data/bitcoin/coinbase/forecast_lab/forecasts/
+          if-no-files-found: error
+          retention-days: 90
