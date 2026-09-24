@@ -14,6 +14,7 @@ from sce.research.bitcoin_causal_surfing import causal_alarm_responses, summariz
 from sce.research.bitcoin_alarm_features import causal_alarm_features, summarize_feature_separation
 from sce.research.bitcoin_surfing_backtest import walk_forward_predictions, backtest_predictions
 from sce.research.bitcoin_confirmed_surfing import confirmation_sweep
+from sce.research.bitcoin_wave_rider import wave_rider
 
 ERAS=(("early","2010-07-18","2016-12-31"),("middle","2017-01-01","2020-12-31"),("later","2021-01-01","2099-12-31"))
 
@@ -40,6 +41,7 @@ def main():
     surfing_predictions=walk_forward_predictions(alarm_features)
     surfing_backtest=backtest_predictions(surfing_predictions)
     confirmed_surfing=confirmation_sweep(surfing_predictions)
+    wave_rider_result=wave_rider(surfing_predictions,confirm=3)
     result={
         "method":"independent forward-regime labels; CDS field remains causal",
         "scale_semantics":field.get("scale_semantics"),
@@ -64,6 +66,7 @@ def main():
         "causal_alarm_features":alarm_features,
         "surfing_backtest":surfing_backtest,
         "confirmed_surfing":confirmed_surfing,
+        "wave_rider":wave_rider_result,
         "surfing_predictions":surfing_predictions,
     }
     out=Path(args.out);out.parent.mkdir(parents=True,exist_ok=True);out.write_text(json.dumps(result,indent=2))
