@@ -1,5 +1,6 @@
 from __future__ import annotations
-import csv,json,math\nfrom bisect import bisect_left
+import csv,json,math
+from bisect import bisect_left
 from pathlib import Path
 
 # Scale-space experiment: one 15m price path, observed under progressively
