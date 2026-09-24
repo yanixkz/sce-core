@@ -1,5 +1,5 @@
 from __future__ import annotations
-import csv, io, json, urllib.request
+import csv, io, json, urllib.request, urllib.error, time, random
 from dataclasses import dataclass
 from datetime import datetime, timezone
 
@@ -14,7 +14,7 @@ class Candle:
 def fetch_candles(granularity:int,start:str,end:str):
     url=f"{BASE}?granularity={granularity}&start={start}&end={end}"
     req=urllib.request.Request(url,headers={"User-Agent":"sce-core-research/1.0"})
-    with urllib.request.urlopen(req,timeout=30) as r: raw=json.load(r)
+    raw=None\n    for attempt in range(8):\n        try:\n            with urllib.request.urlopen(req,timeout=30) as r: raw=json.load(r)\n            break\n        except urllib.error.HTTPError as e:\n            if e.code != 429 or attempt == 7: raise\n            time.sleep(min(60, 2 ** attempt) + random.random())\n    time.sleep(0.35)
     out=[Candle(datetime.fromtimestamp(x[0],timezone.utc),*map(float,x[1:])) for x in raw]
     return sorted(out,key=lambda x:x.time)
 
