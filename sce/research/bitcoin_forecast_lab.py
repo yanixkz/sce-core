@@ -96,7 +96,7 @@ def issue(rows, issued_at, output_dir, run_id=None):
     t, p = eligible[-1]
     known_at = t+timedelta(seconds=BAR_SECONDS)
     lag = (issued_at-known_at).total_seconds()
-    if not 0 <= lag < 300:
+    if not 0 <= lag < 600:
         raise ValueError("latest completed 15m bar is not fresh enough for +15m forecast")
     history = eligible[-LOOKBACK-1:]
     if any((b[0]-a[0]).total_seconds() != BAR_SECONDS for a, b in zip(history, history[1:])):

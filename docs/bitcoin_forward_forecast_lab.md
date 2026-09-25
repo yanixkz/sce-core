@@ -4,7 +4,7 @@
 
 Source: Coinbase Exchange BTC-USD 15m candles. A candle stamped `t` is
 eligible only after `t+15m`; the issue command requires a completed candle
-less than five minutes old and 97 consecutive candles. At issue time it writes
+less than ten minutes old and 97 consecutive candles. At issue time it writes
 one new, exclusive `forecasts/<sha256>.json` with observation time, wall-clock
 issue time, source snapshot hash, code run ID, two target closes (+15m/+30m
 from the observation), and actual effective lead from issue. It **does not**

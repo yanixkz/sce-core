@@ -26,7 +26,7 @@ def test_issue_requires_completed_fresh_contiguous_history(tmp_path):
     with pytest.raises(FileExistsError):
         issue(source, last_close+timedelta(seconds=40), tmp_path)
     with pytest.raises(ValueError, match="not fresh"):
-        issue(source, last_close+timedelta(minutes=6), tmp_path)
+        issue(source, last_close+timedelta(minutes=11), tmp_path)
     broken = source.copy()
     broken[-10] = (broken[-10][0]+timedelta(minutes=1), broken[-10][1])
     with pytest.raises(ValueError, match="missing 15m"):
