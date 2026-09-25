@@ -1,0 +1,34 @@
+name: Bitcoin Empirical Evaluation
+on:
+  pull_request:
+    paths:
+      - "sce/research/bitcoin_*"
+      - "sce/data/coinmetrics_btc.py"
+      - "examples/fetch_bitcoin_history.py"
+      - "examples/evaluate_bitcoin_regimes.py"
+      - ".github/workflows/bitcoin-empirical-evaluation.yml"
+permissions:
+  contents: read
+jobs:
+  evaluate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Fetch Coin Metrics BTC history
+        env:
+          PYTHONPATH: .
+        run: python examples/fetch_bitcoin_history.py
+      - name: Evaluate CDS regime-transition signal
+        env:
+          PYTHONPATH: .
+        run: python examples/evaluate_bitcoin_regimes.py
+      - name: Upload empirical result
+        uses: actions/upload-artifact@v4
+        with:
+          name: bitcoin-regime-evaluation
+          path: |
+            data/bitcoin/bitcoin_regime_evaluation.json
+            data/bitcoin/btc_priceusd_1d.provenance.json
