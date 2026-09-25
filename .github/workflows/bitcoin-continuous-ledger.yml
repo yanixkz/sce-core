@@ -1,0 +1,43 @@
+name: Bitcoin Continuous Forecast Ledger
+on:
+  schedule:
+    - cron: '2,7,12,17,22,27,32,37,42,47,52,57 * * * *'
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: bitcoin-continuous-ledger
+  cancel-in-progress: false
+jobs:
+  cycle:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout frozen research code
+        uses: actions/checkout@v4
+        with:
+          ref: 43ca0dcaa3cf5bb73c9841ef7c0de114c2a2f734
+          path: research
+          persist-credentials: false
+      - name: Checkout forecast ledger
+        uses: actions/checkout@v4
+        with:
+          ref: experiment/bitcoin-forecast-ledger
+          path: ledger
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Settle old forecasts and issue one for the latest closed bar
+        env:
+          PYTHONPATH: research
+        run: python research/examples/run_bitcoin_continuous.py --ledger ledger/data/bitcoin/forward_ledger
+      - name: Preserve prospective records
+        working-directory: ledger
+        run: |
+          git add data/bitcoin/forward_ledger
+          if ! git diff --cached --quiet; then
+            git config user.name 'github-actions[bot]'
+            git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+            git commit -m "Record prospective Bitcoin forecast cycle ${{ github.run_id }}"
+            git push origin HEAD:experiment/bitcoin-forecast-ledger
+          fi
