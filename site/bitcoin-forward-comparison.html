@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="ru"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>SCE — прогноз BTC и факт</title>
+<style>
+:root{color-scheme:dark;font-family:Inter,system-ui,sans-serif;background:#090e18;color:#e8edf7}*{box-sizing:border-box}body{margin:0}main{max-width:1300px;margin:auto;padding:24px}a{color:#82c9ff}nav{display:flex;gap:16px;flex-wrap:wrap;color:#9db2c9}h1{font-size:clamp(26px,4vw,44px);margin:32px 0 8px}h2{margin:0 0 8px}.muted{color:#9cacc1}.panel{border:1px solid #293952;background:#111a2b;border-radius:16px;padding:20px;margin:18px 0}.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}.value{font-size:24px;font-variant-numeric:tabular-nums;margin-top:6px}.bad{color:#ff9a8a}.good{color:#93d4ad}.tag{border:1px solid #40516c;border-radius:20px;padding:4px 10px;display:inline-block}canvas{width:100%;height:260px;display:block}.legend{display:flex;gap:18px;flex-wrap:wrap;font-size:13px}.swatch{width:12px;height:12px;display:inline-block;border-radius:50%;margin-right:5px}.scroll{overflow:auto}table{width:100%;border-collapse:collapse;min-width:800px;text-align:left;font-size:14px}th,td{padding:10px;border-bottom:1px solid #293952;font-variant-numeric:tabular-nums}button{background:#1c344b;border:1px solid #46627c;border-radius:8px;color:white;padding:8px 12px;cursor:pointer}@media(max-width:700px){.grid{grid-template-columns:1fr}main{padding:15px}}
+</style></head><body><main>
+<nav><a href="./index.html">SCE</a><a href="./bitcoin-temporal-field.html">Temporal Field</a><span>Forward Prediction Lab</span></nav>
+<h1>Прогноз BTC × фактическая цена</h1><p class="muted">Два горизонта, прогнозы записаны до исхода. Coinbase BTC-USD, закрытие 15-минутных свечей UTC.</p>
+<div id="state" class="panel" role="status">Загрузка журнала…</div>
+<section class="grid"><div class="panel"><div class="muted">Последняя запись</div><div id="last" class="value">—</div></div><div class="panel"><div class="muted">За 24 часа / ожидаемые 96</div><div id="coverage" class="value">—</div></div><div class="panel"><div class="muted">Обновление индекса</div><div id="updated" class="value">—</div></div></section>
+<section class="panel"><h2>+15 минут</h2><p class="muted">Пробный momentum, baseline «без изменения» и исход</p><canvas id="chart15" aria-label="График прогнозов BTC на 15 минут и фактических цен"></canvas></section>
+<section class="panel"><h2>+30 минут</h2><p class="muted">Те же записи, но целевая свеча закрывается на 30 минут позже</p><canvas id="chart30" aria-label="График прогнозов BTC на 30 минут и фактических цен"></canvas></section>
+<div class="legend"><span><i class="swatch" style="background:#7db7ff"></i>Модель (пробная)</span><span><i class="swatch" style="background:#e8bb70"></i>Baseline</span><span><i class="swatch" style="background:#7ee0ad"></i>Факт</span><span>Кружок без зелёной точки: исход ожидается</span></div>
+<section class="panel"><h2>Журнал</h2><p class="muted">Нажми на ID, чтобы открыть неизменяемую запись прогноза. Исход хранится отдельным файлом.</p><div class="scroll"><table><thead><tr><th>Цель UTC</th><th>Горизонт</th><th>Прогноз</th><th>Baseline</th><th>Факт</th><th>Ошибка модели</th><th>Запись</th></tr></thead><tbody id="rows"></tbody></table></div></section>
+<p class="muted">Momentum здесь исследовательский кандидат: исторически он проиграл baseline. Вероятности 0,55/0,45 не калиброваны. График показывает время цели; задержки GitHub Actions создают пробелы, и они не заполняются выдуманными прогнозами.</p>
+</main><script>
+const ROOT='https://raw.githubusercontent.com/yanixkz/sce-core/experiment/bitcoin-forecast-ledger/data/bitcoin/forward_ledger/';
+const $=id=>document.getElementById(id), money=x=>x==null?'Ожидаем':new Intl.NumberFormat('en-US',{style:'currency',currency:'USD',maximumFractionDigits:2}).format(x);
+const date=s=>s?new Date(s).toLocaleString('ru-RU',{timeZone:'UTC',day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'})+' UTC':'—';
+let latest=null;
+function plot(canvas,entries,h){
+ const dpr=window.devicePixelRatio||1,w=canvas.clientWidth,ht=260;canvas.width=w*dpr;canvas.height=ht*dpr;
+ const c=canvas.getContext('2d');c.scale(dpr,dpr);c.clearRect(0,0,w,ht);
+ const data=entries.filter(e=>e.forecasts?.[h]).slice(-65).map(e=>({t:Date.parse(e.forecasts[h].target_bar_close),model:e.forecasts[h].momentum_price,base:e.forecasts[h].flat_price,actual:e.outcome?.outcomes?.[h]?.actual_price}));
+ if(!data.length){c.fillStyle='#a8b6c9';c.fillText('Пока нет записанных прогнозов',20,40);return}
+ const vals=data.flatMap(x=>[x.model,x.base,x.actual].filter(Number.isFinite)),min=Math.min(...vals),max=Math.max(...vals),pad=Math.max((max-min)*.12,10),low=min-pad,high=max+pad;
+ const t0=data[0].t,t1=data[data.length-1].t, left=70,right=w-20,top=16,bottom=ht-32;
+ const X=t=>left+(t-t0)/Math.max(t1-t0,1)*(right-left),Y=v=>bottom-(v-low)/(high-low)*(bottom-top);
+ c.font='12px system-ui';c.strokeStyle='#293952';c.fillStyle='#9cacc1';
+ for(let i=0;i<4;i++){let y=top+(bottom-top)*i/3;c.beginPath();c.moveTo(left,y);c.lineTo(right,y);c.stroke();c.fillText('$'+(high-(high-low)*i/3).toFixed(0),4,y+4)}
+ const series=[['base','#e8bb70'],['model','#7db7ff'],['actual','#7ee0ad']];
+ for(const [key,color] of series){c.strokeStyle=color;c.fillStyle=color;c.lineWidth=2;c.beginPath();let prev=null;
+  for(const item of data){let v=item[key];if(!Number.isFinite(v)){prev=null;continue}
+   const x=X(item.t),y=Y(v);if(prev && item.t-prev.t<=45*60*1000){c.moveTo(X(prev.t),Y(prev[key]));c.lineTo(x,y)}
+   c.fillRect(x-2,y-2,4,4);prev=item}c.stroke()}
+ c.fillStyle='#9cacc1';c.fillText(date(new Date(t0).toISOString()),left,bottom+22);c.textAlign='right';c.fillText(date(new Date(t1).toISOString()),right,bottom+22);c.textAlign='left';
+}
+function render(index){latest=index;const items=index.entries||[],last=items.at(-1),age=index.last_forecast_at?(Date.now()-Date.parse(index.last_forecast_at))/60000:Infinity;
+ $('last').textContent=date(index.last_forecast_at);$('coverage').textContent=`${index.forecasts_last_24h} / ${index.expected_15m_bars_last_24h}`;$('updated').textContent=date(index.generated_at);
+ const stale=age>35,lag=Number.isFinite(age)?Math.round(age):null;
+ $('state').className='panel '+(stale?'bad':'good');$('state').textContent=items.length?stale?`Данные задерживаются: последний прогноз ${lag} мин назад. GitHub Actions запускается нерегулярно; графики показывают только реально записанные наблюдения.`:`Журнал обновляется. Последний прогноз записан ${lag} мин назад. Следующая точка появится после нового запуска GitHub Actions.`:'Журнал пока пуст. Последняя проверка: '+date(index.generated_at);
+ plot($('chart15'),items,'15');plot($('chart30'),items,'30');
+ const rows=items.slice(-30).reverse().flatMap(e=>['15','30'].map(h=>{let f=e.forecasts[h],o=e.outcome?.outcomes?.[h];if(!f)return '';let id=encodeURIComponent(e.forecast_id),link=ROOT+'forecasts/'+id+'.json',outcome=ROOT+'outcomes/'+id+'.json';return `<tr><td>${date(f.target_bar_close)}</td><td>+${h}м</td><td>${money(f.momentum_price)}</td><td>${money(f.flat_price)}</td><td>${o?money(o.actual_price):'Ожидаем'}</td><td>${o?o.momentum_abs_pct.toFixed(3)+'%':'—'}</td><td><a href="${link}" target="_blank" rel="noopener" title="${e.source_snapshot_sha256}">${e.forecast_id.slice(0,10)}</a>${o?` · <a href="${outcome}" target="_blank" rel="noopener">исход</a>`:''}</td></tr>`}));
+ $('rows').innerHTML=rows.join('');
+}
+async function refresh(){try{const res=await fetch(ROOT+'index.json?v='+Date.now(),{cache:'no-store'});if(!res.ok)throw Error('HTTP '+res.status);const data=await res.json();if(data.schema_version!==1)throw Error('неизвестная версия данных');render(data)}catch(err){$('state').className='panel bad';$('state').textContent='Не удалось прочитать журнал: '+err.message+'. Попробуйте обновить страницу позже.'}}
+refresh();setInterval(refresh,60000);window.addEventListener('resize',()=>latest&&render(latest));
+</script></body></html>
