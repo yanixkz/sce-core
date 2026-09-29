@@ -1,48 +1,296 @@
 <!doctype html>
-<html lang="ru"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>SCE — прогноз BTC и факт</title>
-<style>
-:root{color-scheme:dark;font-family:Inter,system-ui,sans-serif;background:#090e18;color:#e8edf7}*{box-sizing:border-box}body{margin:0}main{max-width:1300px;margin:auto;padding:24px}a{color:#82c9ff}nav{display:flex;gap:16px;flex-wrap:wrap;color:#9db2c9}h1{font-size:clamp(26px,4vw,44px);margin:32px 0 8px}h2{margin:0 0 8px}.muted{color:#9cacc1}.panel{border:1px solid #293952;background:#111a2b;border-radius:16px;padding:20px;margin:18px 0}.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}.value{font-size:24px;font-variant-numeric:tabular-nums;margin-top:6px}.bad{color:#ff9a8a}.good{color:#93d4ad}.tag{border:1px solid #40516c;border-radius:20px;padding:4px 10px;display:inline-block}canvas{width:100%;height:260px;display:block}.legend{display:flex;gap:18px;flex-wrap:wrap;font-size:13px}.swatch{width:12px;height:12px;display:inline-block;border-radius:50%;margin-right:5px}.scroll{overflow:auto}table{width:100%;border-collapse:collapse;min-width:800px;text-align:left;font-size:14px}th,td{padding:10px;border-bottom:1px solid #293952;font-variant-numeric:tabular-nums}button{background:#1c344b;border:1px solid #46627c;border-radius:8px;color:white;padding:8px 12px;cursor:pointer}@media(max-width:700px){.grid{grid-template-columns:1fr}main{padding:15px}}
-</style></head><body><main>
-<nav><a href="./index.html">SCE</a><a href="./bitcoin-temporal-field.html">Temporal Field</a><span>Forward Prediction Lab</span></nav>
-<h1>Прогноз BTC × фактическая цена</h1><p class="muted">Два горизонта, прогнозы записаны до исхода. Coinbase BTC-USD, закрытие 15-минутных свечей UTC.</p>
-<div id="state" class="panel" role="status">Загрузка журнала…</div>
-<section class="grid"><div class="panel"><div class="muted">Последняя запись</div><div id="last" class="value">—</div></div><div class="panel"><div class="muted">За 24 часа / ожидаемые 96</div><div id="coverage" class="value">—</div></div><div class="panel"><div class="muted">Обновление индекса</div><div id="updated" class="value">—</div></div></section>
-<section class="panel"><h2>+15 минут</h2><p class="muted">Пробный momentum, baseline «без изменения» и исход</p><canvas id="chart15" aria-label="График прогнозов BTC на 15 минут и фактических цен"></canvas></section>
-<section class="panel"><h2>+30 минут</h2><p class="muted">Те же записи, но целевая свеча закрывается на 30 минут позже</p><canvas id="chart30" aria-label="График прогнозов BTC на 30 минут и фактических цен"></canvas></section>
-<div class="legend"><span><i class="swatch" style="background:#7db7ff"></i>Модель (пробная)</span><span><i class="swatch" style="background:#e8bb70"></i>Baseline</span><span><i class="swatch" style="background:#7ee0ad"></i>Факт</span><span>Кружок без зелёной точки: исход ожидается</span></div>
-<section class="panel"><h2>Журнал</h2><p class="muted">Нажми на ID, чтобы открыть неизменяемую запись прогноза. Исход хранится отдельным файлом.</p><div class="scroll"><table><thead><tr><th>Цель UTC</th><th>Горизонт</th><th>Прогноз</th><th>Baseline</th><th>Факт</th><th>Ошибка модели</th><th>Запись</th></tr></thead><tbody id="rows"></tbody></table></div></section>
-<p class="muted">Momentum здесь исследовательский кандидат: исторически он проиграл baseline. Вероятности 0,55/0,45 не калиброваны. График показывает время цели; задержки GitHub Actions создают пробелы, и они не заполняются выдуманными прогнозами.</p>
-</main><script>
-const ROOT='https://raw.githubusercontent.com/yanixkz/sce-core/experiment/bitcoin-forecast-ledger/data/bitcoin/forward_ledger/';
-const $=id=>document.getElementById(id), money=x=>x==null?'Ожидаем':new Intl.NumberFormat('en-US',{style:'currency',currency:'USD',maximumFractionDigits:2}).format(x);
-const date=s=>s?new Date(s).toLocaleString('ru-RU',{timeZone:'UTC',day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'})+' UTC':'—';
-let latest=null;
-function plot(canvas,entries,h){
- const dpr=window.devicePixelRatio||1,w=canvas.clientWidth,ht=260;canvas.width=w*dpr;canvas.height=ht*dpr;
- const c=canvas.getContext('2d');c.scale(dpr,dpr);c.clearRect(0,0,w,ht);
- const data=entries.filter(e=>e.forecasts?.[h]).slice(-65).map(e=>({t:Date.parse(e.forecasts[h].target_bar_close),model:e.forecasts[h].momentum_price,base:e.forecasts[h].flat_price,actual:e.outcome?.outcomes?.[h]?.actual_price}));
- if(!data.length){c.fillStyle='#a8b6c9';c.fillText('Пока нет записанных прогнозов',20,40);return}
- const vals=data.flatMap(x=>[x.model,x.base,x.actual].filter(Number.isFinite)),min=Math.min(...vals),max=Math.max(...vals),pad=Math.max((max-min)*.12,10),low=min-pad,high=max+pad;
- const t0=data[0].t,t1=data[data.length-1].t, left=70,right=w-20,top=16,bottom=ht-32;
- const X=t=>left+(t-t0)/Math.max(t1-t0,1)*(right-left),Y=v=>bottom-(v-low)/(high-low)*(bottom-top);
- c.font='12px system-ui';c.strokeStyle='#293952';c.fillStyle='#9cacc1';
- for(let i=0;i<4;i++){let y=top+(bottom-top)*i/3;c.beginPath();c.moveTo(left,y);c.lineTo(right,y);c.stroke();c.fillText('$'+(high-(high-low)*i/3).toFixed(0),4,y+4)}
- const series=[['base','#e8bb70'],['model','#7db7ff'],['actual','#7ee0ad']];
- for(const [key,color] of series){c.strokeStyle=color;c.fillStyle=color;c.lineWidth=2;c.beginPath();let prev=null;
-  for(const item of data){let v=item[key];if(!Number.isFinite(v)){prev=null;continue}
-   const x=X(item.t),y=Y(v);if(prev && item.t-prev.t<=45*60*1000){c.moveTo(X(prev.t),Y(prev[key]));c.lineTo(x,y)}
-   c.fillRect(x-2,y-2,4,4);prev=item}c.stroke()}
- c.fillStyle='#9cacc1';c.fillText(date(new Date(t0).toISOString()),left,bottom+22);c.textAlign='right';c.fillText(date(new Date(t1).toISOString()),right,bottom+22);c.textAlign='left';
+<html lang="ru"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#0b141c"><title>Forward Prediction Lab · SCE</title><style>:root{color-scheme:dark;--bg:#0b141c;--surface:#141f29;--panel:#192631;--line:#344958;--text:#e8edf2;--muted:#a5b7c4;--cyan:#9bd8d1;--amber:#f2c785;--violet:#ceb1de;font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif}*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:var(--bg);color:var(--text)}button,input{font:inherit}button{cursor:pointer}a{color:inherit;text-decoration:none}a:hover{color:var(--cyan)}.topbar{border-bottom:1px solid var(--line);display:flex;justify-content:space-between;align-items:center;gap:20px;padding:16px max(24px,calc((100vw - 1510px)/2));background:#101a23;position:sticky;top:0;z-index:5}.brand{display:flex;align-items:center;gap:12px;font-weight:750;letter-spacing:.13em}.brand small{display:block;font-size:10px;letter-spacing:.16em;color:var(--muted)}.mark{font:italic 28px Georgia,serif;color:var(--amber);letter-spacing:0}.topbar nav{display:flex;gap:20px;flex-wrap:wrap;color:#c6d4dd;font-size:14px}main{max-width:1510px;margin:auto;padding:27px 24px 70px}.intro{display:flex;justify-content:space-between;align-items:center;gap:20px;margin:0 0 24px}.eyebrow{display:block;font:12px ui-monospace,SFMono-Regular,monospace;letter-spacing:.11em;color:var(--amber)}h1{font-size:clamp(28px,3.2vw,44px);line-height:1.12;margin:8px 0 9px;letter-spacing:-.035em}p{line-height:1.6;color:var(--muted)}.intro p{margin:0;max-width:830px}.source-stamp{font:12px ui-monospace,monospace;color:var(--cyan);border:1px solid var(--line);padding:13px 16px;border-radius:8px;max-width:270px}.observatory,.price-section,.layers-section,.evidence-section{border:1px solid var(--line);border-radius:13px;background:var(--surface);margin-bottom:21px;overflow:hidden}.section-bar{display:flex;align-items:end;justify-content:space-between;gap:20px;padding:22px 25px 20px}.section-bar h2{font-size:24px;letter-spacing:-.02em;margin:6px 0}.section-bar p{margin:0;max-width:900px;font-size:15px}.range{display:flex;gap:7px;flex-wrap:wrap;flex-shrink:0}.range button,.scan button,.layer-grid button{background:#1b2a36;border:1px solid #486071;border-radius:6px;color:var(--text);padding:9px 12px}.range .selected,.layer-grid .selected{border-color:var(--cyan);background:#244043;color:#b6f3eb}.instrument{display:grid;grid-template-columns:minmax(0,1fr) 340px;border-top:1px solid var(--line)}.canvas-column{padding:18px 24px 22px;min-width:0}.status-strip{display:flex;gap:12px;align-items:center;color:var(--muted);font-size:14px;min-height:38px}.tag{display:inline-block;font:11px ui-monospace,monospace;letter-spacing:.08em;border:1px solid;padding:5px 7px;border-radius:4px;white-space:nowrap}.observed,.causal{color:var(--cyan);border-color:#43827f}.hypothesis-tag{color:var(--amber);border-color:#866949}.retrospective{color:var(--violet);border-color:#746282}.invalid{color:#edaa9f;border-color:#935c58}.map-shell{display:grid;grid-template-columns:72px minmax(0,1fr);height:488px;border:1px solid #3c5263;border-radius:7px;background:#111d27;padding:14px 13px 8px 4px}.scale-axis{display:grid;grid-template-rows:repeat(11,1fr);padding:27px 4px 28px;text-align:right;font:12px ui-monospace,monospace;color:#bcd1dc}.scale-axis span{align-self:center}.map-main{min-width:0;position:relative;display:flex;flex-direction:column}.map-caption{font:11px ui-monospace,monospace;letter-spacing:.08em;color:var(--muted);height:25px}#scale-map{display:block;width:100%;height:calc(100% - 53px)}.map-empty{position:absolute;top:43%;left:50%;transform:translate(-50%,-50%);width:min(500px,85%);padding:22px;background:rgba(17,29,39,.96);border:1px solid #496070;border-radius:8px;box-shadow:0 15px 40px #09131ccc;display:grid;gap:9px;text-align:center}.map-empty strong{font-size:18px}.map-empty span{font-size:14px;line-height:1.55;color:var(--muted)}.time-axis{display:flex;justify-content:space-between;font:12px ui-monospace,monospace;color:var(--muted);height:28px;padding-top:8px}.scan{margin-top:17px}.scan label{font:12px ui-monospace,monospace;letter-spacing:.07em;color:#b3c5d0;display:flex;justify-content:space-between}.scan strong{color:var(--amber)}.scan input{width:100%;accent-color:var(--amber);margin:13px 0}.scan-buttons{display:flex;align-items:center;gap:8px}.scan-buttons span{margin-left:auto;font-size:13px;color:var(--muted)}.scan button{font-size:13px;padding:7px 10px}.inspector{border-left:1px solid var(--line);padding:25px 22px;background:var(--panel)}.inspector h2{font-size:22px;margin:11px 0 7px}.inspector .small{font-size:14px;margin:0 0 23px}.reading>div{display:flex;justify-content:space-between;gap:13px;border-bottom:1px solid var(--line);padding:12px 0;font-size:13px}.reading span{color:var(--muted)}.reading b{text-align:right;font:13px ui-monospace,monospace;font-weight:500}.inspector-note{margin-top:23px}.inspector-note p{font-size:13px}.hypothesis{border-top:1px solid var(--line);padding:18px 25px}.hypothesis p{font-size:14px;margin:11px 0 0}.life-flow{display:flex;gap:6px;margin-top:13px}.life-flow span{flex:1;border-top:3px solid #b08c64;padding:10px 4px;color:#e3cda9;font:11px ui-monospace,monospace;text-align:center;white-space:normal}.life-flow span:last-child{border-color:#6d7480;color:#b8bfca}.price-section .chart-frame{padding:0 25px 15px}#price-chart{height:232px;width:100%;display:block;border:1px solid #395061;border-radius:6px;background:#111d27;cursor:crosshair}.chart-bottom{display:flex;justify-content:space-between;gap:15px;color:var(--muted);font:12px ui-monospace,monospace;margin-top:8px}.source-note{font-size:13px;margin:0 25px 20px}.text-link{color:var(--cyan);font-size:14px}.layer-grid{padding:0 25px;display:grid;grid-template-columns:repeat(5,1fr);gap:10px}.layer-grid button{text-align:left;min-height:104px}.layer-grid button strong,.layer-grid button span{display:block}.layer-grid button strong{font-size:14px}.layer-grid button span{font-size:12px;margin-top:10px;color:var(--muted)}.layer-grid button:disabled{opacity:.62;cursor:not-allowed}.layer-detail{margin:16px 25px;border:1px solid var(--line);padding:14px;border-radius:6px;font-size:14px;color:var(--muted)}.mini{margin-top:17px}.mini p{display:inline;margin-left:10px}.evidence-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));border-top:1px solid var(--line)}.evidence-grid article{padding:22px 25px;border-right:1px solid var(--line)}.evidence-grid article:last-child{border-right:0}.evidence-grid h3{font-size:19px;margin:15px 0 9px}.evidence-grid p{font-size:14px}.evidence-values{border:1px solid var(--line);padding:12px;border-radius:5px;font:12px ui-monospace,monospace;color:var(--cyan);line-height:1.8}.method{border-top:1px solid var(--line);padding:17px 25px 23px;font-size:14px}.method summary{cursor:pointer;font-weight:600}.method p{max-width:1000px}.method a{color:var(--cyan)}footer{display:flex;justify-content:space-between;gap:20px;color:var(--muted);font-size:13px;padding:15px 0}footer div{display:flex;gap:18px;flex-wrap:wrap}button:focus-visible,a:focus-visible,input:focus-visible,summary:focus-visible{outline:2px solid var(--amber);outline-offset:3px}@media(max-width:1000px){.instrument{grid-template-columns:1fr}.inspector{border-left:0;border-top:1px solid var(--line)}.reading{display:grid;grid-template-columns:repeat(2,1fr);gap:0 24px}.layer-grid{grid-template-columns:repeat(3,1fr)}.evidence-grid{grid-template-columns:1fr}.evidence-grid article{border-right:0;border-bottom:1px solid var(--line)}}@media(max-width:700px){.topbar{position:static;display:block;padding:15px 18px}.topbar nav{margin-top:15px;gap:12px}main{padding:20px 12px}.intro,.section-bar{display:block}.source-stamp{margin-top:15px}.section-bar{padding:19px 15px}.range{margin-top:15px}.canvas-column{padding:12px}.map-shell{height:390px;grid-template-columns:51px minmax(0,1fr);padding-right:7px}.scale-axis{font-size:10px}.map-empty{width:90%;padding:12px}.map-empty strong{font-size:15px}.map-empty span{font-size:12px}.inspector{padding:20px 15px}.reading{grid-template-columns:1fr}.hypothesis{padding:17px 14px}.life-flow{flex-wrap:wrap}.life-flow span{min-width:30%;font-size:10px}.layer-grid{padding:0 14px;grid-template-columns:repeat(2,1fr)}.layer-detail{margin:14px}.price-section .chart-frame{padding:0 14px 15px}.source-note{margin:0 14px 16px}.chart-bottom{font-size:10px}.scan-buttons span{display:none}footer{display:block}footer div{margin-top:10px}}
+
+[hidden]{display:none!important}
+/* Three observed daily horizons use their own axis and accessible scan spacing. */
+.map-shell{height:390px}.scale-axis{grid-template-rows:repeat(3,1fr)}.scale-axis span{align-self:center}.scan{margin-top:25px}.time-axis{height:34px}.pending-scales{border-top:1px solid var(--line);padding:18px 25px}.pending-scales p{margin:9px 0 0;font-size:14px}.map-main canvas{cursor:crosshair}@media(max-width:700px){.map-shell{height:320px}.pending-scales{padding:16px}}
+</style><style>.lab{max-width:1380px}.lab-intro{margin-bottom:24px}.lab-intro p{max-width:960px}.forecast-panel,.journal-panel,.benchmark-panel,.method-panel{background:var(--surface);border:1px solid var(--line);border-radius:12px;margin-bottom:20px;overflow:hidden}.loading{padding:22px;background:var(--panel);border:1px solid var(--line);border-radius:8px}.entry-badge{font:13px ui-monospace,monospace;color:var(--cyan);border:1px solid #497476;border-radius:5px;padding:9px 11px}.origin-strip{display:grid;grid-template-columns:repeat(3,1fr);border-block:1px solid var(--line);background:#1a2934}.origin-strip>div{padding:18px 24px;border-right:1px solid var(--line)}.origin-strip>div:last-child{border:0}.origin-strip small{display:block;font:11px ui-monospace,monospace;letter-spacing:.07em;color:var(--muted);margin-bottom:9px}.origin-strip strong{font:19px ui-monospace,monospace;color:var(--text)}.origin-strip>div:first-child strong{font-size:27px;color:var(--amber)}.horizon-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:17px;padding:20px 24px}.horizon-card{background:#101d27;border:1px solid #3d5361;border-radius:9px;padding:18px 18px 16px;min-width:0}.horizon-card h3{margin:0;font-size:23px}.horizon-head{display:flex;align-items:center;justify-content:space-between;gap:10px}.target{margin:10px 0 16px;font:12px ui-monospace,monospace;color:var(--muted);line-height:1.6}.target strong{color:var(--text)}.ruler{position:relative;height:76px;border-top:1px solid var(--line);border-bottom:1px solid var(--line);margin:7px 0 14px}.ruler:before{content:'';position:absolute;top:50%;left:0;right:0;border-top:1px dashed #526878}.pin{position:absolute;top:15px;transform:translateX(-50%);text-align:center;font:11px ui-monospace,monospace;white-space:nowrap}.pin:after{content:'';display:block;width:3px;height:22px;margin:4px auto;background:currentColor}.pin.bottom{top:43px}.pin.bottom:after{height:0}.pin.bottom:before{content:'';display:block;width:3px;height:14px;background:currentColor;margin:-9px auto 4px}.pin.base{color:#86b4d2}.pin.model{color:var(--amber)}.pin.actual{color:var(--cyan)}.horizon-values{display:grid;grid-template-columns:repeat(2,1fr);gap:7px 18px;font-size:13px}.horizon-values div{display:flex;justify-content:space-between;gap:7px;border-bottom:1px solid #304452;padding:7px 0}.horizon-values span{color:var(--muted)}.horizon-values strong{font:13px ui-monospace,monospace}.outcome-line{margin-top:12px;border:1px solid #395364;border-radius:5px;padding:12px;color:var(--muted);font-size:14px}.caution{margin:0;padding:0 24px 20px;font-size:13px}.caution .tag{margin-right:7px}.table-scroll{overflow:auto;padding:0 24px 12px}.journal-panel table{border-collapse:collapse;width:100%;white-space:nowrap;font-size:13px}.journal-panel th,.journal-panel td{padding:12px 11px;border-bottom:1px solid var(--line);text-align:left}.journal-panel th{color:var(--muted);font-weight:500;font-size:12px}.journal-panel tr[data-index]{cursor:pointer}.journal-panel tr[data-index]:hover,.journal-panel tr.active{background:#263c47}.journal-panel code{font-size:12px;color:var(--cyan)}.entry-details{padding:18px 24px;border-top:1px solid var(--line);background:#192733;color:var(--muted);font-size:14px;line-height:1.7;overflow-wrap:anywhere}.entry-details p{margin:7px 0}.entry-details code{font-size:12px}.entry-details a{color:var(--cyan)}.benchmark-legend{display:flex;gap:22px;padding:0 24px;color:var(--muted);font-size:13px}.benchmark-legend i{display:inline-block;width:9px;height:9px;border-radius:2px;margin-right:7px}.baseline-dot{background:#86b4d2}.model-dot{background:var(--amber)}.benchmark-chart{padding:18px 24px;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}.era-card{border:1px solid var(--line);border-radius:7px;padding:14px;min-width:0}.era-card h3{font-size:16px;margin:0 0 7px}.era-card small{color:var(--muted)}.benchmark-row{padding:13px 0 5px;border-top:1px solid #324653;margin-top:10px}.benchmark-row-head{display:flex;justify-content:space-between;font-size:13px}.benchmark-row-head strong{color:var(--amber)}.comparison-line{height:9px;margin:9px 0 4px;background:#253643;border-radius:3px;position:relative}.comparison-line i{position:absolute;height:4px;top:0;left:0;background:#86b4d2;border-radius:3px}.comparison-line b{position:absolute;height:4px;top:5px;left:0;background:var(--amber);border-radius:3px}.comparison-values{display:flex;justify-content:space-between;color:var(--muted);font:12px ui-monospace,monospace}.benchmark-footer{padding:0 24px 18px}.benchmark-footer p{font-size:13px}.method-panel{padding:23px 25px}.method-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:14px;margin:16px 0}.method-grid>div{border:1px solid var(--line);padding:13px;border-radius:6px}.method-grid p,.method-panel>p{font-size:13px}.method-grid p{margin:12px 0 0}.refresh-note{border-top:1px solid var(--line);padding-top:15px}@media(max-width:1100px){.method-grid{grid-template-columns:repeat(3,1fr)}.benchmark-chart{grid-template-columns:1fr}.era-card{display:grid;grid-template-columns:1fr 1fr;gap:0 15px}.era-card h3,.era-card small{grid-column:1/-1}}@media(max-width:750px){.origin-strip{grid-template-columns:1fr}.origin-strip>div{border-right:0;border-bottom:1px solid var(--line);padding:12px 16px}.horizon-grid{grid-template-columns:1fr;padding:14px}.section-bar{display:block}.entry-badge{display:inline-block;margin-top:14px}.method-grid{grid-template-columns:repeat(2,1fr)}.benchmark-chart,.benchmark-legend{padding-inline:14px}.table-scroll{padding-inline:14px}.entry-details{padding:16px}.caution{padding-inline:14px}.method-panel{padding:18px}}@media(max-width:450px){.method-grid{grid-template-columns:1fr}.era-card{display:block}.horizon-values{grid-template-columns:1fr}}
+.prospective-score{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;padding:0 24px 21px}.score-card{padding:16px;border:1px solid var(--line);border-radius:7px;background:#111f29}.score-card h3{margin:10px 0}.score-card>div{display:flex;justify-content:space-between;gap:10px;border-top:1px solid #344956;padding:10px 0;font-size:13px}.score-card span{color:var(--muted)}.score-card b{font:13px ui-monospace,monospace;text-align:right}.score-card p{font-size:13px}@media(max-width:750px){.prospective-score{grid-template-columns:1fr;padding:0 14px 16px}}
+.chart-panel{padding-bottom:15px}.chart-panel .section-bar{align-items:center}.chart-key{display:flex;gap:22px;flex-wrap:wrap;padding:0 24px 8px;font-size:14px;color:var(--muted)}.line-key{display:inline-block;width:20px;height:3px;margin:0 8px 4px 0;background:currentColor}.line-key.actual{color:#76ddcc}.line-key.model{color:#e6b875}.line-key.baseline{color:#86b4d2}#forecast-chart{display:block;width:calc(100% - 48px);height:300px;margin:0 24px}.chart-summary{color:var(--muted);font-size:13px;padding:0 24px;margin:4px 0 0}@media(max-width:750px){.chart-key{padding-inline:14px}#forecast-chart{width:calc(100% - 28px);margin:0 14px}.chart-summary{padding-inline:14px}}
+.chart-controls{display:flex;gap:10px;flex-wrap:wrap}.chart-wrap{position:relative}#forecast-chart{height:330px;cursor:crosshair;outline-offset:2px}.chart-tooltip{position:absolute;top:14px;width:225px;pointer-events:none;background:#20323e;border:1px solid #6b8a99;border-radius:8px;box-shadow:0 10px 30px #050b12ad;padding:10px 12px;z-index:2;font-size:13px}.chart-tooltip strong,.chart-tooltip span{display:block;margin:3px 0}.chart-tooltip span{color:#c2d5dc}.selected-forecast{display:grid;grid-template-columns:1fr 1fr auto;gap:16px;align-items:center;margin:15px 24px 4px;padding:16px;border:1px solid var(--line);border-radius:8px;background:#172833;color:var(--muted);font-size:13px}.selected-forecast div{display:grid;gap:5px}.selected-forecast small{font:11px ui-monospace,monospace;color:var(--muted)}.selected-forecast strong{font-size:20px;color:var(--text)}.selected-forecast a{color:var(--cyan)}.dir-up{color:#76ddcc!important}.dir-down{color:#e6b875!important}.direction-callout{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:4px 0 14px}.direction-callout>div{padding:11px 12px;background:#1b303b;border:1px solid #355563;border-radius:6px}.direction-callout small,.direction-callout strong{display:block}.direction-callout small{font-size:10px;color:var(--muted);letter-spacing:.07em}.direction-callout strong{font-size:19px;margin-top:5px}.journal-panel td small{color:var(--muted);margin-left:4px}@media(max-width:750px){.chart-controls{margin-top:12px}.selected-forecast{grid-template-columns:1fr;margin-inline:14px}.chart-tooltip{width:190px}}
+.chart-tooltip[hidden]{display:none}
+.chart-controls .range[hidden],.chart-summary[hidden]{display:none}.chart-controls .timeframe-control{flex-wrap:wrap}.chart-controls .timeframe-control button{min-width:36px}
+
+/* Clear comparison workspace */
+.lab{max-width:1240px}.lab-intro{margin-bottom:22px}.lab-intro h1{font-size:clamp(28px,3vw,38px);letter-spacing:-.025em}.lab-intro .eyebrow{font-size:12px}.lab-intro p{font-size:16px;line-height:1.65}.lab-intro .hypothesis-tag{display:none}.chart-panel .section-bar{display:block;padding-bottom:14px}.chart-panel h2{font-size:25px}.chart-panel .section-bar p{max-width:820px;font-size:15px}.chart-controls{padding:0 24px 20px;gap:28px;align-items:end;border-bottom:1px solid var(--line);margin-bottom:20px}.control-field>span{display:block;font-size:14px;color:var(--muted);margin-bottom:8px}.range{display:inline-flex;background:#0d1a24;border:1px solid #344c5c;border-radius:9px;padding:4px;gap:3px}.range button{border:0!important;background:transparent;border-radius:6px;min-height:40px;padding:8px 14px;font-size:14px;color:#bed0da;cursor:pointer}.range button.selected{background:#28544f;color:#e1fff8;box-shadow:inset 0 0 0 1px #599d90}.range button:hover{background:#263d49}.range button:focus-visible{outline:2px solid #8debd7;outline-offset:2px}.chart-key{padding-bottom:12px;font-size:15px}.line-key{width:28px}.chart-summary{font-size:14px;line-height:1.65;margin-top:12px}.selected-forecast small{font:12px system-ui;line-height:1.6}.selected-forecast{font-size:14px}.selected-forecast strong{font-size:22px}.section-bar .eyebrow{font-size:12px}.section-bar p,.caution,.score-card p{font-size:14px;line-height:1.65}.score-card>div,.score-card b,.journal-panel table,.journal-panel th,.horizon-values,.horizon-values strong{font-size:14px}.direction-callout small{font-size:12px}.target{font:14px system-ui;line-height:1.65}.origin-strip small{font-size:12px}.origin-strip strong{font:16px system-ui;line-height:1.6}.horizon-values{grid-template-columns:1fr}.horizon-values div:nth-child(n+5){display:none}.research-details{border:1px solid var(--line);border-radius:12px;margin-bottom:24px}.research-details>summary{padding:20px 24px;cursor:pointer;font-size:16px;color:var(--text)}.research-details>section{margin:0;border:0;border-top:1px solid var(--line);border-radius:0}.method-grid p,.method-panel>p{font-size:14px}.table-scroll{max-height:460px}.ledger-notice{font-size:14px!important}.score-card>div:first-of-type b{font:24px system-ui;color:#83e2ce}.chart-panel{background:linear-gradient(150deg,#182733,#13202b)}
+@media(max-width:750px){.chart-controls{padding-inline:14px;gap:16px;display:grid;grid-template-columns:1fr}.control-field .range{display:flex;flex-wrap:wrap}.range button{flex:1;padding-inline:10px}.lab-intro h1{font-size:28px}.chart-panel h2{font-size:22px}.selected-forecast strong{font-size:20px}.horizon-head{flex-wrap:wrap}.score-card>div{flex-wrap:wrap}}
+
+.prospective-score{grid-template-columns:1fr}.score-card{max-width:none}.score-card>div{font-size:15px}.score-controls{margin-top:0}.empty-score{min-height:140px}
+</style><style>/* Shared project navigation across all research routes. */
+header:has(> .site-global-nav){height:auto;min-height:70px;display:flex;align-items:center;justify-content:space-between;gap:18px;flex-wrap:wrap}
+.site-global-nav{display:flex;align-items:center;gap:4px;flex-wrap:wrap;max-width:100%;font-family:inherit}
+.site-global-nav a{display:inline-flex;align-items:center;min-height:38px;padding:8px 11px;border:1px solid transparent;border-radius:6px;color:#b9cdd8;font-size:13px;font-weight:600;line-height:1.2;white-space:nowrap;text-decoration:none}
+.site-global-nav a:hover,.site-global-nav a:focus-visible{color:#eafffa;background:#20333e;border-color:#526879}
+.site-global-nav a[aria-current="page"]{color:#a9eee0;background:#24413f;border-color:#6db4a8}
+.site-subnav{display:flex;gap:8px;align-items:center;overflow-x:auto;white-space:nowrap;padding:9px max(24px,calc((100vw - 1510px)/2));border-bottom:1px solid #344958;background:#101c27;color:#91a9b7;scrollbar-width:thin}
+.site-subnav span{font:11px ui-monospace,monospace;letter-spacing:.08em;margin-right:7px;flex-shrink:0}
+.site-subnav a{color:#aec5d0;text-decoration:none;font-size:13px;padding:5px 9px;border-radius:5px;flex-shrink:0}
+.site-subnav a:hover,.site-subnav a:focus-visible{background:#243b47;color:#e8f7f3}
+.archive-banner{padding:11px max(24px,calc((100vw - 1510px)/2));background:#1d2c35;border-bottom:1px solid #49606a;color:#c8d8dc;font-size:13px;line-height:1.5}
+.archive-banner a{color:#9de2d7;text-decoration:underline;text-underline-offset:3px}
+.site-footer-links{display:flex;flex-wrap:wrap;gap:9px 15px;margin-top:12px;font-size:13px}
+.site-footer-links a{color:#a9c3d0;text-decoration:none}
+.site-footer-links a:hover{color:#9be2d4}
+.page-directory{border:1px solid #344958;border-radius:12px;background:#141f29;padding:23px 25px;margin:20px 0}
+.page-directory h2{font-size:22px;margin:6px 0 14px}
+.page-directory .directory-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+.page-directory .directory-grid a{display:block;border:1px solid #3a5260;border-radius:7px;background:#192a35;padding:15px 16px;min-height:103px;color:#e5eef1;text-decoration:none}
+.page-directory .directory-grid a:hover{border-color:#83cfc2;background:#24403f}
+.page-directory strong{display:block;font-size:16px}
+.page-directory small{display:block;margin-top:8px;color:#aac0ca;line-height:1.5;font-size:13px}
+@media(max-width:1050px){header:has(> .site-global-nav){align-items:flex-start}.site-global-nav{width:100%;overflow-x:auto;flex-wrap:nowrap;scrollbar-width:thin}.site-global-nav a{flex-shrink:0}}
+@media(max-width:700px){header:has(> .site-global-nav){padding:13px 15px;gap:9px}.site-global-nav{gap:2px}.site-global-nav a{font-size:12px;padding:8px 9px}.site-subnav,.archive-banner{padding:8px 13px}.page-directory{padding:18px 14px}.page-directory .directory-grid{grid-template-columns:1fr}.page-directory .directory-grid a{min-height:0}}
+</style><style>.ledger-notice{margin:14px 0 0;padding:12px 14px;border:1px solid #496579;border-radius:6px;background:#172631;font-size:14px;line-height:1.6}.ledger-notice .tag{margin-right:8px}.ledger-notice a{color:var(--cyan);text-decoration:underline}</style></head>
+<body><header class="topbar"><a class="brand" href="./index.html"><span class="mark">Fτ</span><span>SCE <small>RESEARCH / BITCOIN</small></span></a><nav class="site-global-nav" aria-label="Разделы SCE"><a href="bitcoin-temporal-field.html">Поле</a><a href="bitcoin-forward-comparison.html" aria-current="page">Прогнозы</a></nav></header>
+<main class="lab"><div class="intro lab-intro"><div><span class="eyebrow">SCE / ПРОГНОЗЫ BTC</span><h1>Прогноз и реальное движение BTC</h1><p>Сравниваем направление, предсказанное заранее, с фактическим изменением цены через 15 или 30 минут.</p><p class="ledger-notice" id="ledger-notice"><span class="tag observed">ТЕКУЩИЙ ЖУРНАЛ</span> Проверяем свежесть записей…</p></div><span class="tag hypothesis-tag">ИССЛЕДОВАТЕЛЬСКИЙ ТЕСТ</span></div>
+<div id="load-status" class="loading" role="status">Загружаем журнал и проверяем целостность записей…</div><div id="app" hidden>
+<section class="forecast-panel chart-panel"><div class="section-bar"><div><span class="eyebrow">СРАВНЕНИЕ НАПРАВЛЕНИЯ</span><h2>Направление: прогноз и факт</h2><p id="chart-explainer">Изменение цены в процентах: выше нуля — рост, ниже — падение. Наведите на график для сравнения; нажмите на точку для деталей.</p></div></div><div class="chart-controls"><div class="control-field"><span>Срок прогноза</span><div class="range" role="group" aria-label="Срок прогноза"><button id="chart-15" class="selected" aria-pressed="true">15 минут</button><button id="chart-30" aria-pressed="false">30 минут</button></div></div><div class="control-field"><span>Таймфрейм</span><div class="range" id="line-timeframes" role="group" aria-label="Группировка записей"><button data-timeframe="15m" class="selected" aria-pressed="true">15 мин</button><button data-timeframe="1h" aria-pressed="false">1 час</button><button data-timeframe="4h" aria-pressed="false">4 часа</button><button data-timeframe="1d" aria-pressed="false">1 день</button></div></div><div class="control-field"><span>Период</span><div class="range" id="record-range" role="group" aria-label="Количество записей"><button id="range-10" aria-pressed="false">Последние 10</button><button id="range-all" class="selected" aria-pressed="true">Весь журнал</button></div></div></div><div id="chart-key" class="chart-key"><span><i class="line-key actual"></i>Фактическое движение</span><span><i class="line-key model"></i>Прогноз</span></div><div class="chart-wrap"><canvas id="forecast-chart" tabindex="0" role="img" aria-label="Сравнение прогнозируемого и фактического движения BTC в процентах по времени записанных прогнозов"></canvas><div id="chart-tooltip" class="chart-tooltip" hidden></div></div><p id="chart-summary" class="chart-summary"></p><div id="selected-forecast" class="selected-forecast" aria-live="polite">Выберите точку, чтобы увидеть направление и результат.</div></section>
+<section class="benchmark-panel"><div class="section-bar"><div><span class="eyebrow">ТОЧНОСТЬ НАПРАВЛЕНИЯ</span><h2>Результаты записанного журнала</h2><p>Считаются только по опубликованным исходам, связанным с неизменяемыми прогнозами. Пока исходов нет, оценка остаётся пустой.</p></div></div><div class="chart-controls score-controls"><div class="control-field"><span>Срок прогноза</span><div class="range" id="score-timeframes" role="group" aria-label="Срок прогноза для оценки"><button data-score="15" class="selected" aria-pressed="true">15 минут</button><button data-score="30" aria-pressed="false">30 минут</button><button data-score="60" aria-pressed="false">1 час</button><button data-score="240" aria-pressed="false">4 часа</button><button data-score="1440" aria-pressed="false">1 день</button></div></div></div><div id="prospective-score" class="prospective-score"></div></section><section class="forecast-panel"><div class="section-bar"><div><span class="eyebrow">ПОСЛЕДНИЙ ПРОГНОЗ</span><h2>Последняя запись <span id="latest-short"></span></h2><p id="latest-source">—</p></div><div class="entry-badge" id="latest-status">—</div></div>
+<div class="origin-strip"><div><small>НАБЛЮДЁННАЯ ЦЕНА</small><strong id="last-price">—</strong></div><div><small>СВЕЧА ЗАКРЫЛАСЬ · UTC</small><strong id="bar-close">—</strong></div><div><small>ПРОГНОЗ ВЫПУЩЕН · UTC</small><strong id="issue-time">—</strong></div></div><div id="horizons" class="horizon-grid"></div><p class="caution"><span class="tag causal">CAUSAL</span> Прогноз относится к цене закрытия будущей 15-минутной свечи. До появления отдельного файла исхода фактическая цена неизвестна. Наступившее время цели само по себе не подтверждает исход.</p></section>
+<section class="journal-panel"><div class="section-bar"><div><span class="eyebrow">ИСТОРИЯ</span><h2>Журнал прогнозов</h2><p>Направление проверяется по цене закрытия целевой свечи относительно цены при выпуске. Файл исхода хранится отдельно.</p></div><span class="tag observed" id="ledger-count">—</span></div><div class="table-scroll"><table><thead><tr><th>Выпуск · UTC</th><th>Горизонт</th><th>Прогноз</th><th>Факт</th><th>Проверка</th><th>forecast_id</th></tr></thead><tbody id="ledger-rows"></tbody></table></div><div id="entry-details" class="entry-details" aria-live="polite">Выберите строку журнала для просмотра источника и снимка данных.</div></section>
+
+<details class="research-details"><summary>Методика и исторические тесты</summary><section class="benchmark-panel"><div class="section-bar"><div><span class="eyebrow">ИСТОРИЧЕСКИЙ ТЕСТ</span><h2>Помогает ли кандидат сверх baseline?</h2><p>Ретроспективный Coinbase 15m тест на часовых точках. Меньше MAE и Brier — лучше. Это отдельное исследование, а не журнал реально выпущенных прогнозов.</p></div><div class="range" role="group" aria-label="Метрика"><button id="mae-btn" class="selected">Ошибка цены</button><button id="brier-btn">Brier</button></div></div><div class="benchmark-legend"><span><i class="baseline-dot"></i> Цена не изменится</span><span><i class="model-dot"></i> Momentum-кандидат</span></div><div id="benchmark-chart" class="benchmark-chart"></div><div class="benchmark-footer"><p id="benchmark-source"></p><p>Momentum проиграл baseline на +15m и +30m во всех трёх периодах. Некалиброванные P(up)=0.55/0.45 заданы для сравнения; это не уверенность системы и не торговый сигнал.</p></div></section>
+<section class="method-panel"><span class="eyebrow">КАК СЧИТАЕТСЯ РЕЗУЛЬТАТ</span><div class="method-grid"><div><span class="tag observed">OBSERVED</span><p>Coinbase Exchange BTC-USD 15m; цена известна после закрытия исходной свечи.</p></div><div><span class="tag causal">CAUSAL</span><p>Время выпуска, цена, снимок 97 свечей и прогнозы хранятся в неизменяемой записи.</p></div><div><span class="tag retrospective">RETROSPECTIVE</span><p>Фактические цены, ошибки и покрытие интервала можно оценить только после отдельных исходов.</p></div><div><span class="tag hypothesis-tag">HYPOTHESIS</span><p>Позже проверим, дают ли признаки F(t, τ) дополнительную информацию сверх flat baseline.</p></div><div><span class="tag invalid">INVALID</span><p>Задним числом созданный или изменённый прогноз исключается из prospective-журнала.</p></div></div><p>«80% интервал» задан формулой из прошлой волатильности; эмпирическое покрытие появится здесь после накопления исходов. Отсутствие покрытия сейчас — недостаток данных, а не 80% подтверждённая вероятность.</p><p class="refresh-note" id="refresh-note"></p><a class="text-link" href="https://github.com/yanixkz/sce-core/blob/experiment/bitcoin-temporal-field/docs/bitcoin_forward_forecast_lab.md" target="_blank" rel="noreferrer">Методика Research ↗</a></section></details></div>
+<footer><span>SCE / Bitcoin Temporal Field</span><div class="site-footer-links"><a href="bitcoin-temporal-field.html">Поле</a><a href="bitcoin-forward-comparison.html">Прогнозы</a></div></footer></main><script>(() => {
+  const $=id=>document.getElementById(id);
+  const money=x=>Number.isFinite(Number(x))?'$'+Number(x).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2}):'—';
+  const pct=x=>Number.isFinite(x)?x.toFixed(4)+'%':'—';
+  const utc=t=>t?new Intl.DateTimeFormat('ru-RU',{timeZone:'UTC',day:'2-digit',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit',second:'2-digit',hour12:false}).format(new Date(t))+' UTC':'—';
+  const esc=x=>String(x??'').replace(/[&<>"']/g,ch=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));
+  const load=async path=>{let r=await fetch(path,{cache:'no-store'});if(!r.ok)throw Error(path+' · HTTP '+r.status);return r.json()};
+  const url=(branch,path)=>'https://github.com/yanixkz/sce-core/blob/'+branch+'/'+path;
+  const LIVE='https://raw.githubusercontent.com/yanixkz/sce-core/experiment/bitcoin-forecast-ledger/data/bitcoin/forward_ledger/index.json';
+  const state={entries:[],index:null,benchmark:null,metric:'mae',scoreHorizon:'15',horizon:'15',range:'all',timeframe:'15m',chartPoints:[],activePoint:null};
+  const CANDLE_STEPS={'1m':60000,'5m':300000,'15m':900000,'1h':3600000,'4h':14400000,'1d':86400000};
+  function validate(record,outcome,item){
+    const id=record?.forecast_id;
+    if(!/^[a-f0-9]{64}$/.test(id||'')||!item.forecast.endsWith('/'+id+'.json')||record.status!=='CAUSAL'||!Number.isFinite(Number(record.observed_price))||!record.forecasts?.['15']||!record.forecasts?.['30'])return 'Некорректная запись прогноза';
+    for(const [h,f] of Object.entries(record.forecasts)){
+      if(!['15','30'].includes(h)||!Number.isFinite(Number(f.flat_price))||!Number.isFinite(Number(f.momentum_price))||Date.parse(record.issued_at)>=Date.parse(f.target_bar_close))return 'Неверные времена или цены прогноза';
+    }
+    if(outcome&&(outcome.status!=='RESOLVED'||outcome.forecast_id!==id||Date.parse(outcome.resolved_at)<=Math.max(...Object.values(record.forecasts).map(f=>Date.parse(f.target_bar_close)))))return 'Исход не соответствует прогнозу или времени цели';
+    return null;
+  }
+  const outcomeFor=(entry,h)=>entry.outcome?.outcomes?.[h]||null;
+  const statusFor=(entry,h)=>entry.invalid?'INVALID':outcomeFor(entry,h)?'Проверен':Date.now()<Date.parse(entry.record.forecasts[h].target_bar_close)?'Ожидаем результат':'Исход ещё не опубликован';
+  const movement=(price,origin)=>(Number(price)/Number(origin)-1)*100;
+  const direction=x=>x>0?'РОСТ':x<0?'ПАДЕНИЕ':'БЕЗ ИЗМЕНЕНИЯ';
+  const signed=x=>(x>0?'+':'')+x.toFixed(3)+'%';
+  const matches=p=>p.actual===null?null:Math.sign(p.model)===Math.sign(p.actual);
+  function selectPoint(p){
+    state.activePoint=p.entry.record.forecast_id;
+    const r=p.entry.record,f=r.forecasts[state.horizon],out=outcomeFor(p.entry,state.horizon);
+    p={...p,model:movement(f.momentum_price,r.observed_price),actual:out?movement(out.actual_price,r.observed_price):null};
+    $('selected-forecast').innerHTML='<div><small>ПРОГНОЗ ДО ИСХОДА · '+utc(r.issued_at)+'</small><strong class="'+(p.model>0?'dir-up':'dir-down')+'">'+direction(p.model)+' · '+signed(p.model)+'</strong><span>от '+money(r.observed_price)+' к '+money(f.momentum_price)+'</span></div><div><small>ФАКТ · ЦЕЛЬ '+utc(f.target_bar_close)+'</small><strong class="'+(p.actual===null?'':p.actual>0?'dir-up':'dir-down')+'">'+(p.actual===null?'Ожидаем исход':direction(p.actual)+' · '+signed(p.actual))+'</strong><span>'+(out?money(out.actual_price)+(matches(p)?' · направление совпало':' · направление не совпало'):'Фактическая цена пока не записана')+'</span></div><a href="'+url(state.index.ledger_branch,p.entry.item.forecast)+'" target="_blank" rel="noreferrer">Запись #'+esc(r.forecast_id.slice(0,10))+' ↗</a>';
+    renderChart();
+  }
+  function renderChart(){
+    const canvas=$('forecast-chart'),ctx=canvas.getContext('2d'),width=canvas.clientWidth,height=330,dpr=window.devicePixelRatio||1;
+    canvas.width=Math.round(width*dpr);canvas.height=Math.round(height*dpr);ctx.scale(dpr,dpr);
+    const h=state.horizon,all=state.entries.filter(e=>!e.invalid).sort((a,b)=>Date.parse(a.record.issued_at)-Date.parse(b.record.issued_at));
+    const entries=state.range==='10'?all.slice(-10):all;
+    const rawPoints=entries.map((entry,i)=>{const r=entry.record,o=outcomeFor(entry,h);return {entry,i,model:movement(r.forecasts[h].momentum_price,r.observed_price),actual:o?movement(o.actual_price,r.observed_price):null}});
+    const buckets=new Map(),step=CANDLE_STEPS[state.timeframe];
+    for(const p of rawPoints){const time=Math.floor(Date.parse(p.entry.record.issued_at)/step)*step;if(!buckets.has(time))buckets.set(time,[]);buckets.get(time).push(p)}
+    const points=[...buckets].map(([time,group],i)=>{const resolved=group.filter(p=>p.actual!==null),paired=resolved.length?resolved:group;return {...group.at(-1),i,time,count:group.length,model:paired.reduce((n,p)=>n+p.model,0)/paired.length,actual:resolved.length?resolved.reduce((n,p)=>n+p.actual,0)/resolved.length:null}});
+    state.chartPoints=points;
+    if(!points.length){ctx.fillStyle='#a8bfca';ctx.fillText('Нет записанных прогнозов',20,45);return}
+    const abs=Math.max(.15,...points.flatMap(p=>[Math.abs(p.model),p.actual===null?0:Math.abs(p.actual)]));
+    const limit=Math.ceil(abs*1.15*10)/10,l=65,r=width-22,t=18,b=height-38;
+    const X=i=>l+(points.length===1?.5:(points[i].time-points[0].time)/(points.at(-1).time-points[0].time))*(r-l),Y=v=>b-(v+limit)/(2*limit)*(b-t);
+    for(const p of points)p.x=X(p.i);
+    ctx.font='12px ui-monospace,monospace';ctx.textAlign='left';ctx.lineWidth=1;
+    for(const value of [-limit,0,limit]){const y=Y(value);ctx.strokeStyle=value===0?'#7793a5':'#2e4450';ctx.beginPath();ctx.moveTo(l,y);ctx.lineTo(r,y);ctx.stroke();ctx.fillStyle=value===0?'#b6cbd4':'#91aebc';ctx.fillText((value>0?'+':'')+value.toFixed(1)+'%',5,y+4)}
+    for(const [key,color] of [['model','#e6b875'],['actual','#76ddcc']]){
+      ctx.strokeStyle=color;ctx.fillStyle=color;ctx.lineWidth=2.4;ctx.beginPath();let started=false;
+      for(const p of points){if(p[key]===null){started=false;continue}const x=p.x,y=Y(p[key]);if(!started){ctx.moveTo(x,y);started=true}else ctx.lineTo(x,y)}ctx.stroke();
+      for(const p of points){if(p[key]===null)continue;ctx.beginPath();ctx.arc(p.x,Y(p[key]),p.entry.record.forecast_id===state.activePoint?6:4,0,Math.PI*2);ctx.fill()}
+    }
+    const selected=points.find(p=>p.entry.record.forecast_id===state.activePoint);
+    if(selected){ctx.strokeStyle='#91aebc';ctx.setLineDash([3,4]);ctx.beginPath();ctx.moveTo(selected.x,t);ctx.lineTo(selected.x,b);ctx.stroke();ctx.setLineDash([])}
+    ctx.fillStyle='#91aebc';ctx.fillText(new Date(points[0].time).toISOString().slice(5,16).replace('T',' '),l,b+22);ctx.textAlign='right';ctx.fillText(new Date(points.at(-1).time).toISOString().slice(5,16).replace('T',' ')+' UTC',r,b+22);ctx.textAlign='left';
+    const scored=rawPoints.filter(p=>p.actual!==null),hits=scored.filter(matches).length;
+    $('chart-summary').textContent=`${entries.length} прогнозов · направление совпало ${hits} из ${scored.length}. Таймфрейм ${state.timeframe}: ${points.length} точек. В каждой точке — среднее движение по одной и той же группе проверенных прогнозов; если исходов нет, показан только прогноз. Пропущенные интервалы не заполнены.`;
+  }
+  function ruler(f,record,o){
+    const marks=[{name:'Baseline',value:Number(f.flat_price),cls:'base'},{name:'Кандидат',value:Number(f.momentum_price),cls:'model'}];
+    if(o&&Number.isFinite(Number(o.actual_price)))marks.push({name:'Факт',value:Number(o.actual_price),cls:'actual'});
+    const values=marks.map(m=>m.value),lo=Math.min(...values),hi=Math.max(...values),padding=Math.max((hi-lo)*.23,Number(record.observed_price)*.0003),range=hi-lo+2*padding;
+    return '<div class="ruler" role="img" aria-label="'+esc(marks.map(m=>m.name+' '+money(m.value)).join('; '))+'">'+marks.map((m,i)=>'<span class="pin '+m.cls+(i===1?' bottom':'')+'" style="left:'+(((m.value-lo+padding)/range)*100).toFixed(2)+'%">'+m.name+'</span>').join('')+'</div>';
+  }
+  function renderLatest(){
+    const e=state.entries[0],r=e.record;
+    $('latest-short').textContent='#'+r.forecast_id.slice(0,10);
+    $('latest-source').textContent=r.source;
+    $('last-price').textContent=money(r.observed_price);
+    $('bar-close').textContent=utc(r.observed_bar_close);
+    $('issue-time').textContent=utc(r.issued_at);
+    $('latest-status').textContent=e.invalid?'INVALID':e.outcome?'Исход записан':statusFor(e,'30');
+    $('horizons').innerHTML=['15','30'].map(h=>{
+      const f=r.forecasts[h],o=outcomeFor(e,h),known=!!o&&!e.invalid;
+      const lead=Number.isFinite(Number(f.effective_lead_minutes))?Number(f.effective_lead_minutes).toFixed(2)+' мин':'—';
+      const baseError=known?Math.abs(Number(o.actual_price)-Number(f.flat_price))/Number(r.observed_price)*100:NaN;
+      const modelError=known?Math.abs(Number(o.actual_price)-Number(f.momentum_price))/Number(r.observed_price)*100:NaN;
+      const predicted=movement(f.momentum_price,r.observed_price),actual=known?movement(o.actual_price,r.observed_price):null;
+      return '<article class="horizon-card"><div class="horizon-head"><h3>+'+h+' минут</h3><span class="tag '+(known?'retrospective':'causal')+'">'+esc(statusFor(e,h))+'</span></div><div class="target">Цель: <strong>'+utc(f.target_bar_close)+'</strong><br>От выпуска до цели: <strong>'+lead+'</strong></div>'+
+      '<div class="direction-callout"><div><small>ПРОГНОЗ НАПРАВЛЕНИЯ</small><strong class="'+(predicted>0?'dir-up':'dir-down')+'">'+direction(predicted)+'</strong></div><div><small>ФАКТ</small><strong>'+(actual===null?'Ожидаем':direction(actual))+'</strong></div></div>'+
+      '<div class="horizon-values"><div><span>Последняя цена</span><strong>'+money(r.observed_price)+'</strong></div><div><span>Baseline</span><strong>'+money(f.flat_price)+'</strong></div><div><span>Кандидат</span><strong>'+money(f.momentum_price)+'</strong></div><div><span>Факт</span><strong>'+(known?money(o.actual_price):'Ожидаем результат')+'</strong></div><div><span>Ошибка baseline</span><strong>'+pct(baseError)+'</strong></div><div><span>Ошибка кандидата</span><strong>'+pct(modelError)+'</strong></div></div><div class="outcome-line">'+(known?'Факт записан позже: '+utc(e.outcome.resolved_at):'Фактическая цена и обе ошибки появятся только после публикации отдельного исхода.')+'</div></article>';
+    }).join('');
+  }
+  function renderLedger(){
+    const rows=state.entries.flatMap((e,i)=>['15','30'].map(h=>({e,i,h})));
+    $('ledger-count').textContent=state.entries.length+' записей · '+rows.length+' горизонтов';
+    $('ledger-rows').innerHTML=rows.map(({e,i,h})=>{
+      const o=outcomeFor(e,h),f=e.record.forecasts[h],predicted=movement(f.momentum_price,e.record.observed_price),actual=o&&!e.invalid?movement(o.actual_price,e.record.observed_price):null;
+      return '<tr tabindex="0" role="button" data-index="'+i+'" data-horizon="'+h+'" aria-label="Открыть запись '+esc(e.record.forecast_id)+' +'+h+' минут"><td>'+utc(e.record.issued_at)+'</td><td>+'+h+'m</td><td>'+direction(predicted)+' <small>'+signed(predicted)+'</small></td><td>'+(actual===null?'Ожидаем':direction(actual)+' <small>'+signed(actual)+'</small>')+'</td><td>'+(actual===null?esc(statusFor(e,h)):Math.sign(predicted)===Math.sign(actual)?'Совпало':'Не совпало')+'</td><td><code>'+esc(e.record.forecast_id.slice(0,14))+'…</code></td></tr>';
+    }).join('');
+    $('ledger-rows').querySelectorAll('tr[data-index]').forEach(tr=>{
+      const open=()=>{state.selected={index:Number(tr.dataset.index),h:tr.dataset.horizon};$('ledger-rows').querySelectorAll('tr').forEach(x=>x.classList.toggle('active',x===tr));showDetails()};
+      tr.onclick=open;tr.onkeydown=ev=>{if(ev.key==='Enter'||ev.key===' '){ev.preventDefault();open()}};
+    });
+    if(rows.length)$('ledger-rows').querySelector('tr').click();
+  }
+  function showDetails(){
+    const {index,h}=state.selected,e=state.entries[index],r=e.record,item=e.item;
+    const commit=item.forecast_commit?'https://github.com/yanixkz/sce-core/commit/'+encodeURIComponent(item.forecast_commit):null;
+    const o=outcomeFor(e,h),f=r.forecasts[h],interval=f.momentum_80_interval,within=o&&interval?Number(o.actual_price)>=Number(interval[0])&&Number(o.actual_price)<=Number(interval[1]):null;
+    $('entry-details').innerHTML='<span class="tag causal">ЗАПИСАНО ДО ИСХОДА</span><p>Источник: '+esc(r.source)+' · свеча закрылась '+utc(r.observed_bar_close)+' · прогноз выпущен '+utc(r.issued_at)+'</p><p>forecast_id: <code>'+esc(r.forecast_id)+'</code><br>SHA-256 снимка 97 свечей: <code>'+esc(r.source_snapshot_sha256||'—')+'</code><br>CI run: '+esc(r.run_id||'—')+'</p><p><a href="'+url(state.index.ledger_branch,item.forecast)+'" target="_blank" rel="noreferrer">Неизменяемый JSON прогноза ↗</a>'+(commit?' · <a href="'+commit+'" target="_blank" rel="noreferrer">Коммит фиксации ↗</a>':'')+'</p><p>+'+h+'m: некалиброванное P(up)='+esc(f.momentum_p_up)+' · заданный «80%» диапазон '+(interval?money(interval[0])+'…'+money(interval[1]):'—')+'. Покрытие по одной записи '+(within===null?'ещё не известно':within?'попало':'не попало')+'; общая эмпирическая доля требует накопления исходов.</p><div class="outcome-line"><span class="tag retrospective">ИСХОД ЗАПИСЫВАЕТСЯ ПОЗЖЕ</span><p>'+(e.outcome&&!e.invalid?'Файл исхода: <a href="'+url(state.index.ledger_branch,item.outcome)+'" target="_blank" rel="noreferrer">'+esc(item.outcome)+'</a> · записан '+utc(e.outcome.resolved_at):'Файл исхода пока не опубликован в этом снимке журнала. Статус: '+esc(statusFor(e,h)))+'</p></div>';
+  }
+  function renderBenchmark(){
+    const rows=state.benchmark?.rows||[];
+    const eras=[...new Set(rows.map(x=>x.era))];
+    $('benchmark-chart').innerHTML=eras.map(era=>{
+      const selected=rows.filter(x=>x.era===era),max=Math.max(...selected.map(x=>state.metric==='mae'?x.momentum_mae_pct:x.momentum_brier));
+      return '<article class="era-card"><h3>'+esc(era)+'</h3><small>Отдельная историческая выборка</small>'+selected.map(x=>{
+        const flat=state.metric==='mae'?x.flat_mae_pct:x.flat_brier,model=state.metric==='mae'?x.momentum_mae_pct:x.momentum_brier,unit=state.metric==='mae'?'%':'';
+        return '<div class="benchmark-row"><div class="benchmark-row-head"><span>+'+x.horizon_minutes+'m · n='+Number(x.n).toLocaleString('ru-RU')+'</span><strong>'+((model-flat)>0?'Кандидат хуже':'Сравнить')+'</strong></div><div class="comparison-line"><i style="width:'+(flat/max*100).toFixed(2)+'%"></i><b style="width:'+(model/max*100).toFixed(2)+'%"></b></div><div class="comparison-values"><span>'+Number(flat).toFixed(4)+unit+'</span><span>'+Number(model).toFixed(4)+unit+'</span></div></div>';
+      }).join('')+'</article>';
+    }).join('');
+    $('benchmark-source').textContent='Источник значений: '+(state.benchmark?.source||'недоступен')+' · SHA '+(state.benchmark?.source_sha?.slice(0,12)||'—')+'. Это таблица Research, а не результаты опубликованного forward-журнала.';
+  }
+  function renderProspective(){
+    $('prospective-score').innerHTML=[state.scoreHorizon].map(h=>{
+      const label=({'15':'15 минут','30':'30 минут','60':'1 час','240':'4 часа','1440':'1 день'})[h];
+      if(!['15','30'].includes(h))return '<article class="score-card empty-score"><h3>'+label+'</h3><p>Нет записанных прогнозов на этот срок.</p><p>Сейчас журнал выпускает прогнозы на 15 и 30 минут. Оценка появится после записи прогнозов и публикации их исходов для выбранного срока.</p></article>';
+      const settled=state.entries.filter(e=>!e.invalid&&outcomeFor(e,h));
+      if(!settled.length)return '<article class="score-card"><h3>+'+h+' минут</h3><p>Нет опубликованных исходов. MAE, Brier и фактическое покрытие интервала пока не определены.</p></article>';
+      const values=settled.map(e=>{
+        const r=e.record,f=r.forecasts[h],o=outcomeFor(e,h),y=Number(o.actual_price)>Number(r.observed_price)?1:0;
+        return {flat:Math.abs(Number(o.actual_price)-Number(f.flat_price))/Number(r.observed_price)*100,model:Math.abs(Number(o.actual_price)-Number(f.momentum_price))/Number(r.observed_price)*100,flatBrier:(Number(f.flat_p_up)-y)**2,modelBrier:(Number(f.momentum_p_up)-y)**2,correct:Math.sign(Number(f.momentum_price)-Number(r.observed_price))===Math.sign(Number(o.actual_price)-Number(r.observed_price))?1:0,hit:Number(o.actual_price)>=Number(f.momentum_80_interval?.[0])&&Number(o.actual_price)<=Number(f.momentum_80_interval?.[1])?1:0};
+      });
+      const avg=k=>values.reduce((n,v)=>n+v[k],0)/values.length;
+      return '<article class="score-card"><span class="tag retrospective">ПОЗЖЕ / ИСХОДЫ</span><h3>+'+h+' минут · n='+values.length+'</h3><div><span>Направление совпало</span><b>'+values.reduce((n,v)=>n+v.correct,0)+'/'+values.length+' · '+(avg('correct')*100).toFixed(1)+'%</b></div><div><span>Brier: 0,5 / кандидат</span><b>'+avg('flatBrier').toFixed(4)+' / '+avg('modelBrier').toFixed(4)+'</b></div><div><span>Ошибка цены: без движения / кандидат</span><b>'+pct(avg('flat'))+' / '+pct(avg('model'))+'</b></div><p>0,5 в Brier — нейтральная вероятность, а не прогноз направления. Выборка мала; преимущества для торговли пока нет.</p></article>';
+    }).join('');
+  }
+  function fail(message){$('load-status').textContent='Источник недоступен: '+message+'. Попробуйте обновить страницу. Предыдущие цифры не подменяются.';$('load-status').classList.add('error')}
+  async function start(){
+    try{
+      const live=await load(LIVE+'?v='+Date.now());
+      if(live.schema_version!==1||!Array.isArray(live.entries))throw Error('Неизвестный формат журнала');
+      if(!live.entries.length){$('load-status').textContent='В журнале пока нет записанных прогнозов.';return}
+      const branch='experiment/bitcoin-forecast-ledger',root='data/bitcoin/forward_ledger/';
+      state.index={ledger_branch:branch,backtest:'data/forward_backtest.json',refresh:'Источник обновляется после каждого CI цикла.'};
+      state.entries=live.entries.map(entry=>{
+        const id=entry.forecast_id,item={forecast:root+'forecasts/'+id+'.json',outcome:entry.outcome?root+'outcomes/'+id+'.json':null};
+        const record={...entry,status:'CAUSAL'};
+        return {item,record,outcome:entry.outcome,invalid:validate(record,entry.outcome,item)};
+      }).sort((a,b)=>Date.parse(b.record.issued_at)-Date.parse(a.record.issued_at));
+      state.benchmark=state.benchmark||{
+  "status": "RETROSPECTIVE",
+  "source": "docs/bitcoin_forward_forecast_lab.md",
+  "source_sha": "c5e046d132c60193966de59af6b34c1300a4187b",
+  "method": "Hourly origins, 2017–September 2026; nonoverlapping 30-minute targets; values extracted from Research methodology table.",
+  "rows": [
+    {
+      "era": "2017–20",
+      "horizon_minutes": 15,
+      "n": 34144,
+      "flat_mae_pct": 0.2621,
+      "momentum_mae_pct": 0.3045,
+      "flat_brier": 0.25,
+      "momentum_brier": 0.2551
+    },
+    {
+      "era": "2017–20",
+      "horizon_minutes": 30,
+      "n": 34139,
+      "flat_mae_pct": 0.3713,
+      "momentum_mae_pct": 0.4776,
+      "flat_brier": 0.25,
+      "momentum_brier": 0.2555
+    },
+    {
+      "era": "2021–23",
+      "horizon_minutes": 15,
+      "n": 26202,
+      "flat_mae_pct": 0.2337,
+      "momentum_mae_pct": 0.267,
+      "flat_brier": 0.25,
+      "momentum_brier": 0.256
+    },
+    {
+      "era": "2021–23",
+      "horizon_minutes": 30,
+      "n": 26201,
+      "flat_mae_pct": 0.3156,
+      "momentum_mae_pct": 0.4023,
+      "flat_brier": 0.25,
+      "momentum_brier": 0.2556
+    },
+    {
+      "era": "2024+",
+      "horizon_minutes": 15,
+      "n": 23810,
+      "flat_mae_pct": 0.1609,
+      "momentum_mae_pct": 0.1823,
+      "flat_brier": 0.25,
+      "momentum_brier": 0.2536
+    },
+    {
+      "era": "2024+",
+      "horizon_minutes": 30,
+      "n": 23809,
+      "flat_mae_pct": 0.2277,
+      "momentum_mae_pct": 0.2865,
+      "flat_brier": 0.25,
+      "momentum_brier": 0.2541
+    }
+  ]
 }
-function render(index){latest=index;const items=index.entries||[],last=items.at(-1),age=index.last_forecast_at?(Date.now()-Date.parse(index.last_forecast_at))/60000:Infinity;
- $('last').textContent=date(index.last_forecast_at);$('coverage').textContent=`${index.forecasts_last_24h} / ${index.expected_15m_bars_last_24h}`;$('updated').textContent=date(index.generated_at);
- const stale=age>35,lag=Number.isFinite(age)?Math.round(age):null;
- $('state').className='panel '+(stale?'bad':'good');$('state').textContent=items.length?stale?`Данные задерживаются: последний прогноз ${lag} мин назад. GitHub Actions запускается нерегулярно; графики показывают только реально записанные наблюдения.`:`Журнал обновляется. Последний прогноз записан ${lag} мин назад. Следующая точка появится после нового запуска GitHub Actions.`:'Журнал пока пуст. Последняя проверка: '+date(index.generated_at);
- plot($('chart15'),items,'15');plot($('chart30'),items,'30');
- const rows=items.slice(-30).reverse().flatMap(e=>['15','30'].map(h=>{let f=e.forecasts[h],o=e.outcome?.outcomes?.[h];if(!f)return '';let id=encodeURIComponent(e.forecast_id),link=ROOT+'forecasts/'+id+'.json',outcome=ROOT+'outcomes/'+id+'.json';return `<tr><td>${date(f.target_bar_close)}</td><td>+${h}м</td><td>${money(f.momentum_price)}</td><td>${money(f.flat_price)}</td><td>${o?money(o.actual_price):'Ожидаем'}</td><td>${o?o.momentum_abs_pct.toFixed(3)+'%':'—'}</td><td><a href="${link}" target="_blank" rel="noopener" title="${e.source_snapshot_sha256}">${e.forecast_id.slice(0,10)}</a>${o?` · <a href="${outcome}" target="_blank" rel="noopener">исход</a>`:''}</td></tr>`}));
- $('rows').innerHTML=rows.join('');
-}
-async function refresh(){try{const res=await fetch(ROOT+'index.json?v='+Date.now(),{cache:'no-store'});if(!res.ok)throw Error('HTTP '+res.status);const data=await res.json();if(data.schema_version!==1)throw Error('неизвестная версия данных');render(data)}catch(err){$('state').className='panel bad';$('state').textContent='Не удалось прочитать журнал: '+err.message+'. Попробуйте обновить страницу позже.'}}
-refresh();setInterval(refresh,60000);window.addEventListener('resize',()=>latest&&render(latest));
+;
+      $('app').hidden=false;$('load-status').hidden=true;
+      renderChart();renderLatest();renderLedger();renderProspective();renderBenchmark();
+      selectPoint(state.chartPoints.find(p=>p.entry.record.forecast_id===state.activePoint)||state.chartPoints.at(-1));
+      const age=live.last_forecast_at?Math.round((Date.now()-Date.parse(live.last_forecast_at))/60000):null;
+      $('ledger-notice').innerHTML='<span class="tag observed">ТЕКУЩИЙ ЖУРНАЛ</span> Последний прогноз: '+utc(live.last_forecast_at)+' · '+live.forecasts_last_24h+'/'+live.expected_15m_bars_last_24h+' возможных свечей за сутки. '+(age>35?'Данные задерживаются: последний прогноз '+age+' мин назад.':'Данные обновляются после запуска GitHub Actions.')+' <a href="https://github.com/yanixkz/sce-core/tree/experiment/bitcoin-forecast-ledger/data/bitcoin/forward_ledger" target="_blank" rel="noreferrer">Источник ↗</a>';
+      $('refresh-note').textContent='Индекс журнала создан '+utc(live.generated_at)+'. Страница проверяет обновления каждую минуту. Пропуски запусков GitHub не заполняются задним числом.';
+      $('mae-btn').onclick=()=>{state.metric='mae';$('mae-btn').classList.add('selected');$('brier-btn').classList.remove('selected');renderBenchmark()};
+      $('brier-btn').onclick=()=>{state.metric='brier';$('brier-btn').classList.add('selected');$('mae-btn').classList.remove('selected');renderBenchmark()};
+    }catch(e){if(!state.entries.length)fail(e.message);else $('ledger-notice').textContent='Обновить текущий журнал не удалось: '+e.message+'. Показаны ранее загруженные записи.'}
+  }
+  $('score-timeframes').querySelectorAll('[data-score]').forEach(button=>button.onclick=()=>{
+    state.scoreHorizon=button.dataset.score;
+    $('score-timeframes').querySelectorAll('[data-score]').forEach(other=>{other.classList.toggle('selected',other===button);other.setAttribute('aria-pressed',String(other===button))});
+    renderProspective();
+  });
+  $('line-timeframes').querySelectorAll('[data-timeframe]').forEach(button=>button.onclick=()=>{
+    state.timeframe=button.dataset.timeframe;
+    $('line-timeframes').querySelectorAll('[data-timeframe]').forEach(other=>{other.classList.toggle('selected',other===button);other.setAttribute('aria-pressed',String(other===button))});
+    renderChart();
+  });
+  for(const h of ['15','30'])$('chart-'+h).onclick=()=>{state.horizon=h;for(const n of ['15','30']){$('chart-'+n).classList.toggle('selected',n===h);$('chart-'+n).setAttribute('aria-pressed',String(n===h))}renderChart();selectPoint(state.chartPoints.find(p=>p.entry.record.forecast_id===state.activePoint)||state.chartPoints.at(-1))};
+  for(const name of ['10','all'])$('range-'+name).onclick=()=>{state.range=name;for(const other of ['10','all']){$('range-'+other).classList.toggle('selected',other===name);$('range-'+other).setAttribute('aria-pressed',String(other===name))};renderChart();selectPoint(state.chartPoints.find(p=>p.entry.record.forecast_id===state.activePoint)||state.chartPoints.at(-1))};
+  const canvas=$('forecast-chart'),tip=$('chart-tooltip');
+  const nearest=clientX=>{const x=clientX-canvas.getBoundingClientRect().left;return state.chartPoints.reduce((best,p)=>best===null||Math.abs(p.x-x)<Math.abs(best.x-x)?p:best,null)};
+  canvas.addEventListener('pointermove',ev=>{
+    const p=nearest(ev.clientX);if(!p||Math.abs(p.x-(ev.clientX-canvas.getBoundingClientRect().left))>28){tip.hidden=true;return}
+    const h=state.horizon;tip.hidden=false;tip.style.left=Math.max(6,Math.min(canvas.clientWidth-235,p.x+10))+'px';
+    tip.innerHTML='<strong>#'+(p.i+1)+' · '+utc(p.entry.record.issued_at)+'</strong><span>Прогноз: '+direction(p.model)+' '+signed(p.model)+'</span><span>Факт: '+(p.actual===null?'ожидаем':direction(p.actual)+' '+signed(p.actual))+'</span>';
+  });
+  canvas.addEventListener('pointerleave',()=>tip.hidden=true);
+  canvas.addEventListener('click',ev=>{const p=nearest(ev.clientX);if(p)selectPoint(p)});
+  canvas.addEventListener('keydown',ev=>{if(!['ArrowLeft','ArrowRight'].includes(ev.key)||!state.chartPoints.length)return;ev.preventDefault();const i=state.chartPoints.findIndex(p=>p.entry.record.forecast_id===state.activePoint),next=Math.max(0,Math.min(state.chartPoints.length-1,i+(ev.key==='ArrowLeft'?-1:1)));selectPoint(state.chartPoints[next]);tip.hidden=true});
+  window.addEventListener('resize',()=>state.entries.length&&renderChart());
+  start();setInterval(start,60000);
+})();
 </script></body></html>
