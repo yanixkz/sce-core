@@ -4,7 +4,7 @@ on:
     branches: [main]
     paths: ['.github/workflows/bitcoin-continuous-ledger.yml']
   schedule:
-    - cron: '2,7,12,17,22,27,32,37,42,47,52,57 * * * *'
+    - cron: '3,18,33,48 * * * *'
   workflow_dispatch:
 permissions:
   contents: write
@@ -19,7 +19,7 @@ jobs:
       - name: Checkout frozen research code
         uses: actions/checkout@v4
         with:
-          ref: 43ca0dcaa3cf5bb73c9841ef7c0de114c2a2f734
+          ref: 92e4449f9bdb2517b5f9e8007511a36c318b8d6f
           path: research
           persist-credentials: false
       - name: Checkout forecast ledger
@@ -34,6 +34,10 @@ jobs:
         env:
           PYTHONPATH: research
         run: python research/examples/run_bitcoin_continuous.py --ledger ledger/data/bitcoin/forward_ledger
+      - name: Refresh public read index and coverage
+        env:
+          PYTHONPATH: research
+        run: python research/examples/build_bitcoin_ledger_index.py --ledger ledger/data/bitcoin/forward_ledger
       - name: Preserve prospective records
         working-directory: ledger
         run: |
