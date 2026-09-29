@@ -1,0 +1,55 @@
+name: Bitcoin Coinbase Multiscale Data
+on:
+  workflow_dispatch:
+  pull_request:
+    branches: [main]
+    paths:
+      - 'sce/data/coinbase_btc.py'
+      - 'examples/fetch_bitcoin_coinbase_multiscale.py'
+      - 'examples/analyze_bitcoin_scale_space.py'
+      - 'examples/analyze_bitcoin_scale_space_robustness.py'
+      - 'examples/analyze_bitcoin_scale_trajectory.py'
+      - 'examples/analyze_bitcoin_scale_hierarchy.py'
+      - 'sce/research/bitcoin_forecast_lab.py'
+      - 'examples/run_bitcoin_forecast_lab.py'
+      - 'examples/analyze_bitcoin_volume_forecast.py'
+      - 'sce/research/bitcoin_trade_readiness.py'
+      - '.github/workflows/bitcoin-coinbase-multiscale.yml'
+jobs:
+  fetch:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: '3.12'}
+      - run: PYTHONPATH=. python examples/fetch_bitcoin_coinbase_multiscale.py --start 2017-01-01
+      - name: Analyze real multiscale wave geometry
+        run: PYTHONPATH=. python examples/analyze_bitcoin_real_multiscale.py
+      - name: Analyze scale-space persistence
+        run: PYTHONPATH=. python examples/analyze_bitcoin_scale_space.py
+      - name: Analyze scale-space robustness and nulls
+        run: PYTHONPATH=. python examples/analyze_bitcoin_scale_space_robustness.py
+      - name: Analyze scale-space trajectory geometry
+        run: PYTHONPATH=. python examples/analyze_bitcoin_scale_trajectory.py
+      - name: Analyze adjacent-scale extremum hierarchy
+        run: PYTHONPATH=. python examples/analyze_bitcoin_scale_hierarchy.py
+      - name: Evaluate fixed 15m and 30m forecast baselines
+        run: PYTHONPATH=. python examples/run_bitcoin_forecast_lab.py backtest
+      - name: Test prespecified volume condition and trade gate
+        run: PYTHONPATH=. python examples/analyze_bitcoin_volume_forecast.py
+      - name: Quality gate
+        run: |
+          python - <<'PY'
+          import csv,glob,sys
+          mins={'15m':100000,'1h':30000,'4h':8000,'1d':2000}
+          for tf,n in mins.items():
+              p=f'data/bitcoin/coinbase/btc_usd_{tf}.csv'
+              rows=sum(1 for _ in open(p))-1
+              print(tf,rows)
+              if rows<n: raise SystemExit(f'quality gate failed: {tf} {rows} < {n}')
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: bitcoin-coinbase-multiscale
+          path: data/bitcoin/coinbase/

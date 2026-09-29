@@ -1,0 +1,22 @@
+name: Bitcoin Microstructure Source Probe
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - 'sce/data/coinbase_microstructure.py'
+      - 'examples/probe_coinbase_microstructure.py'
+      - '.github/workflows/bitcoin-microstructure-probe.yml'
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: '3.12'}
+      - run: PYTHONPATH=. python examples/probe_coinbase_microstructure.py
+      - uses: actions/upload-artifact@v4
+        with:
+          name: bitcoin-microstructure-probe
+          path: data/bitcoin/coinbase/microstructure_probe.json
+          if-no-files-found: error

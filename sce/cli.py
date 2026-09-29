@@ -82,6 +82,13 @@ DEMO_REGISTRY: dict[str, Callable[[], DemoSpec]] = {
         run_fn="run_constraint_sweep_demo",
         format_fn="format_constraint_sweep_demo",
     ),
+    "bitcoin-temporal-field": _demo_spec_from_module(
+        name="bitcoin-temporal-field",
+        title="Bitcoin Temporal Field (Research Prototype)",
+        module="sce.scenarios.bitcoin_temporal_field",
+        run_fn="run_bitcoin_temporal_field_demo",
+        format_fn="format_bitcoin_temporal_field_demo",
+    ),
     "stability-basin": _demo_spec_from_module(
         name="stability-basin",
         title="Stability Basin Robustness (Scientific Toy)",
