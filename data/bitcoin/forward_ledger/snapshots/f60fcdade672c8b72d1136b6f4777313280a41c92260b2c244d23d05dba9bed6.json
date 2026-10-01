@@ -1,0 +1,23 @@
+{
+  "best_ask": 83932.48,
+  "best_bid": 83932.47,
+  "book_sequence": 137097534622,
+  "candle_volume": {
+    "bar_open": "2026-10-01T14:30:00+00:00",
+    "last_closed_btc": 119.66152835,
+    "prior_96_median_btc": 38.340009124999995,
+    "relative_to_median": 3.121061551129717
+  },
+  "fetched_at": "2026-10-01T14:47:30.192765+00:00",
+  "limitation": "REST snapshots and recent trades are not a 15m order-flow history or synchronized L2 stream",
+  "recent_taker_buy_btc": 8.64191359,
+  "recent_taker_sell_btc": 4.80400117,
+  "recent_trade_count": 1000,
+  "recent_trade_imbalance": 0.2854333445142262,
+  "source": "Coinbase Exchange BTC-USD REST",
+  "spread_bps": 0.0011914339467245913,
+  "status": "OBSERVED",
+  "top_10_ask_btc": 0.92853654,
+  "top_10_bid_btc": 3.71435676,
+  "top_10_size_imbalance": 0.6000181438587011
+}
