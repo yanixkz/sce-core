@@ -1,0 +1,37 @@
+{
+  "forecast_id": "61fdaae6eaa4b8ee0d887a93fbb5363cb9be241e78b8a8b462109eedf81d3654",
+  "forecasts": {
+    "15": {
+      "effective_lead_minutes": 6.173836099999999,
+      "flat_p_up": 0.5,
+      "flat_price": 84509.21,
+      "momentum_80_interval": [
+        84261.00227437406,
+        84776.23275353646
+      ],
+      "momentum_p_up": 0.55,
+      "momentum_price": 84518.22490361826,
+      "target_bar_close": "2026-10-03T00:30:00+00:00"
+    },
+    "30": {
+      "effective_lead_minutes": 21.1738361,
+      "flat_p_up": 0.5,
+      "flat_price": 84509.21,
+      "momentum_80_interval": [
+        84163.66368040643,
+        84892.38846746007
+      ],
+      "momentum_p_up": 0.55,
+      "momentum_price": 84527.24076888895,
+      "target_bar_close": "2026-10-03T00:45:00+00:00"
+    }
+  },
+  "issued_at": "2026-10-03T00:23:49.569834+00:00",
+  "observed_bar_close": "2026-10-03T00:15:00+00:00",
+  "observed_bar_open": "2026-10-03T00:00:00+00:00",
+  "observed_price": 84509.21,
+  "run_id": "37081883728",
+  "source": "Coinbase Exchange BTC-USD 15m",
+  "source_snapshot_sha256": "e4753b27bc156e03662c6c03f60c39ebeea1987154ca27e75b00905d0bfac362",
+  "status": "CAUSAL"
+}
