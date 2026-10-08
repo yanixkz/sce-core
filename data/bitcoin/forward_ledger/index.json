@@ -1,9 +1,9 @@
 {
   "schema_version": 1,
-  "generated_at": "2026-10-07T20:07:13.958096+00:00",
+  "generated_at": "2026-10-08T00:13:34.867463+00:00",
   "last_forecast_at": "2026-10-07T20:07:13.886984+00:00",
   "total_forecasts": 43,
-  "forecasts_last_24h": 4,
+  "forecasts_last_24h": 3,
   "expected_15m_bars_last_24h": 96,
   "entries": [
     {
@@ -2349,7 +2349,27 @@
           "target_bar_close": "2026-10-07T20:30:00+00:00"
         }
       },
-      "outcome": null
+      "outcome": {
+        "forecast_id": "ef55bcdadf13392a937976f96a16aa7aae4585d1e2c8bfd07282852b9cd7fe8b",
+        "outcomes": {
+          "15": {
+            "actual_price": 83502.28,
+            "flat_abs_pct": 0.1321948713570327,
+            "momentum_abs_pct": 0.1264231041286812,
+            "momentum_brier": 0.20249999999999996,
+            "momentum_direction_correct": true
+          },
+          "30": {
+            "actual_price": 83522.22,
+            "flat_abs_pct": 0.15610602642651214,
+            "momentum_abs_pct": 0.14456215883680495,
+            "momentum_brier": 0.20249999999999996,
+            "momentum_direction_correct": true
+          }
+        },
+        "resolved_at": "2026-10-08T00:13:34.770474+00:00",
+        "status": "RESOLVED"
+      }
     }
   ]
 }
