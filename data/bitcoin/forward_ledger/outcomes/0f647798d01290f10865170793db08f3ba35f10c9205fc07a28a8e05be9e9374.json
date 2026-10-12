@@ -1,0 +1,21 @@
+{
+  "forecast_id": "0f647798d01290f10865170793db08f3ba35f10c9205fc07a28a8e05be9e9374",
+  "outcomes": {
+    "15": {
+      "actual_price": 83564.97,
+      "flat_abs_pct": 0.018568926791412775,
+      "momentum_abs_pct": 0.035747918772379324,
+      "momentum_brier": 0.2025,
+      "momentum_direction_correct": true
+    },
+    "30": {
+      "actual_price": 83675.2,
+      "flat_abs_pct": 0.11331591858338214,
+      "momentum_abs_pct": 0.22192010651384242,
+      "momentum_brier": 0.30250000000000005,
+      "momentum_direction_correct": false
+    }
+  },
+  "resolved_at": "2026-10-12T08:54:51.200507+00:00",
+  "status": "RESOLVED"
+}
