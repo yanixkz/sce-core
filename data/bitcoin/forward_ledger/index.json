@@ -1,8 +1,8 @@
 {
   "schema_version": 1,
-  "generated_at": "2026-10-21T11:30:47.305291+00:00",
-  "last_forecast_at": "2026-10-21T11:30:47.240981+00:00",
-  "total_forecasts": 89,
+  "generated_at": "2026-10-21T16:04:28.848958+00:00",
+  "last_forecast_at": "2026-10-21T16:04:28.784848+00:00",
+  "total_forecasts": 90,
   "forecasts_last_24h": 6,
   "expected_15m_bars_last_24h": 96,
   "entries": [
@@ -4877,6 +4877,61 @@
           "momentum_p_up": 0.55,
           "momentum_price": 83472.70193647365,
           "target_bar_close": "2026-10-21T12:00:00+00:00"
+        }
+      },
+      "outcome": {
+        "forecast_id": "0f8c4051b4f002d1dd24806ac80b23e33fc7565515f9b5b5df1b82cc64be9e85",
+        "outcomes": {
+          "15": {
+            "actual_price": 83374.2,
+            "flat_abs_pct": 0.009666324707434977,
+            "momentum_abs_pct": 0.06388494682961972,
+            "momentum_brier": 0.30250000000000005,
+            "momentum_direction_correct": false
+          },
+          "30": {
+            "actual_price": 83419.09,
+            "flat_abs_pct": 0.04417006687034118,
+            "momentum_abs_pct": 0.06429657396387606,
+            "momentum_brier": 0.20249999999999996,
+            "momentum_direction_correct": true
+          }
+        },
+        "resolved_at": "2026-10-21T16:04:28.648545+00:00",
+        "status": "RESOLVED"
+      }
+    },
+    {
+      "forecast_id": "d575f16fb51e785515451a775b4bd59f3df4b13207364d041a20249eaf63ef1d",
+      "issued_at": "2026-10-21T16:04:28.784848+00:00",
+      "observed_bar_close": "2026-10-21T16:00:00+00:00",
+      "observed_price": 84472.69,
+      "source": "Coinbase Exchange BTC-USD 15m",
+      "source_snapshot_sha256": "0990f003d4230f365da3409c62dfcd765498b1160273cebcaf186e296bcae572",
+      "forecasts": {
+        "15": {
+          "effective_lead_minutes": 10.520252533333334,
+          "flat_p_up": 0.5,
+          "flat_price": 84472.69,
+          "momentum_80_interval": [
+            84321.71343198861,
+            84612.61392051834
+          ],
+          "momentum_p_up": 0.45,
+          "momentum_price": 84467.03844540448,
+          "target_bar_close": "2026-10-21T16:15:00+00:00"
+        },
+        "30": {
+          "effective_lead_minutes": 25.520252533333334,
+          "flat_p_up": 0.5,
+          "flat_price": 84472.69,
+          "momentum_80_interval": [
+            84255.95366616854,
+            84667.32176167778
+          ],
+          "momentum_p_up": 0.45,
+          "momentum_price": 84461.38726892015,
+          "target_bar_close": "2026-10-21T16:30:00+00:00"
         }
       },
       "outcome": null
