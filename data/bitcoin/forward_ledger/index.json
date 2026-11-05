@@ -1,9 +1,9 @@
 {
   "schema_version": 1,
-  "generated_at": "2026-11-05T14:29:33.311070+00:00",
+  "generated_at": "2026-11-05T21:11:12.182208+00:00",
   "last_forecast_at": "2026-11-05T06:00:12.992228+00:00",
   "total_forecasts": 140,
-  "forecasts_last_24h": 2,
+  "forecasts_last_24h": 1,
   "expected_15m_bars_last_24h": 96,
   "entries": [
     {
